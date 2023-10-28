@@ -14,6 +14,7 @@
     </properties>
 
     <modules>
+        <module>frontend</module>
         <module>webapp</module>
     </modules>
 
