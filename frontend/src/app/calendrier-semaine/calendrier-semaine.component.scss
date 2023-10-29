@@ -1,0 +1,55 @@
+
+.semaine {
+  border: 3px;
+  //width: 150px;
+  width: 200px
+}
+
+.journee {
+  border: 1px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.no-jour {
+  width: 20px;
+  text-align: right;
+}
+
+.jour-semaine {
+  width: 20px;
+  text-align: center;
+}
+
+.nom-saint {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.dimanche {
+  background-color: #d5d5d5;
+  .no-jour {
+    color: red;
+  }
+  .jour-semaine {
+    color: red;
+  }
+}
+
+.ferier {
+  color: red;
+  font-weight: bold;
+}
+
+.jourActuel {
+  background-color: burlywood;
+}
+
+.no-semaine {
+  color: #a4d267;
+  margin-left: auto;
+}

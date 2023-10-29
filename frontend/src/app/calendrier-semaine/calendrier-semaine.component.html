@@ -1,0 +1,10 @@
+<div class="semaine">
+  <div class="journee" *ngFor="let jour of listeJours; let index = index"
+       [ngClass]="{'dimanche':jour.dimanche,'ferier':jour.jourFerier,'jourActuel':jour.jourActuel}">
+    <div class="no-jour">{{jour.numero}}</div>
+    <div class="jour-semaine">{{jour.journeeSemaine}}</div>
+    <div class="nom-saint">{{jour.nomSaint}}</div>
+    <div class="no-semaine" *ngIf="jour.noSemaine>0">{{jour.noSemaine}}</div>
+  </div>
+</div>
+

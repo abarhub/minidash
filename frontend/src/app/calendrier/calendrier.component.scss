@@ -1,0 +1,17 @@
+
+.annee {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.mois {
+  border: 2px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.titre-mois {
+  text-align: center;
+}
