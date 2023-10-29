@@ -4,6 +4,7 @@ import {Observable} from "rxjs";
 import {MoisEpiphanie} from "../model/moisEpiphanie";
 import {DateTime, Settings} from "luxon";
 import {Mois} from "../model/mois.model";
+import {JoursFerieService} from "../service/jours-ferie.service";
 
 @Component({
   selector: 'app-calendrier',
@@ -15,9 +16,9 @@ export class CalendrierComponent implements OnInit {
   public mois: MoisEpiphanie | null = null;
   public jourActuel: DateTime = DateTime.now();
   public listeSemaineDuMois: Mois[] = [];
-  public listeJourFerier:DateTime[]=[];
+  public listeJourFerier: DateTime[] = [];
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private joursFerieService :JoursFerieService) {
     this.getMois();
   }
 
@@ -38,7 +39,7 @@ export class CalendrierComponent implements OnInit {
 
   private calculDesMois(premierMois: DateTime, nbMois: number) {
     this.listeSemaineDuMois = [];
-    this.calculJourFeriers(premierMois);
+    this.listeJourFerier = this.joursFerieService.calculJourFeries(premierMois.year);
     for (let i = 1; i <= nbMois; i++) {
       let tab = this.calculDuMois(premierMois);
       let mois = new Mois();
@@ -87,14 +88,4 @@ export class CalendrierComponent implements OnInit {
     });
   }
 
-  private calculJourFeriers(date:DateTime) {
-    this.listeJourFerier=[];
-    this.listeJourFerier.push(date.startOf('year'));
-    this.listeJourFerier.push(date.set({day:1,month:5}));
-    this.listeJourFerier.push(date.set({day:14,month:7}));
-    this.listeJourFerier.push(date.set({day:15,month:8}));
-    this.listeJourFerier.push(date.set({day:1,month:11}));
-    this.listeJourFerier.push(date.set({day:11,month:11}));
-    this.listeJourFerier.push(date.endOf('year'));
-  }
 }
