@@ -6,4 +6,7 @@ export class JourneeModel {
   jourFerier: boolean = false;
   jourActuel: boolean = false;
   noSemaine: number = 0;
+  vacancesA:boolean=false;
+  vacancesB:boolean=false;
+  vacancesC:boolean=false;
 }

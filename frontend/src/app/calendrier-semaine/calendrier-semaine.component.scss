@@ -49,7 +49,45 @@
   background-color: burlywood;
 }
 
+.fin-ligne {
+  margin-left: auto;
+  min-width: 7px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+}
+
 .no-semaine {
   color: #a4d267;
-  margin-left: auto;
+}
+
+.vacances-scolaires {
+  //top:0px;
+  //right: 10px;
+  //position: relative;
+  //width: 2px;
+  //background-color: blue;
+  //margin-left: auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.zone-a {
+  width: 2px;
+  background-color: blue;
+  height: 18px;
+}
+
+.zone-b {
+  width: 2px;
+  background-color: green;
+  height: 18px;
+}
+
+.zone-c {
+  width: 2px;
+  background-color: red;
+  height: 18px;
 }

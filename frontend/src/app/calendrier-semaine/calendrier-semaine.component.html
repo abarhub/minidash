@@ -4,7 +4,14 @@
     <div class="no-jour">{{jour.numero}}</div>
     <div class="jour-semaine">{{jour.journeeSemaine}}</div>
     <div class="nom-saint">{{jour.nomSaint}}</div>
+    <div class="fin-ligne">
     <div class="no-semaine" *ngIf="jour.noSemaine>0">{{jour.noSemaine}}</div>
+    <div class="vacances-scolaires">
+      <div class="zone-a" *ngIf="jour.vacancesA"></div>
+      <div class="zone-b" *ngIf="jour.vacancesB"></div>
+      <div class="zone-c" *ngIf="jour.vacancesC"></div>
+    </div>
+    </div>
   </div>
 </div>
 
