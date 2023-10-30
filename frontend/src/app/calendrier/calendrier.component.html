@@ -18,7 +18,10 @@
     <div class="titre-mois">{{moisParAnnee.nomMois}} {{moisParAnnee.annee}}</div>
     <div class="mois" *ngFor="let semaine of moisParAnnee.semaineDuMois">
   <!--<app-calendrier-semaine *ngIf="mois" [listeSaint]="mois" [numeroSemaine]="semaine.weekNumber" [annee]="semaine.year"></app-calendrier-semaine>-->
-      <app-calendrier-semaine *ngIf="mois" [listeSaint]="mois" [dateDebut]="semaine" [listeJourFerier]="listeJourFerier"></app-calendrier-semaine>
+      <app-calendrier-semaine *ngIf="mois" [listeSaint]="mois" [dateDebut]="semaine"
+                              [listeJourFerier]="listeJourFerier"
+                              [listePeriodeVacance]="listePeriodeVacances"
+      ></app-calendrier-semaine>
     </div>
 
 

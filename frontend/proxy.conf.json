@@ -1,0 +1,14 @@
+{
+  "/api/*": {
+    "target": "http://localhost:8080/api",
+    "changeOrigine": true,
+    "logLevel": "debug",
+    "secure": false
+  },
+  "/api/vacances": {
+    "target": "http://localhost:8080/api/vacances",
+    "changeOrigine": true,
+    "logLevel": "debug",
+    "secure": false
+  }
+}

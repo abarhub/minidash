@@ -5,6 +5,8 @@ import {MoisEpiphanie} from "../model/moisEpiphanie";
 import {DateTime, Settings} from "luxon";
 import {Mois} from "../model/mois.model";
 import {JoursFerieService} from "../service/jours-ferie.service";
+import {VacanceModel} from "../model/vacance.model";
+import {PeriodeVacanceModel} from "../model/periodeVacanceModel";
 
 @Component({
   selector: 'app-calendrier',
@@ -17,8 +19,9 @@ export class CalendrierComponent implements OnInit {
   public jourActuel: DateTime = DateTime.now();
   public listeSemaineDuMois: Mois[] = [];
   public listeJourFerier: DateTime[] = [];
+  public listePeriodeVacances: PeriodeVacanceModel[] = [];
 
-  constructor(private http: HttpClient, private joursFerieService :JoursFerieService) {
+  constructor(private http: HttpClient, private joursFerieService: JoursFerieService) {
     this.getMois();
   }
 
@@ -86,6 +89,53 @@ export class CalendrierComponent implements OnInit {
     this.getJSON().subscribe(data => {
       this.mois = data;
     });
+
+    return this.http.get<VacanceModel[]>('api/vacances').subscribe(data => {
+      console.log("data vacances", data);
+      this.initVacances(data);
+    });
   }
 
+  private initVacances(data: VacanceModel[]) {
+    let liste: PeriodeVacanceModel[] = [];
+    if (data && data.length > 0) {
+      for(let vac of data){
+        let zone=vac.zone;
+        let dateDebut:DateTime|null=null;
+        let dateFin:DateTime|null=null;
+        if(vac.dateDebut){
+          let date=DateTime.fromISO(vac.dateDebut);
+          if(date){
+            dateDebut=date;
+          }
+          date=DateTime.fromISO(vac.dateFin);
+          if(date){
+            dateFin=date;
+          }
+        }
+        if(zone&&dateDebut&&dateFin){
+          if(zone==='Zone A'){
+            const vacance=new PeriodeVacanceModel();
+            vacance.zone='zoneA';
+            vacance.dateDebut=dateDebut;
+            vacance.dateFin=dateFin;
+            liste.push(vacance);
+          } else if(zone==='Zone B'){
+            const vacance=new PeriodeVacanceModel();
+            vacance.zone='zoneB';
+            vacance.dateDebut=dateDebut;
+            vacance.dateFin=dateFin;
+            liste.push(vacance);
+          } else if(zone==='Zone C'){
+            const vacance=new PeriodeVacanceModel();
+            vacance.zone='zoneC';
+            vacance.dateDebut=dateDebut;
+            vacance.dateFin=dateFin;
+            liste.push(vacance);
+          }
+        }
+      }
+    }
+    this.listePeriodeVacances = liste;
+  }
 }

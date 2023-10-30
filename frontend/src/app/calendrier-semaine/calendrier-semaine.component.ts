@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {DateTime} from "luxon";
 import {MoisEpiphanie} from "../model/moisEpiphanie";
 import {JourneeModel} from "../model/journee.model";
+import {PeriodeVacanceModel} from "../model/periodeVacanceModel";
 
 @Component({
   selector: 'app-calendrier-semaine',
@@ -18,6 +19,9 @@ export class CalendrierSemaineComponent implements OnInit {
 
   @Input()
   listeJourFerier: DateTime[] = [];
+
+  @Input()
+  listePeriodeVacance: PeriodeVacanceModel[] = [];
 
   premierJour: number = 0;
   listeJours: JourneeModel[] = [];
@@ -42,8 +46,17 @@ export class CalendrierSemaineComponent implements OnInit {
       journee.dimanche = journee.journeeSemaine === 'D';
       journee.jourFerier = this.getJourFerier(dt2);
       journee.jourActuel = this.isJourActuel(dt2);
-      if(i===0){
-        journee.noSemaine=dt2.weekNumber;
+      journee.vacancesA = this.listePeriodeVacance.findIndex(x => {
+        x.zone === 'zoneA' && x.dateDebut != null && dt2 >= x.dateDebut && x.dateFin != null && dt2 <= x.dateFin
+      }) >= 0;
+      journee.vacancesB = this.listePeriodeVacance.findIndex(x => {
+        x.zone === 'zoneB' && x.dateDebut != null && dt2 >= x.dateDebut && x.dateFin != null && dt2 <= x.dateFin
+      }) >= 0;
+      journee.vacancesC = this.listePeriodeVacance.findIndex(x => {
+        x.zone === 'zoneC' && x.dateDebut != null && dt2 >= x.dateDebut && x.dateFin != null && dt2 <= x.dateFin
+      }) >= 0;
+      if (i === 0) {
+        journee.noSemaine = dt2.weekNumber;
       }
       this.listeJours.push(journee);
 
