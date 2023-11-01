@@ -72,22 +72,40 @@
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
+  justify-content: flex-end;
+  width: 12px;
+  min-width: 12px;
 }
 
 .zone-a {
   width: 2px;
+  min-width: 2px;
   background-color: blue;
   height: 18px;
 }
 
 .zone-b {
   width: 2px;
+  min-width: 2px;
   background-color: green;
   height: 18px;
 }
 
 .zone-c {
   width: 2px;
+  min-width: 2px;
   background-color: red;
+  height: 18px;
+}
+
+.zone-sansVacance {
+  width: 2px;
+  min-width: 2px;
+  height: 18px;
+}
+
+.separateur-zone {
+  width: 2px;
+  min-width: 2px;
   height: 18px;
 }

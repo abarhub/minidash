@@ -8,8 +8,14 @@
     <div class="no-semaine" *ngIf="jour.noSemaine>0">{{jour.noSemaine}}</div>
     <div class="vacances-scolaires">
       <div class="zone-a" *ngIf="jour.vacancesA"></div>
+      <div class="zone-sansVacance" *ngIf="!jour.vacancesA"></div>
+      <div class="separateur-zone"></div>
       <div class="zone-b" *ngIf="jour.vacancesB"></div>
+      <div class="zone-sansVacance" *ngIf="!jour.vacancesB"></div>
+      <div class="separateur-zone"></div>
       <div class="zone-c" *ngIf="jour.vacancesC"></div>
+      <div class="zone-sansVacance" *ngIf="!jour.vacancesC"></div>
+      <div class="separateur-zone"></div>
     </div>
     </div>
   </div>
