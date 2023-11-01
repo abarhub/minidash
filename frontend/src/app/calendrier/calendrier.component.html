@@ -10,6 +10,19 @@
 <!--  <div class="journee"><div class="no-jour">21</div><div class="nom-saint">Guillaume avec un nom tres très looooong</div></div>-->
 
 <!--</div>-->
+<div class="page">
+  <div class="entete">
+    <div class="affichageAnnee">{{anneeAffiche}}</div>
+    <div>
+      <mat-button-toggle-group name="nbMois" aria-label="Nombre de mois" (valueChange)="changenbMois($event)">
+        <mat-button-toggle value="six">6</mat-button-toggle>
+        <mat-button-toggle value="douze">12</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </div>
+
+
+
 <div class="annee">
 
 <div class="boucleFor" *ngFor="let moisParAnnee of listeSemaineDuMois">
@@ -24,6 +37,8 @@
       ></app-calendrier-semaine>
     </div>
 
+
+</div>
 
 </div>
 

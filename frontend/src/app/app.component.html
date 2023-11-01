@@ -483,15 +483,32 @@
 <!--<hr>-->
 <!-- ne fonctionne pas -->
 <!--<app-horloge></app-horloge>-->
+<mat-slide-toggle>Toggle me!</mat-slide-toggle>
 
 <hr>
 
-<app-horloge2></app-horloge2>
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center">
+  <mat-tab label="Horloge">
+    <div class="page">
+      <app-horloge2></app-horloge2>
+    </div>
+  </mat-tab>
+  <mat-tab label="Calendrier">
+    <div class="page">
+      <app-calendrier></app-calendrier>
+    </div>
+  </mat-tab>
 
-<hr>
+</mat-tab-group>
 
-<app-calendrier></app-calendrier>
+<!--<hr>-->
 
-<hr>
+<!--<app-horloge2></app-horloge2>-->
+
+<!--<hr>-->
+
+
+
+<!--<hr>-->
 
 <router-outlet></router-outlet>

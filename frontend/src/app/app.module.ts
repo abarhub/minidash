@@ -8,6 +8,10 @@ import { HorlogeComponent } from './horloge/horloge.component';
 import { Horloge2Component } from './horloge2/horloge2.component';
 import {HttpClientModule} from "@angular/common/http";
 import { CalendrierSemaineComponent } from './calendrier-semaine/calendrier-semaine.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import {MatTabsModule} from "@angular/material/tabs";
+import {MatButtonToggleModule} from "@angular/material/button-toggle";
 
 @NgModule({
   declarations: [
@@ -17,11 +21,15 @@ import { CalendrierSemaineComponent } from './calendrier-semaine/calendrier-sema
     Horloge2Component,
     CalendrierSemaineComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        BrowserAnimationsModule,
+        MatSlideToggleModule,
+        MatTabsModule,
+        MatButtonToggleModule
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

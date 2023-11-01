@@ -7,6 +7,7 @@ import {Mois} from "../model/mois.model";
 import {JoursFerieService} from "../service/jours-ferie.service";
 import {VacanceModel} from "../model/vacance.model";
 import {PeriodeVacanceModel} from "../model/periodeVacanceModel";
+import {MatButtonToggleChange} from "@angular/material/button-toggle";
 
 @Component({
   selector: 'app-calendrier',
@@ -20,6 +21,7 @@ export class CalendrierComponent implements OnInit {
   public listeSemaineDuMois: Mois[] = [];
   public listeJourFerier: DateTime[] = [];
   public listePeriodeVacances: PeriodeVacanceModel[] = [];
+  public anneeAffiche:number=0;
 
   constructor(private http: HttpClient, private joursFerieService: JoursFerieService) {
     this.getMois();
@@ -28,10 +30,11 @@ export class CalendrierComponent implements OnInit {
   ngOnInit() {
     Settings.defaultLocale = "fr";
     this.jourActuel = DateTime.now();
+    this.anneeAffiche=this.jourActuel.year;
     let debut: DateTime;
     let nbMois;
     nbMois = 6;
-    nbMois = 12;
+    // nbMois = 12;
     if (this.jourActuel.month <= 6 || nbMois > 6) {
       debut = this.jourActuel.startOf('year');
     } else {
@@ -137,5 +140,24 @@ export class CalendrierComponent implements OnInit {
       }
     }
     this.listePeriodeVacances = liste;
+  }
+
+  changenbMois($event: any) {
+    console.log('toggle',$event);
+    let nbMois=0;
+    if($event==='six'){
+      nbMois = 6;
+    } else if($event==='douze'){
+      nbMois = 12;
+    }
+    if(nbMois>0){
+      let debut: DateTime;
+      if (this.jourActuel.month <= 6 || nbMois > 6) {
+        debut = this.jourActuel.startOf('year');
+      } else {
+        debut = this.jourActuel.set({month: 7}).startOf('month');
+      }
+      this.calculDesMois(debut, nbMois);
+    }
   }
 }
