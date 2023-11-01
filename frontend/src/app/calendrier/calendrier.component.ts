@@ -7,7 +7,6 @@ import {Mois} from "../model/mois.model";
 import {JoursFerieService} from "../service/jours-ferie.service";
 import {VacanceModel} from "../model/vacance.model";
 import {PeriodeVacanceModel} from "../model/periodeVacanceModel";
-import {MatButtonToggleChange} from "@angular/material/button-toggle";
 
 @Component({
   selector: 'app-calendrier',
@@ -21,7 +20,9 @@ export class CalendrierComponent implements OnInit {
   public listeSemaineDuMois: Mois[] = [];
   public listeJourFerier: DateTime[] = [];
   public listePeriodeVacances: PeriodeVacanceModel[] = [];
-  public anneeAffiche:number=0;
+  public anneeAffiche: number = 0;
+  public nbMois: number = 0;
+  public premierMois: number = 0;
 
   constructor(private http: HttpClient, private joursFerieService: JoursFerieService) {
     this.getMois();
@@ -30,7 +31,7 @@ export class CalendrierComponent implements OnInit {
   ngOnInit() {
     Settings.defaultLocale = "fr";
     this.jourActuel = DateTime.now();
-    this.anneeAffiche=this.jourActuel.year;
+    // this.anneeAffiche=this.jourActuel.year;
     let debut: DateTime;
     let nbMois;
     nbMois = 6;
@@ -45,6 +46,9 @@ export class CalendrierComponent implements OnInit {
 
   private calculDesMois(premierMois: DateTime, nbMois: number) {
     this.listeSemaineDuMois = [];
+    this.anneeAffiche = premierMois.year;
+    this.nbMois = nbMois;
+    this.premierMois = premierMois.month;
     this.listeJourFerier = this.joursFerieService.calculJourFeries(premierMois.year);
     for (let i = 1; i <= nbMois; i++) {
       let tab = this.calculDuMois(premierMois);
@@ -102,38 +106,38 @@ export class CalendrierComponent implements OnInit {
   private initVacances(data: VacanceModel[]) {
     let liste: PeriodeVacanceModel[] = [];
     if (data && data.length > 0) {
-      for(let vac of data){
-        let zone=vac.zone;
-        let dateDebut:DateTime|null=null;
-        let dateFin:DateTime|null=null;
-        if(vac.dateDebut){
-          let date=DateTime.fromISO(vac.dateDebut);
-          if(date){
-            dateDebut=date;
+      for (let vac of data) {
+        let zone = vac.zone;
+        let dateDebut: DateTime | null = null;
+        let dateFin: DateTime | null = null;
+        if (vac.dateDebut) {
+          let date = DateTime.fromISO(vac.dateDebut);
+          if (date) {
+            dateDebut = date;
           }
-          date=DateTime.fromISO(vac.dateFin);
-          if(date){
-            dateFin=date;
+          date = DateTime.fromISO(vac.dateFin);
+          if (date) {
+            dateFin = date;
           }
         }
-        if(zone&&dateDebut&&dateFin){
-          if(zone==='Zone A'){
-            const vacance=new PeriodeVacanceModel();
-            vacance.zone='zoneA';
-            vacance.dateDebut=dateDebut;
-            vacance.dateFin=dateFin;
+        if (zone && dateDebut && dateFin) {
+          if (zone === 'Zone A') {
+            const vacance = new PeriodeVacanceModel();
+            vacance.zone = 'zoneA';
+            vacance.dateDebut = dateDebut;
+            vacance.dateFin = dateFin;
             liste.push(vacance);
-          } else if(zone==='Zone B'){
-            const vacance=new PeriodeVacanceModel();
-            vacance.zone='zoneB';
-            vacance.dateDebut=dateDebut;
-            vacance.dateFin=dateFin;
+          } else if (zone === 'Zone B') {
+            const vacance = new PeriodeVacanceModel();
+            vacance.zone = 'zoneB';
+            vacance.dateDebut = dateDebut;
+            vacance.dateFin = dateFin;
             liste.push(vacance);
-          } else if(zone==='Zone C'){
-            const vacance=new PeriodeVacanceModel();
-            vacance.zone='zoneC';
-            vacance.dateDebut=dateDebut;
-            vacance.dateFin=dateFin;
+          } else if (zone === 'Zone C') {
+            const vacance = new PeriodeVacanceModel();
+            vacance.zone = 'zoneC';
+            vacance.dateDebut = dateDebut;
+            vacance.dateFin = dateFin;
             liste.push(vacance);
           }
         }
@@ -143,21 +147,35 @@ export class CalendrierComponent implements OnInit {
   }
 
   changenbMois($event: any) {
-    console.log('toggle',$event);
-    let nbMois=0;
-    if($event==='six'){
+    console.log('toggle', $event);
+    let nbMois = 0;
+    if ($event === 'trois') {
+      nbMois = 3;
+    } else if ($event === 'six') {
       nbMois = 6;
-    } else if($event==='douze'){
+    } else if ($event === 'douze') {
       nbMois = 12;
     }
-    if(nbMois>0){
+    if (nbMois > 0) {
       let debut: DateTime;
-      if (this.jourActuel.month <= 6 || nbMois > 6) {
-        debut = this.jourActuel.startOf('year');
-      } else {
-        debut = this.jourActuel.set({month: 7}).startOf('month');
-      }
+      debut = DateTime.local(this.anneeAffiche, this.premierMois, 1);
       this.calculDesMois(debut, nbMois);
+    }
+  }
+
+  recule() {
+    this.decalage(-this.nbMois);
+  }
+
+  avance(): void {
+    this.decalage(this.nbMois);
+  }
+
+  private decalage(decalage: number): void {
+    if (this.nbMois > 0 && decalage !== 0) {
+      let debut: DateTime = DateTime.local(this.anneeAffiche, this.premierMois, 1);
+      debut = debut.plus({month: decalage});
+      this.calculDesMois(debut, this.nbMois);
     }
   }
 }

@@ -15,10 +15,12 @@
     <div class="affichageAnnee">{{anneeAffiche}}</div>
     <div>
       <mat-button-toggle-group name="nbMois" aria-label="Nombre de mois" (valueChange)="changenbMois($event)">
+        <mat-button-toggle value="trois">3</mat-button-toggle>
         <mat-button-toggle value="six">6</mat-button-toggle>
         <mat-button-toggle value="douze">12</mat-button-toggle>
       </mat-button-toggle-group>
     </div>
+    <div><button mat-raised-button (click)="recule()">-</button><button mat-raised-button (click)="avance()">+</button></div>
   </div>
 
 

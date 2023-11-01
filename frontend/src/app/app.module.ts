@@ -12,6 +12,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {MatTabsModule} from "@angular/material/tabs";
 import {MatButtonToggleModule} from "@angular/material/button-toggle";
+import {MatButtonModule} from "@angular/material/button";
 
 @NgModule({
   declarations: [
@@ -21,15 +22,16 @@ import {MatButtonToggleModule} from "@angular/material/button-toggle";
     Horloge2Component,
     CalendrierSemaineComponent
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        HttpClientModule,
-        BrowserAnimationsModule,
-        MatSlideToggleModule,
-        MatTabsModule,
-        MatButtonToggleModule
-    ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    MatSlideToggleModule,
+    MatTabsModule,
+    MatButtonToggleModule,
+    MatButtonModule
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })
