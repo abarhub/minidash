@@ -1,5 +1,6 @@
 
 
 #urlVacancesScolaires: https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records?limit=20
-urlVacancesScolaires: https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records?where=start_date>="2023-01-01" and end_date<"2025-01-01" and zones in ("Zone A","Zone B","Zone C")&limit=100
+#urlVacancesScolaires: 'https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records?where=start_date>="2023-01-01" and end_date<"2025-01-01" and zones in ("Zone A","Zone B","Zone C")&limit=100'
+urlVacancesScolaires: https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records
 

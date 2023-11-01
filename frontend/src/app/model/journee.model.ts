@@ -1,3 +1,5 @@
+import {DateTime} from "luxon";
+
 export class JourneeModel {
   numero: number = 0;
   journeeSemaine: string = '';
@@ -9,4 +11,5 @@ export class JourneeModel {
   vacancesA:boolean=false;
   vacancesB:boolean=false;
   vacancesC:boolean=false;
+  date:DateTime|null=null;
 }

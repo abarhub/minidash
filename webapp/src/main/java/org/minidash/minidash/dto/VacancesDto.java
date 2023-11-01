@@ -1,6 +1,7 @@
 package org.minidash.minidash.dto;
 
 import java.time.LocalDate;
+import java.util.StringJoiner;
 
 public class VacancesDto {
 
@@ -48,5 +49,16 @@ public class VacancesDto {
 
     public void setAnneeScolaire(String anneeScolaire) {
         this.anneeScolaire = anneeScolaire;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", VacancesDto.class.getSimpleName() + "[", "]")
+                .add("description='" + description + "'")
+                .add("dateDebut=" + dateDebut)
+                .add("dateFin=" + dateFin)
+                .add("zone='" + zone + "'")
+                .add("anneeScolaire='" + anneeScolaire + "'")
+                .toString();
     }
 }

@@ -21,12 +21,15 @@ export class CalendrierSemaineComponent implements OnInit {
   listeJourFerier: DateTime[] = [];
 
   @Input()
-  listePeriodeVacance: PeriodeVacanceModel[] = [];
+  set listePeriodeVacance(value: PeriodeVacanceModel[]) {
+    this.updateVacances(value);
+  }
 
   premierJour: number = 0;
   listeJours: JourneeModel[] = [];
   listeSaints: string[] = [];
   listeJourSemaine: string[] = [];
+  _listePeriodeVacance: PeriodeVacanceModel[] = [];
 
   ngOnInit() {
     console.log('saints', this.listeSaint);
@@ -41,20 +44,22 @@ export class CalendrierSemaineComponent implements OnInit {
     for (let i = 0; i < 7; i++) {
       const journee = new JourneeModel();
       journee.numero = dt2.day;
+      journee.date = dt2;
       journee.journeeSemaine = this.getJourSemaine(dt2);
       journee.nomSaint = this.getSaint(dt2);
       journee.dimanche = journee.journeeSemaine === 'D';
       journee.jourFerier = this.getJourFerier(dt2);
       journee.jourActuel = this.isJourActuel(dt2);
-      journee.vacancesA = this.listePeriodeVacance.findIndex(x => {
-        x.zone === 'zoneA' && x.dateDebut != null && dt2 >= x.dateDebut && x.dateFin != null && dt2 <= x.dateFin
-      }) >= 0;
-      journee.vacancesB = this.listePeriodeVacance.findIndex(x => {
-        x.zone === 'zoneB' && x.dateDebut != null && dt2 >= x.dateDebut && x.dateFin != null && dt2 <= x.dateFin
-      }) >= 0;
-      journee.vacancesC = this.listePeriodeVacance.findIndex(x => {
-        x.zone === 'zoneC' && x.dateDebut != null && dt2 >= x.dateDebut && x.dateFin != null && dt2 <= x.dateFin
-      }) >= 0;
+      this.updateZone(journee,this._listePeriodeVacance);
+      // journee.vacancesA = this._listePeriodeVacance.findIndex(x => {
+      //   x.zone === 'zoneA' && x.dateDebut != null && dt2 >= x.dateDebut && x.dateFin != null && dt2 <= x.dateFin
+      // }) >= 0;
+      // journee.vacancesB = this._listePeriodeVacance.findIndex(x => {
+      //   x.zone === 'zoneB' && x.dateDebut != null && dt2 >= x.dateDebut && x.dateFin != null && dt2 <= x.dateFin
+      // }) >= 0;
+      // journee.vacancesC = this._listePeriodeVacance.findIndex(x => {
+      //   x.zone === 'zoneC' && x.dateDebut != null && dt2 >= x.dateDebut && x.dateFin != null && dt2 <= x.dateFin
+      // }) >= 0;
       if (i === 0) {
         journee.noSemaine = dt2.weekNumber;
       }
@@ -72,6 +77,45 @@ export class CalendrierSemaineComponent implements OnInit {
 
   }
 
+  private updateVacances(value: PeriodeVacanceModel[]) {
+    this._listePeriodeVacance = value;
+    if(this.dateDebut.month==11&&this.dateDebut.day==1){
+      console.log('vacances',this.dateDebut,value);
+    }
+    for (let journee of this.listeJours) {
+      if (journee.date != null&&this._listePeriodeVacance) {
+        this.updateZone(journee,this._listePeriodeVacance);
+        // journee.vacancesA = this._listePeriodeVacance.findIndex(x => {
+        //   x.zone === 'zoneA' && x.dateDebut != null && journee.date != null && journee.date >= x.dateDebut && x.dateFin != null && journee.date <= x.dateFin
+        // }) >= 0;
+        // journee.vacancesB = this._listePeriodeVacance.findIndex(x => {
+        //   x.zone === 'zoneB' && x.dateDebut != null && journee.date != null && journee.date >= x.dateDebut && x.dateFin != null && journee.date <= x.dateFin
+        // }) >= 0;
+        // journee.vacancesC = this._listePeriodeVacance.findIndex(x => {
+        //   x.zone === 'zoneC' && x.dateDebut != null && journee.date != null && journee.date >= x.dateDebut && x.dateFin != null && journee.date <= x.dateFin
+        // }) >= 0;
+      } else {
+        journee.vacancesA = false;
+        journee.vacancesB = false;
+        journee.vacancesC = false;
+      }
+    }
+    if(this.dateDebut.month==11&&this.dateDebut.day==1){
+      console.log('vacances resultat',this.dateDebut,this.listeJours);
+    }
+  }
+
+  private updateZone(journee:JourneeModel,listePeriodeVacance:PeriodeVacanceModel[]):void{
+    journee.vacancesA = listePeriodeVacance.findIndex(x =>
+      x.zone === 'zoneA' && x.dateDebut != null && journee.date != null && journee.date >= x.dateDebut && x.dateFin != null && journee.date <= x.dateFin
+    ) >= 0;
+    journee.vacancesB = listePeriodeVacance.findIndex(x =>
+      x.zone === 'zoneB' && x.dateDebut != null && journee.date != null && journee.date >= x.dateDebut && x.dateFin != null && journee.date <= x.dateFin
+    ) >= 0;
+    journee.vacancesC = listePeriodeVacance.findIndex(x =>
+      x.zone === 'zoneC' && x.dateDebut != null && journee.date != null && journee.date >= x.dateDebut && x.dateFin != null && journee.date <= x.dateFin
+    ) >= 0;
+  }
   private getJourSemaine(dt2: DateTime): string {
     switch (dt2.weekday) {
       case 1:
