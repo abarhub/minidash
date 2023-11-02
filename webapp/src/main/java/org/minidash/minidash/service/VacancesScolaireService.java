@@ -2,14 +2,18 @@ package org.minidash.minidash.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import org.minidash.minidash.base.model.GlobalModel;
+import org.minidash.minidash.base.service.BaseService;
 import org.minidash.minidash.dto.VacancesDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.OffsetDateTime;
@@ -28,11 +32,38 @@ public class VacancesScolaireService {
     @Value("${urlVacancesScolaires}")
     private String urlVacancesScolaires;
 
+    @Autowired
+    private BaseService baseService;
+
     private List<VacancesDto> listeVacances;
 
     @PostConstruct
     public void init() {
         LOGGER.atInfo().log("init vacances");
+        List<VacancesDto> listeTotal=null;
+        try {
+            var global= baseService.get();
+            if(global!=null&&global.getVacances()!=null){
+                listeTotal=List.copyOf(global.getVacances());
+            }
+        }catch (IOException e){
+            LOGGER.atError().log("Erreur pour lire la base",e);
+        }
+        if(listeTotal==null) {
+            listeTotal = getVacancesDtos();
+            try {
+                var global = new GlobalModel();
+                global.setVacances(listeTotal);
+                baseService.save(global);
+            }catch (IOException e){
+                LOGGER.atError().log("Erreur pour enregistrer la base",e);
+            }
+        }
+        LOGGER.atInfo().log("nb vacances={}", listeTotal.size());
+        this.listeVacances = List.copyOf(listeTotal);
+    }
+
+    private List<VacancesDto> getVacancesDtos() {
         List<VacancesDto> listeTotal = new ArrayList<>();
         for(int annee=2017;annee<2027;annee+=2) {
             LOGGER.atInfo().log("vacances annee {}-{}",annee,annee+1);
@@ -92,8 +123,7 @@ public class VacancesScolaireService {
             }
         }
         listeTotal = nettoyage(listeTotal);
-        LOGGER.atInfo().log("nb vacances={}", listeTotal.size());
-        this.listeVacances = List.copyOf(listeTotal);
+        return listeTotal;
     }
 
     private static List<VacancesDto> nettoyage(List<VacancesDto> liste) {
