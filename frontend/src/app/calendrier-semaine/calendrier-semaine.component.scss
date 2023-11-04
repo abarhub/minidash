@@ -63,6 +63,11 @@
   color: #a4d267;
 }
 
+$ligne-vacances-width: 4px;
+$ligne-vacances-separateur-width: 6px;
+// =3*$ligne-vacances-width+3*$ligne-vacances-separateur-width
+$ligne-vacances-total-width: calc(3*$ligne-vacances-width + 3*$ligne-vacances-separateur-width);
+
 .vacances-scolaires {
   //top:0px;
   //right: 10px;
@@ -74,39 +79,39 @@
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: flex-end;
-  width: 12px;
-  min-width: 12px;
+  width: $ligne-vacances-total-width;
+  min-width: $ligne-vacances-total-width;
 }
 
 .zone-a {
-  width: 2px;
-  min-width: 2px;
+  width: $ligne-vacances-width;
+  min-width: $ligne-vacances-width;
   background-color: blue;
   height: 100%;
 }
 
 .zone-b {
-  width: 2px;
-  min-width: 2px;
+  width: $ligne-vacances-width;
+  min-width: $ligne-vacances-width;
   background-color: green;
   height: 100%;
 }
 
 .zone-c {
-  width: 2px;
-  min-width: 2px;
+  width: $ligne-vacances-width;
+  min-width: $ligne-vacances-width;
   background-color: red;
   height: 100%;
 }
 
 .zone-sansVacance {
-  width: 2px;
-  min-width: 2px;
+  width: $ligne-vacances-width;
+  min-width: $ligne-vacances-width;
   height: 100%;
 }
 
 .separateur-zone {
-  width: 2px;
-  min-width: 2px;
+  width: $ligne-vacances-separateur-width;
+  min-width: $ligne-vacances-separateur-width;
   height: 100%;
 }

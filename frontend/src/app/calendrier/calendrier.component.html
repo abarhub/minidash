@@ -1,19 +1,10 @@
-<!--<p>calendrier works!</p>-->
 
-<!--<div class="semaine">-->
-<!--  <div class="journee"><div class="no-jour">15</div><div class="nom-saint">Odilon</div></div>-->
-<!--  <div class="journee"><div class="no-jour">16</div><div class="nom-saint">Edouard</div></div>-->
-<!--  <div class="journee"><div class="no-jour">17</div><div class="nom-saint">Mélaine</div></div>-->
-<!--  <div class="journee"><div class="no-jour">18</div><div class="nom-saint">Raymond</div></div>-->
-<!--  <div class="journee"><div class="no-jour">19</div><div class="nom-saint">Lucien</div></div>-->
-<!--  <div class="journee"><div class="no-jour">20</div><div class="nom-saint">Alix</div></div>-->
-<!--  <div class="journee"><div class="no-jour">21</div><div class="nom-saint">Guillaume avec un nom tres très looooong</div></div>-->
-
-<!--</div>-->
 <div class="page">
   <div class="entete">
+    <div>&nbsp;</div>
     <div class="affichageAnnee">{{anneeAffiche}}</div>
-    <div>
+    <div class="bouton-entete">
+    <div >
       <mat-button-toggle-group name="nbMois" aria-label="Nombre de mois" (valueChange)="changenbMois($event)">
         <mat-button-toggle value="trois">3</mat-button-toggle>
         <mat-button-toggle value="six">6</mat-button-toggle>
@@ -21,6 +12,7 @@
       </mat-button-toggle-group>
     </div>
     <div><button mat-raised-button (click)="recule()">-</button><button mat-raised-button (click)="avance()">+</button></div>
+    </div>
   </div>
 
 
@@ -32,8 +24,7 @@
 
     <div class="titre-mois">{{moisParAnnee.nomMois}} {{moisParAnnee.annee}}</div>
     <div class="mois" *ngFor="let semaine of moisParAnnee.semaineDuMois">
-  <!--<app-calendrier-semaine *ngIf="mois" [listeSaint]="mois" [numeroSemaine]="semaine.weekNumber" [annee]="semaine.year"></app-calendrier-semaine>-->
-      <app-calendrier-semaine *ngIf="mois" [listeSaint]="mois" [dateDebut]="semaine"
+        <app-calendrier-semaine *ngIf="mois" [listeSaint]="mois" [dateDebut]="semaine"
                               [listeJourFerier]="listeJourFerier"
                               [listePeriodeVacance]="listePeriodeVacances"
       ></app-calendrier-semaine>
