@@ -97,7 +97,8 @@ export class CalendrierComponent implements OnInit {
       this.mois = data;
     });
 
-    this.http.get<VacanceModel[]>('http://localhost:8080/api/vacances').subscribe(data => {
+    let url='api/vacances';
+    this.http.get<VacanceModel[]>(url).subscribe(data => {
       console.log("data vacances", data);
       this.initVacances(data);
     });

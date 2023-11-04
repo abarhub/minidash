@@ -12,7 +12,6 @@
 
     <groupId>org.minidash</groupId>
     <artifactId>minidash-frontend</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
 
     <build>
         <plugins>
