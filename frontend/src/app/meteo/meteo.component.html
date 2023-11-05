@@ -1,0 +1,22 @@
+<div *ngIf="meteo">
+  <div>
+    <div>Date</div>
+    <div >{{meteo.meteoCourante?.date | date:"dd/MM/yyyy HH:mm"}}</div>
+  </div>
+  <div>
+    <div>Temperature</div>
+    <div>{{meteo.meteoCourante?.temperature}}</div>
+  </div>
+  <div>
+    <div>Temperature resentie</div>
+    <div>{{meteo.meteoCourante?.temperatureResentie}}</div>
+  </div>
+  <div>
+    <div>Heure de levé du soleil</div>
+    <div >{{meteo.meteoCourante?.heureLeveSoleil | date:"HH:mm"}}</div>
+  </div>
+  <div>
+    <div>Heure de couchée du soleil</div>
+    <div >{{meteo.meteoCourante?.heureCoucheSoleil | date:"HH:mm"}}</div>
+  </div>
+</div>

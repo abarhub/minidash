@@ -13,6 +13,7 @@ import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {MatTabsModule} from "@angular/material/tabs";
 import {MatButtonToggleModule} from "@angular/material/button-toggle";
 import {MatButtonModule} from "@angular/material/button";
+import { MeteoComponent } from './meteo/meteo.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import {MatButtonModule} from "@angular/material/button";
     CalendrierComponent,
     HorlogeComponent,
     Horloge2Component,
-    CalendrierSemaineComponent
+    CalendrierSemaineComponent,
+    MeteoComponent
   ],
   imports: [
     BrowserModule,
