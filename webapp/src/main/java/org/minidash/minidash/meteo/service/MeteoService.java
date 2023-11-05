@@ -13,9 +13,11 @@ import org.minidash.minidash.meteo.model.MeteoStatutModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,6 +34,13 @@ public class MeteoService {
 
     @Value("${meteo.fichier}")
     private String fichier;
+
+    @Value("${meteo.url}")
+    private String url;
+
+
+    @Value("${meteo.apiKey}")
+    private String apiKey;
 
     private MeteoGlobalModel meteoGlobalModel;
 
@@ -58,7 +67,7 @@ public class MeteoService {
             return meteoGlobalModel;
         } else {
             try {
-                var res = getJson();
+                var res = getJson2();
                 var db = baseService.get();
                 db.setMeteoGlobalModel(res);
                 baseService.save(db);
@@ -252,6 +261,63 @@ public class MeteoService {
             }
         }
         return meteoCourante;
+    }
+
+    public MeteoDto update() {
+        LOGGER.info("update");
+        try {
+            var db = baseService.get();
+            var meteo = db.getMeteoGlobalModel();
+            var faireMaj = false;
+            if (meteo != null && meteo.getCourante() != null && meteo.getCourante().getDate() != null) {
+                if (meteo.getCourante().getDate().isBefore(LocalDateTime.now().minusMinutes(15))) {
+                    faireMaj = true;
+                } else {
+                    faireMaj = false;
+                }
+            } else {
+                faireMaj = true;
+            }
+            if (faireMaj) {
+                LOGGER.info("maj meteo");
+                var res = getJson2();
+                LOGGER.info("maj meteo termine: {}",res!=null);
+                if (res != null) {
+                    db.setMeteoGlobalModel(res);
+                    baseService.save(db);
+                    meteoGlobalModel = res;
+                }
+            } else {
+                LOGGER.info("pas de maj meteo");
+            }
+        } catch (Exception e) {
+            LOGGER.atError().log("Erreur", e);
+        }
+        return getMeteoDto();
+    }
+
+
+    private MeteoGlobalModel getJson2() throws IOException {
+        if (StringUtils.hasText(url)) {
+            LOGGER.atInfo().log("url meteo={}", url);
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                LOGGER.atInfo().log("Appel Meteo reussi. code={}, body={}", response.getStatusCode(), response.getBody());
+                var res = response.getBody();
+                final MeteoGlobalModel meteoGlobalModel1 = construitModelMeteo(res);
+                if (meteoGlobalModel1 != null) {
+                    return meteoGlobalModel1;
+                } else {
+                    return null;
+                }
+            } else {
+                LOGGER.atError().log("Erreur pour l'appel Meteo. code={}, body={}", response.getStatusCode(), response.getBody());
+                return null;
+            }
+        } else {
+            throw new RuntimeException("Erreur");
+        }
     }
 
 }

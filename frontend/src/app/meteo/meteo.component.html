@@ -65,18 +65,19 @@
     </div>
 
     <div class="donnees" >
-      <div>Date : {{meteo.meteoCourante?.date | date:"dd/MM/yyyy HH:mm"}}</div>
-      <div>Heure de levé de soleil : {{meteo.meteoCourante?.heureLeveSoleil | date:"HH:mm"}}</div>
-      <div>Heure de couché de soleil : {{meteo.meteoCourante?.heureCoucheSoleil | date:"HH:mm"}}</div>
-      <div>Description : {{meteo.meteoCourante?.descriptionStatut}}</div>
-      <div>Temperature : {{meteo.meteoCourante?.temperature}}</div>
-      <div>Temperature resentie : {{meteo.meteoCourante?.temperatureResentie}}</div>
-      <div>Pression athmospherique : {{meteo.meteoCourante?.pressionAthmospherique}}</div>
-      <div>Humidité : {{meteo.meteoCourante?.humidite}}</div>
-      <div>Ciel couvert : {{meteo.meteoCourante?.nuage}}</div>
-      <div>Visibilitée : {{meteo.meteoCourante?.visibilite}}</div>
-      <div>Vitesse du vent : {{meteo.meteoCourante?.vitesseVent}}</div>
-      <div>Direction du vent : {{meteo.meteoCourante?.directionVent}}</div>
+      <div class="ligne"><div class="label">Date</div><div class="valeur">{{meteo.meteoCourante?.date | date:"dd/MM/yyyy HH:mm"}}</div></div>
+      <div class="ligne"><div class="label">Heure de levé de soleil</div><div class="valeur">{{meteo.meteoCourante?.heureLeveSoleil | date:"HH:mm"}}</div></div>
+      <div class="ligne"><div class="label">Heure de couché de soleil</div><div class="valeur">{{meteo.meteoCourante?.heureCoucheSoleil | date:"HH:mm"}}</div></div>
+      <div class="ligne"><div class="label">Description</div><div class="valeur">{{meteo.meteoCourante?.descriptionStatut}}</div></div>
+      <div class="ligne"><div class="label">Temperature</div><div class="valeur">{{meteo.meteoCourante?.temperature}}</div></div>
+      <div class="ligne"><div class="label">Temperature resentie</div><div class="valeur">{{meteo.meteoCourante?.temperatureResentie}}</div></div>
+      <div class="ligne"><div class="label">Pression athmospherique</div><div class="valeur">{{meteo.meteoCourante?.pressionAthmospherique}}</div></div>
+      <div class="ligne"><div class="label">Humidité</div><div class="valeur">{{meteo.meteoCourante?.humidite}}</div></div>
+      <div class="ligne"><div class="label">Ciel couvert</div><div class="valeur">{{meteo.meteoCourante?.nuage}}</div></div>
+      <div class="ligne"><div class="label">Visibilitée</div><div class="valeur">{{meteo.meteoCourante?.visibilite}}</div></div>
+      <div class="ligne"><div class="label">Vitesse du vent</div><div class="valeur">{{meteo.meteoCourante?.vitesseVent}}</div></div>
+      <div class="ligne"><div class="label">Direction du vent</div><div class="valeur"> {{meteo.meteoCourante?.directionVent}}</div></div>
+      <div><button mat-button color="primary" (click)="recharger()">Recharger</button></div>
     </div>
 
   </div>

@@ -21,4 +21,10 @@ export class MeteoComponent implements OnInit {
     });
   }
 
+  recharger() {
+    this.http.post<MeteoModel>('api/meteo', null).subscribe(data => {
+      console.log("data meteo", data);
+      this.meteo = data;
+    });
+  }
 }

@@ -8,7 +8,7 @@ urlVacancesScolaires: https://data.education.gouv.fr/api/explore/v2.1/catalog/da
 repertoireDonnees: ./data
 
 meteo:
-  url: https://api.openweathermap.org/data/3.0/onecall?lat=43.52&lon=5.44&lang=fr&units=metric&appid=${meteoApi}
+  url: https://api.openweathermap.org/data/3.0/onecall?lat=43.52&lon=5.44&lang=fr&units=metric&appid=${meteo.apiKey}
   apiKey:
   latitude:
   longitude:
