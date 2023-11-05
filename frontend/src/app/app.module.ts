@@ -14,6 +14,7 @@ import {MatTabsModule} from "@angular/material/tabs";
 import {MatButtonToggleModule} from "@angular/material/button-toggle";
 import {MatButtonModule} from "@angular/material/button";
 import { MeteoComponent } from './meteo/meteo.component';
+import {MatGridListModule} from "@angular/material/grid-list";
 
 @NgModule({
   declarations: [
@@ -24,16 +25,17 @@ import { MeteoComponent } from './meteo/meteo.component';
     CalendrierSemaineComponent,
     MeteoComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    MatSlideToggleModule,
-    MatTabsModule,
-    MatButtonToggleModule,
-    MatButtonModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        BrowserAnimationsModule,
+        MatSlideToggleModule,
+        MatTabsModule,
+        MatButtonToggleModule,
+        MatButtonModule,
+        MatGridListModule
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

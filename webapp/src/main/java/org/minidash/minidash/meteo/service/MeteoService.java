@@ -3,6 +3,8 @@ package org.minidash.minidash.meteo.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
+import org.minidash.minidash.base.service.BaseService;
 import org.minidash.minidash.meteo.dto.MeteoCouranteDto;
 import org.minidash.minidash.meteo.dto.MeteoDto;
 import org.minidash.minidash.meteo.model.MeteoCourante;
@@ -33,12 +35,33 @@ public class MeteoService {
 
     private MeteoGlobalModel meteoGlobalModel;
 
+    private final BaseService baseService;
+
+    public MeteoService(BaseService baseService) {
+        this.baseService = baseService;
+    }
+
+    @PostConstruct
+    public void init() {
+        try {
+            var db = baseService.get();
+            if (db.getMeteoGlobalModel() != null) {
+                this.meteoGlobalModel = db.getMeteoGlobalModel();
+            }
+        } catch (Exception e) {
+            LOGGER.atError().log("Erreur", e);
+        }
+    }
+
     public MeteoGlobalModel getMeteo() {
         if (meteoGlobalModel != null) {
             return meteoGlobalModel;
         } else {
             try {
                 var res = getJson();
+                var db = baseService.get();
+                db.setMeteoGlobalModel(res);
+                baseService.save(db);
                 meteoGlobalModel = res;
                 return res;
             } catch (Exception e) {
@@ -52,19 +75,19 @@ public class MeteoService {
         var meteo = getMeteo();
         if (meteo != null) {
             MeteoDto meteoDto = new MeteoDto();
-            var meteoCourante=convertie(meteo.getCourante());
+            var meteoCourante = convertie(meteo.getCourante());
             meteoDto.setMeteoCourante(meteoCourante);
 
-            if(!CollectionUtils.isEmpty(meteo.getProchainesHeures())){
+            if (!CollectionUtils.isEmpty(meteo.getProchainesHeures())) {
                 meteoDto.setProchainesHeures(new ArrayList<>());
-                for(var tmp:meteo.getProchainesHeures()){
+                for (var tmp : meteo.getProchainesHeures()) {
                     meteoDto.getProchainesHeures().add(convertie(tmp));
                 }
             }
 
-            if(!CollectionUtils.isEmpty(meteo.getProchainsjours())){
+            if (!CollectionUtils.isEmpty(meteo.getProchainsjours())) {
                 meteoDto.setProchainsjours(new ArrayList<>());
-                for(var tmp:meteo.getProchainsjours()){
+                for (var tmp : meteo.getProchainsjours()) {
                     meteoDto.getProchainsjours().add(convertie(tmp));
                 }
             }
@@ -75,7 +98,7 @@ public class MeteoService {
     }
 
     private static MeteoCouranteDto convertie(MeteoCourante meteo2) {
-        MeteoCouranteDto meteoCourante=new MeteoCouranteDto();
+        MeteoCouranteDto meteoCourante = new MeteoCouranteDto();
         meteoCourante.setDate(meteo2.getDate());
         meteoCourante.setTemperature(meteo2.getTemperature());
         meteoCourante.setTemperatureResentie(meteo2.getTemperatureResentie());
@@ -87,7 +110,7 @@ public class MeteoService {
         meteoCourante.setVisibilite(meteo2.getVisibilite());
         meteoCourante.setVitesseVent(meteo2.getVitesseVent());
         meteoCourante.setDirectionVent(meteo2.getDirectionVent());
-        if(meteo2.getStatut()!=null){
+        if (meteo2.getStatut() != null) {
             meteoCourante.setCodeStatut(meteo2.getStatut().getCode());
             meteoCourante.setDescriptionStatut(meteo2.getStatut().getDescription());
             meteoCourante.setIconeStatut(meteo2.getStatut().getIcone());
