@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {VacanceModel} from "../model/vacance.model";
 import {MeteoModel} from "../model/meteo.model";
 
 @Component({
@@ -8,9 +7,9 @@ import {MeteoModel} from "../model/meteo.model";
   templateUrl: './meteo.component.html',
   styleUrls: ['./meteo.component.scss']
 })
-export class MeteoComponent  implements OnInit {
+export class MeteoComponent implements OnInit {
 
-  public meteo: MeteoModel|null=null;
+  public meteo: MeteoModel | null = null;
 
   constructor(private http: HttpClient) {
   }
@@ -18,8 +17,7 @@ export class MeteoComponent  implements OnInit {
   ngOnInit(): void {
     this.http.get<MeteoModel>('api/meteo').subscribe(data => {
       console.log("data meteo", data);
-      this.meteo=data;
-      // this.initVacances(data);
+      this.meteo = data;
     });
   }
 

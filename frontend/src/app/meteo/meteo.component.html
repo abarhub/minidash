@@ -19,4 +19,40 @@
     <div>Heure de couchée du soleil</div>
     <div >{{meteo.meteoCourante?.heureCoucheSoleil | date:"HH:mm"}}</div>
   </div>
+  <div>
+    <div>Pression athmospherique</div>
+    <div>{{meteo.meteoCourante?.pressionAthmospherique}}</div>
+  </div>
+  <div>
+    <div>Humidité</div>
+    <div>{{meteo.meteoCourante?.humidite}}</div>
+  </div>
+  <div>
+    <div>Ciel couvert</div>
+    <div>{{meteo.meteoCourante?.nuage}}</div>
+  </div>
+  <div>
+    <div>Visibilitée</div>
+    <div>{{meteo.meteoCourante?.visibilite}}</div>
+  </div>
+  <div>
+    <div>Vitesse du vent</div>
+    <div>{{meteo.meteoCourante?.vitesseVent}}</div>
+  </div>
+  <div>
+    <div>Direction du vent</div>
+    <div>{{meteo.meteoCourante?.directionVent}}</div>
+  </div>
+  <div>
+    <div>Code</div>
+    <div>{{meteo.meteoCourante?.codeStatut}}</div>
+  </div>
+  <div>
+    <div>Description</div>
+    <div>{{meteo.meteoCourante?.descriptionStatut}}</div>
+  </div>
+  <div>
+    <div>Icone</div>
+    <div>{{meteo.meteoCourante?.iconeStatut}} | <img *ngIf="meteo.meteoCourante?.iconeStatut" src="https://openweathermap.org/img/wn/{{meteo.meteoCourante?.iconeStatut}}@2x.png"></div>
+  </div>
 </div>
