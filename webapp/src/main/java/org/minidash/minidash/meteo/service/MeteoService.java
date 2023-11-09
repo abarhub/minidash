@@ -42,9 +42,14 @@ public class MeteoService {
     @Value("${meteo.apiKey}")
     private String apiKey;
 
+    @Value("${repertoireDonnees}")
+    private String repertoire;
+
     private MeteoGlobalModel meteoGlobalModel;
 
     private final BaseService baseService;
+
+    private Path repertoireBackup;
 
     public MeteoService(BaseService baseService) {
         this.baseService = baseService;
@@ -56,6 +61,14 @@ public class MeteoService {
             var db = baseService.get();
             if (db.getMeteoGlobalModel() != null) {
                 this.meteoGlobalModel = db.getMeteoGlobalModel();
+            }
+            Path p = Path.of(repertoire);
+            if (Files.exists(p)) {
+                Path p2 = p.resolve("backup");
+                if (Files.notExists(p2)) {
+                    Files.createDirectory(p2);
+                }
+                repertoireBackup = p2;
             }
         } catch (Exception e) {
             LOGGER.atError().log("Erreur", e);
@@ -281,7 +294,7 @@ public class MeteoService {
             if (faireMaj) {
                 LOGGER.info("maj meteo");
                 var res = getJson2();
-                LOGGER.info("maj meteo termine: {}",res!=null);
+                LOGGER.info("maj meteo termine: {}", res != null);
                 if (res != null) {
                     db.setMeteoGlobalModel(res);
                     baseService.save(db);
@@ -305,6 +318,7 @@ public class MeteoService {
             if (response.getStatusCode().is2xxSuccessful()) {
                 LOGGER.atInfo().log("Appel Meteo reussi. code={}, body={}", response.getStatusCode(), response.getBody());
                 var res = response.getBody();
+                sauveJson(res);
                 final MeteoGlobalModel meteoGlobalModel1 = construitModelMeteo(res);
                 if (meteoGlobalModel1 != null) {
                     return meteoGlobalModel1;
@@ -317,6 +331,20 @@ public class MeteoService {
             }
         } else {
             throw new RuntimeException("Erreur");
+        }
+    }
+
+    private void sauveJson(String res) {
+        var s=Instant.now().toString();
+        s=s.replaceAll("\\-","");
+        s=s.replaceAll("\\:","");
+        s=s.replaceAll("\\.","");
+        s=s.replaceAll("T","_");
+        Path f = repertoireBackup.resolve("meteo_" + s + ".json");
+        try {
+            Files.writeString(f, res);
+        } catch (IOException e) {
+            LOGGER.atError().log("Impossible d'enregistrer la meteo dans le fichier {}", f, e);
         }
     }
 
