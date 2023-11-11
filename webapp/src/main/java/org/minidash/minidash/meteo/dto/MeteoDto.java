@@ -4,6 +4,7 @@ import java.util.List;
 
 public class MeteoDto {
     private MeteoCouranteDto meteoCourante;
+    private List<PrecipitationDto> precipitations;
     private List<MeteoCouranteDto> prochainesHeures;
 
     private List<MeteoCouranteDto> prochainsJours;
@@ -14,6 +15,14 @@ public class MeteoDto {
 
     public void setMeteoCourante(MeteoCouranteDto meteoCourante) {
         this.meteoCourante = meteoCourante;
+    }
+
+    public List<PrecipitationDto> getPrecipitations() {
+        return precipitations;
+    }
+
+    public void setPrecipitations(List<PrecipitationDto> precipitations) {
+        this.precipitations = precipitations;
     }
 
     public List<MeteoCouranteDto> getProchainesHeures() {

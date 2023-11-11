@@ -6,6 +6,8 @@ import java.util.StringJoiner;
 public class MeteoGlobalModel {
 
     private MeteoCourante courante;
+
+    private List<PrecipitationModel> prochainesPrecipitations;
     private List<MeteoCourante> prochainesHeures;
 
     private List<MeteoCourante> prochainsJours;
@@ -16,6 +18,14 @@ public class MeteoGlobalModel {
 
     public void setCourante(MeteoCourante courante) {
         this.courante = courante;
+    }
+
+    public List<PrecipitationModel> getProchainesPrecipitations() {
+        return prochainesPrecipitations;
+    }
+
+    public void setProchainesPrecipitations(List<PrecipitationModel> prochainesPrecipitations) {
+        this.prochainesPrecipitations = prochainesPrecipitations;
     }
 
     public List<MeteoCourante> getProchainesHeures() {
@@ -38,8 +48,9 @@ public class MeteoGlobalModel {
     public String toString() {
         return new StringJoiner(", ", MeteoGlobalModel.class.getSimpleName() + "[", "]")
                 .add("courante=" + courante)
+                .add("prochainesPrecipitations=" + prochainesPrecipitations)
                 .add("prochainesHeures=" + prochainesHeures)
-                .add("prochainsjours=" + prochainsJours)
+                .add("prochainsJours=" + prochainsJours)
                 .toString();
     }
 }

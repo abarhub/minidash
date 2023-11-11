@@ -7,9 +7,11 @@ import jakarta.annotation.PostConstruct;
 import org.minidash.minidash.base.service.BaseService;
 import org.minidash.minidash.meteo.dto.MeteoCouranteDto;
 import org.minidash.minidash.meteo.dto.MeteoDto;
+import org.minidash.minidash.meteo.dto.PrecipitationDto;
 import org.minidash.minidash.meteo.model.MeteoCourante;
 import org.minidash.minidash.meteo.model.MeteoGlobalModel;
 import org.minidash.minidash.meteo.model.MeteoStatutModel;
+import org.minidash.minidash.meteo.model.PrecipitationModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,12 +34,8 @@ public class MeteoService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MeteoService.class);
 
-    @Value("${meteo.fichier}")
-    private String fichier;
-
     @Value("${meteo.url}")
     private String url;
-
 
     @Value("${meteo.apiKey}")
     private String apiKey;
@@ -100,6 +98,13 @@ public class MeteoService {
             var meteoCourante = convertie(meteo.getCourante());
             meteoDto.setMeteoCourante(meteoCourante);
 
+            if (!CollectionUtils.isEmpty(meteo.getProchainesPrecipitations())) {
+                meteoDto.setPrecipitations(new ArrayList<>());
+                for (var tmp : meteo.getProchainesPrecipitations()) {
+                    meteoDto.getPrecipitations().add(convertie(tmp));
+                }
+            }
+
             if (!CollectionUtils.isEmpty(meteo.getProchainesHeures())) {
                 meteoDto.setProchainesHeures(new ArrayList<>());
                 for (var tmp : meteo.getProchainesHeures()) {
@@ -117,6 +122,13 @@ public class MeteoService {
             return meteoDto;
         }
         return null;
+    }
+
+    private PrecipitationDto convertie(PrecipitationModel tmp) {
+        PrecipitationDto precipitationDto = new PrecipitationDto();
+        precipitationDto.setDate(tmp.getDate());
+        precipitationDto.setPrecipitation(tmp.getPrecipitation());
+        return precipitationDto;
     }
 
     private static MeteoCouranteDto convertie(MeteoCourante meteo2) {
@@ -140,20 +152,6 @@ public class MeteoService {
         return meteoCourante;
     }
 
-    private MeteoGlobalModel getJson() throws IOException {
-        if (StringUtils.hasText(fichier)) {
-            var res = Files.readString(Path.of(fichier));
-            final MeteoGlobalModel meteoGlobalModel1 = construitModelMeteo(res);
-            if (meteoGlobalModel1 != null) {
-                return meteoGlobalModel1;
-            } else {
-                return null;
-            }
-        } else {
-            throw new RuntimeException("Erreur");
-        }
-    }
-
     private MeteoGlobalModel construitModelMeteo(String res) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         var res2 = mapper.readTree(res);
@@ -163,6 +161,17 @@ public class MeteoService {
                 var tmp = res2.get("current");
                 var meteoCourante = ajouteInfos(tmp);
                 meteoGlobalModel.setCourante(meteoCourante);
+            }
+            if (res2.has("minutely")) {
+                var tmp2 = res2.get("minutely");
+                if (tmp2.isArray()) {
+                    meteoGlobalModel.setProchainesPrecipitations(new ArrayList<>());
+                    for (int i = 0; i < tmp2.size(); i++) {
+                        var tmp = tmp2.get(i);
+                        var precipitationModel = precipitation(tmp);
+                        meteoGlobalModel.getProchainesPrecipitations().add(precipitationModel);
+                    }
+                }
             }
             if (res2.has("hourly")) {
                 var tmp2 = res2.get("hourly");
@@ -190,6 +199,23 @@ public class MeteoService {
             return meteoGlobalModel;
         }
         return null;
+    }
+
+    private PrecipitationModel precipitation(JsonNode tmp) {
+        PrecipitationModel precipitationModel = new PrecipitationModel();
+        if (tmp.has("dt")) {
+            var tmp2 = tmp.get("dt").asLong();
+            if (tmp2 > 0) {
+                precipitationModel.setDate(LocalDateTime.ofInstant(Instant.ofEpochSecond(tmp2), ZoneId.systemDefault()));
+            }
+        }
+        if (tmp.has("precipitation")) {
+            var tmp2 = tmp.get("precipitation").asLong();
+            if (tmp2 > 0) {
+                precipitationModel.setPrecipitation(tmp2);
+            }
+        }
+        return precipitationModel;
     }
 
     private MeteoCourante ajouteInfos(JsonNode tmp) {
@@ -335,11 +361,11 @@ public class MeteoService {
     }
 
     private void sauveJson(String res) {
-        var s=Instant.now().toString();
-        s=s.replaceAll("\\-","");
-        s=s.replaceAll("\\:","");
-        s=s.replaceAll("\\.","");
-        s=s.replaceAll("T","_");
+        var s = Instant.now().toString();
+        s = s.replaceAll("\\-", "");
+        s = s.replaceAll("\\:", "");
+        s = s.replaceAll("\\.", "");
+        s = s.replaceAll("T", "_");
         Path f = repertoireBackup.resolve("meteo_" + s + ".json");
         try {
             Files.writeString(f, res);
