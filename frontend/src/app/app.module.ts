@@ -19,6 +19,7 @@ import { NgChartsModule } from 'ng2-charts';
 import {MatExpansionModule} from "@angular/material/expansion";
 import { PrevisionMeteoComponent } from './prevision-meteo/prevision-meteo.component';
 import {MatDividerModule} from "@angular/material/divider";
+import { BookmarkComponent } from './bookmark/bookmark.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import {MatDividerModule} from "@angular/material/divider";
     Horloge2Component,
     CalendrierSemaineComponent,
     MeteoComponent,
-    PrevisionMeteoComponent
+    PrevisionMeteoComponent,
+    BookmarkComponent
   ],
   imports: [
     BrowserModule,

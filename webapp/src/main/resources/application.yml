@@ -13,3 +13,15 @@ meteo:
   latitude:
   longitude:
   fichier:
+
+
+bookmark:
+  listUrl:
+    -
+      url: https://www.google.fr
+      titre: Google
+    -
+      url: https://fr.wikipedia.org
+      titre: Wikipedia
+
+
