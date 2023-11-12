@@ -1,4 +1,9 @@
 
+.page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
 .colonnes {
   display: flex;
@@ -28,3 +33,14 @@
 .valeur {
   font-weight: bold;
 }
+
+
+
+
+.precipitation {
+  //display: block;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+

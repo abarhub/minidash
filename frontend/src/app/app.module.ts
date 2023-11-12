@@ -15,6 +15,8 @@ import {MatButtonToggleModule} from "@angular/material/button-toggle";
 import {MatButtonModule} from "@angular/material/button";
 import { MeteoComponent } from './meteo/meteo.component';
 import {MatGridListModule} from "@angular/material/grid-list";
+import { NgChartsModule } from 'ng2-charts';
+import {MatExpansionModule} from "@angular/material/expansion";
 
 @NgModule({
   declarations: [
@@ -25,17 +27,19 @@ import {MatGridListModule} from "@angular/material/grid-list";
     CalendrierSemaineComponent,
     MeteoComponent
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        HttpClientModule,
-        BrowserAnimationsModule,
-        MatSlideToggleModule,
-        MatTabsModule,
-        MatButtonToggleModule,
-        MatButtonModule,
-        MatGridListModule
-    ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    MatSlideToggleModule,
+    MatTabsModule,
+    MatButtonToggleModule,
+    MatButtonModule,
+    MatGridListModule,
+    NgChartsModule,
+    MatExpansionModule
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })
