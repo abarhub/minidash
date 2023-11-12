@@ -1,6 +1,7 @@
 package org.minidash.minidash.base.service;
 
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.minidash.minidash.base.model.GlobalModel;
 
@@ -22,6 +23,7 @@ public class BaseService {
         lock = new ReentrantReadWriteLock();
         objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     public GlobalModel get() throws IOException {

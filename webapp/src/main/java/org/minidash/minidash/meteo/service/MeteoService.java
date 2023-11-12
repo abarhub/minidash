@@ -56,14 +56,6 @@ public class MeteoService {
     @PostConstruct
     public void init() {
         try {
-            var db = baseService.get();
-            if (db.getMeteoGlobalModel() != null) {
-                try {
-                    this.meteoGlobalModel = db.getMeteoGlobalModel();
-                }catch(Exception e){
-                    LOGGER.atError().log("Erreur pour charger la configuration", e);
-                }
-            }
             Path p = Path.of(repertoire);
             if (Files.exists(p)) {
                 Path p2 = p.resolve("backup");
@@ -71,6 +63,14 @@ public class MeteoService {
                     Files.createDirectory(p2);
                 }
                 repertoireBackup = p2;
+            }
+            var db = baseService.get();
+            if (db.getMeteoGlobalModel() != null) {
+                try {
+                    this.meteoGlobalModel = db.getMeteoGlobalModel();
+                }catch(Exception e){
+                    LOGGER.atError().log("Erreur pour charger la configuration", e);
+                }
             }
         } catch (Exception e) {
             LOGGER.atError().log("Erreur", e);

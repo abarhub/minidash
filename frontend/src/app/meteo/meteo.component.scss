@@ -5,36 +5,12 @@
   justify-content: center;
 }
 
-//.colonnes {
-//  display: flex;
-//  flex-direction: row;
-//  justify-content: center;
-//}
 
-//.symbole{
-//
-//}
-//
-//.donnees {
-//  display: flex;
-//  flex-direction: column;
-//}
-//
-//.ligne {
-//  display: flex;
-//  flex-direction: row;
-//  justify-content: space-between;
-//}
-//
-//.label {
-//
-//}
-//
-//.valeur {
-//  font-weight: bold;
-//}
-
-
+.meteo-courante {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
 
 
 .precipitation {
@@ -43,6 +19,11 @@
   justify-content: center;
 }
 
+.meteo-prochaine {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
 
 .meteo-prochaines-heures {
   display: flex;
