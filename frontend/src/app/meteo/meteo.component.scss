@@ -5,42 +5,58 @@
   justify-content: center;
 }
 
-.colonnes {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-}
+//.colonnes {
+//  display: flex;
+//  flex-direction: row;
+//  justify-content: center;
+//}
 
-.symbole{
-
-}
-
-.donnees {
-  display: flex;
-  flex-direction: column;
-}
-
-.ligne {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.label {
-
-}
-
-.valeur {
-  font-weight: bold;
-}
+//.symbole{
+//
+//}
+//
+//.donnees {
+//  display: flex;
+//  flex-direction: column;
+//}
+//
+//.ligne {
+//  display: flex;
+//  flex-direction: row;
+//  justify-content: space-between;
+//}
+//
+//.label {
+//
+//}
+//
+//.valeur {
+//  font-weight: bold;
+//}
 
 
 
 
 .precipitation {
-  //display: block;
   display: flex;
   flex-direction: row;
   justify-content: center;
 }
+
+
+.meteo-prochaines-heures {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+
+.meteo-prochains-jours {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+
+
 

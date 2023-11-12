@@ -36,12 +36,12 @@ public class MeteoGlobalModel {
         this.prochainesHeures = prochainesHeures;
     }
 
-    public List<MeteoCourante> getProchainsjours() {
+    public List<MeteoCourante> getProchainsJours() {
         return prochainsJours;
     }
 
-    public void setProchainsjours(List<MeteoCourante> prochainsjours) {
-        this.prochainsJours = prochainsjours;
+    public void setProchainsJours(List<MeteoCourante> prochainsJours) {
+        this.prochainsJours = prochainsJours;
     }
 
     @Override

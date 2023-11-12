@@ -17,6 +17,8 @@ import { MeteoComponent } from './meteo/meteo.component';
 import {MatGridListModule} from "@angular/material/grid-list";
 import { NgChartsModule } from 'ng2-charts';
 import {MatExpansionModule} from "@angular/material/expansion";
+import { PrevisionMeteoComponent } from './prevision-meteo/prevision-meteo.component';
+import {MatDividerModule} from "@angular/material/divider";
 
 @NgModule({
   declarations: [
@@ -25,7 +27,8 @@ import {MatExpansionModule} from "@angular/material/expansion";
     HorlogeComponent,
     Horloge2Component,
     CalendrierSemaineComponent,
-    MeteoComponent
+    MeteoComponent,
+    PrevisionMeteoComponent
   ],
   imports: [
     BrowserModule,
@@ -38,7 +41,8 @@ import {MatExpansionModule} from "@angular/material/expansion";
     MatButtonModule,
     MatGridListModule,
     NgChartsModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatDividerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

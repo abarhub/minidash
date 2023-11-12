@@ -2,25 +2,30 @@
 <div *ngIf="meteo" style="width: 100%" class="page">
   <div class="colonnes">
 
-    <div class="symbole">
-      <img *ngIf="meteo.meteoCourante?.iconeStatut" src="https://openweathermap.org/img/wn/{{meteo.meteoCourante?.iconeStatut}}@4x.png">
-    </div>
+<!--    <div class="symbole">-->
+<!--      <img *ngIf="meteo.meteoCourante?.iconeStatut" src="https://openweathermap.org/img/wn/{{meteo.meteoCourante?.iconeStatut}}@4x.png">-->
+<!--    </div>-->
 
-    <div class="donnees" >
-      <div class="ligne"><div class="label">Date</div><div class="valeur">{{meteo.meteoCourante?.date | date:"dd/MM/yyyy HH:mm"}}</div></div>
-      <div class="ligne"><div class="label">Heure de levé de soleil</div><div class="valeur">{{meteo.meteoCourante?.heureLeveSoleil | date:"HH:mm"}}</div></div>
-      <div class="ligne"><div class="label">Heure de couché de soleil</div><div class="valeur">{{meteo.meteoCourante?.heureCoucheSoleil | date:"HH:mm"}}</div></div>
-      <div class="ligne"><div class="label">Description</div><div class="valeur">{{meteo.meteoCourante?.descriptionStatut}}</div></div>
-      <div class="ligne"><div class="label">Temperature</div><div class="valeur">{{meteo.meteoCourante?.temperature}}</div></div>
-      <div class="ligne"><div class="label">Temperature resentie</div><div class="valeur">{{meteo.meteoCourante?.temperatureResentie}}</div></div>
-      <div class="ligne"><div class="label">Pression athmospherique</div><div class="valeur">{{meteo.meteoCourante?.pressionAthmospherique}}</div></div>
-      <div class="ligne"><div class="label">Humidité</div><div class="valeur">{{meteo.meteoCourante?.humidite}}</div></div>
-      <div class="ligne"><div class="label">Ciel couvert</div><div class="valeur">{{meteo.meteoCourante?.nuage}}</div></div>
-      <div class="ligne"><div class="label">Visibilitée</div><div class="valeur">{{meteo.meteoCourante?.visibilite}}</div></div>
-      <div class="ligne"><div class="label">Vitesse du vent</div><div class="valeur">{{meteo.meteoCourante?.vitesseVent}}</div></div>
-      <div class="ligne"><div class="label">Direction du vent</div><div class="valeur"> {{meteo.meteoCourante?.directionVent}}</div></div>
-      <div><button mat-button color="primary" (click)="recharger()">Recharger</button></div>
-    </div>
+<!--    <div class="donnees" >-->
+<!--      <div class="ligne"><div class="label">Date</div><div class="valeur">{{meteo.meteoCourante?.date | date:"dd/MM/yyyy HH:mm"}}</div></div>-->
+<!--      <div class="ligne"><div class="label">Heure de levé de soleil</div><div class="valeur">{{meteo.meteoCourante?.heureLeveSoleil | date:"HH:mm"}}</div></div>-->
+<!--      <div class="ligne"><div class="label">Heure de couché de soleil</div><div class="valeur">{{meteo.meteoCourante?.heureCoucheSoleil | date:"HH:mm"}}</div></div>-->
+<!--      <div class="ligne"><div class="label">Description</div><div class="valeur">{{meteo.meteoCourante?.descriptionStatut}}</div></div>-->
+<!--      <div class="ligne"><div class="label">Temperature</div><div class="valeur">{{meteo.meteoCourante?.temperature}}</div></div>-->
+<!--      <div class="ligne"><div class="label">Temperature resentie</div><div class="valeur">{{meteo.meteoCourante?.temperatureResentie}}</div></div>-->
+<!--      <div class="ligne"><div class="label">Pression athmospherique</div><div class="valeur">{{meteo.meteoCourante?.pressionAthmospherique}}</div></div>-->
+<!--      <div class="ligne"><div class="label">Humidité</div><div class="valeur">{{meteo.meteoCourante?.humidite}}</div></div>-->
+<!--      <div class="ligne"><div class="label">Ciel couvert</div><div class="valeur">{{meteo.meteoCourante?.nuage}}</div></div>-->
+<!--      <div class="ligne"><div class="label">Visibilitée</div><div class="valeur">{{meteo.meteoCourante?.visibilite}}</div></div>-->
+<!--      <div class="ligne"><div class="label">Vitesse du vent</div><div class="valeur">{{meteo.meteoCourante?.vitesseVent}}</div></div>-->
+<!--      <div class="ligne"><div class="label">Direction du vent</div><div class="valeur"> {{meteo.meteoCourante?.directionVent}}</div></div>-->
+<!--      <div><button mat-button color="primary" (click)="recharger()">Recharger</button></div>-->
+<!--    </div>-->
+    <app-prevision-meteo [meteo]="meteo.meteoCourante"
+                         [boutonRecharger]="true" (emitRecharger)="recharger()"
+                         [afficheCoucheSoleil]="true"
+                         [afficheHeureUniquement]="false"
+    ></app-prevision-meteo>
 
   </div>
 
@@ -43,10 +48,16 @@
           Météo des prochaines heures
         </mat-panel-title>
         <mat-panel-description>
-          This is a summary of the content
+          C'est la météo des prochaines heures
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <p>C'est la météo des prochaines heures</p>
+      <div *ngFor="let meteo of meteo.prochainesHeures">
+        <app-prevision-meteo [meteo]="meteo" [boutonRecharger]="false"
+                             [afficheCoucheSoleil]="false"
+                             [afficheHeureUniquement]="true"
+        ></app-prevision-meteo>
+        <mat-divider></mat-divider>
+      </div>
     </mat-expansion-panel>
   </div>
 
@@ -57,10 +68,16 @@
           Météo des prochains jours
         </mat-panel-title>
         <mat-panel-description>
-          This is a summary of the content
+          C'est la météo des prochains jours
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <p>C'est la météo des prochains jours</p>
+      <div *ngFor="let meteo of meteo.prochainsJours">
+        <app-prevision-meteo [meteo]="meteo" [boutonRecharger]="false"
+                             [afficheCoucheSoleil]="false"
+                             [afficheHeureUniquement]="false"
+        ></app-prevision-meteo>
+        <mat-divider></mat-divider>
+      </div>
     </mat-expansion-panel>
   </div>
 

@@ -1,0 +1,31 @@
+
+
+.colonnes {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+
+.symbole{
+
+}
+
+.donnees {
+  display: flex;
+  flex-direction: column;
+}
+
+.ligne {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.label {
+
+}
+
+.valeur {
+  font-weight: bold;
+}

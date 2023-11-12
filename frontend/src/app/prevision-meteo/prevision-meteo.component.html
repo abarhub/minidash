@@ -1,0 +1,24 @@
+<div class="colonnes" *ngIf="meteo">
+
+  <div class="symbole">
+    <img *ngIf="meteo.iconeStatut" src="https://openweathermap.org/img/wn/{{meteo.iconeStatut}}@4x.png">
+  </div>
+
+  <div class="donnees" >
+    <div class="ligne" *ngIf="!afficheHeureUniquement"><div class="label">Date</div><div class="valeur">{{meteo.date | date:"dd/MM/yyyy HH:mm"}}</div></div>
+    <div class="ligne" *ngIf="afficheHeureUniquement"><div class="label">Date</div><div class="valeur">{{meteo.date | date:"HH:mm"}}</div></div>
+    <div class="ligne" *ngIf="afficheCoucheSoleil"><div class="label">Heure de levé de soleil</div><div class="valeur">{{meteo.heureLeveSoleil | date:"HH:mm"}}</div></div>
+    <div class="ligne" *ngIf="afficheCoucheSoleil"><div class="label">Heure de couché de soleil</div><div class="valeur">{{meteo.heureCoucheSoleil | date:"HH:mm"}}</div></div>
+    <div class="ligne"><div class="label">Description</div><div class="valeur">{{meteo.descriptionStatut}}</div></div>
+    <div class="ligne"><div class="label">Temperature</div><div class="valeur">{{meteo.temperature}}</div></div>
+    <div class="ligne"><div class="label">Temperature resentie</div><div class="valeur">{{meteo.temperatureResentie}}</div></div>
+    <div class="ligne"><div class="label">Pression athmospherique</div><div class="valeur">{{meteo.pressionAthmospherique}}</div></div>
+    <div class="ligne"><div class="label">Humidité</div><div class="valeur">{{meteo.humidite}}</div></div>
+    <div class="ligne"><div class="label">Ciel couvert</div><div class="valeur">{{meteo.nuage}}</div></div>
+    <div class="ligne"><div class="label">Visibilitée</div><div class="valeur">{{meteo.visibilite}}</div></div>
+    <div class="ligne"><div class="label">Vitesse du vent</div><div class="valeur">{{meteo.vitesseVent}}</div></div>
+    <div class="ligne"><div class="label">Direction du vent</div><div class="valeur"> {{meteo.directionVent}}</div></div>
+    <div *ngIf="boutonRecharger"><button mat-button color="primary" (click)="recharger()">Recharger</button></div>
+  </div>
+
+</div>

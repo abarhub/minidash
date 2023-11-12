@@ -58,7 +58,11 @@ public class MeteoService {
         try {
             var db = baseService.get();
             if (db.getMeteoGlobalModel() != null) {
-                this.meteoGlobalModel = db.getMeteoGlobalModel();
+                try {
+                    this.meteoGlobalModel = db.getMeteoGlobalModel();
+                }catch(Exception e){
+                    LOGGER.atError().log("Erreur pour charger la configuration", e);
+                }
             }
             Path p = Path.of(repertoire);
             if (Files.exists(p)) {
@@ -112,10 +116,10 @@ public class MeteoService {
                 }
             }
 
-            if (!CollectionUtils.isEmpty(meteo.getProchainsjours())) {
-                meteoDto.setProchainsjours(new ArrayList<>());
-                for (var tmp : meteo.getProchainsjours()) {
-                    meteoDto.getProchainsjours().add(convertie(tmp));
+            if (!CollectionUtils.isEmpty(meteo.getProchainsJours())) {
+                meteoDto.setProchainsJours(new ArrayList<>());
+                for (var tmp : meteo.getProchainsJours()) {
+                    meteoDto.getProchainsJours().add(convertie(tmp));
                 }
             }
 
@@ -188,11 +192,11 @@ public class MeteoService {
             if (res2.has("daily")) {
                 var tmp2 = res2.get("daily");
                 if (tmp2.isArray()) {
-                    meteoGlobalModel.setProchainsjours(new ArrayList<>());
+                    meteoGlobalModel.setProchainsJours(new ArrayList<>());
                     for (int i = 0; i < tmp2.size(); i++) {
                         var tmp = tmp2.get(i);
                         var meteo = ajouteInfos(tmp);
-                        meteoGlobalModel.getProchainsjours().add(meteo);
+                        meteoGlobalModel.getProchainsJours().add(meteo);
                     }
                 }
             }

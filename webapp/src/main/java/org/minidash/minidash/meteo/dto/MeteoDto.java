@@ -33,11 +33,11 @@ public class MeteoDto {
         this.prochainesHeures = prochainesHeures;
     }
 
-    public List<MeteoCouranteDto> getProchainsjours() {
+    public List<MeteoCouranteDto> getProchainsJours() {
         return prochainsJours;
     }
 
-    public void setProchainsjours(List<MeteoCouranteDto> prochainsjours) {
-        this.prochainsJours = prochainsjours;
+    public void setProchainsJours(List<MeteoCouranteDto> prochainsJours) {
+        this.prochainsJours = prochainsJours;
     }
 }
