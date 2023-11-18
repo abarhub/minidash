@@ -20,6 +20,7 @@ import {MatExpansionModule} from "@angular/material/expansion";
 import { PrevisionMeteoComponent } from './prevision-meteo/prevision-meteo.component';
 import {MatDividerModule} from "@angular/material/divider";
 import { BookmarkComponent } from './bookmark/bookmark.component';
+import { Horloge3Component } from './horloge3/horloge3.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { BookmarkComponent } from './bookmark/bookmark.component';
     CalendrierSemaineComponent,
     MeteoComponent,
     PrevisionMeteoComponent,
-    BookmarkComponent
+    BookmarkComponent,
+    Horloge3Component
   ],
   imports: [
     BrowserModule,
