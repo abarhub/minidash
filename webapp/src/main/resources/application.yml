@@ -13,6 +13,7 @@ meteo:
   latitude:
   longitude:
   fichier:
+  cron: '0 * * * * *'
 
 
 bookmark:

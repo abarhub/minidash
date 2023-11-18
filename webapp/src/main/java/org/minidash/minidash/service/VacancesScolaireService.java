@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -54,6 +55,7 @@ public class VacancesScolaireService {
             try {
                 var global = new GlobalModel();
                 global.setVacances(listeTotal);
+                global.setDateMajVacances(LocalDateTime.now());
                 baseService.save(global);
             }catch (IOException e){
                 LOGGER.atError().log("Erreur pour enregistrer la base",e);

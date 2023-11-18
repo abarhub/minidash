@@ -85,6 +85,7 @@ public class MeteoService {
                 var res = getJson2();
                 var db = baseService.get();
                 db.setMeteoGlobalModel(res);
+                db.setDateMajMeteo(LocalDateTime.now());
                 baseService.save(db);
                 meteoGlobalModel = res;
                 return res;
@@ -327,6 +328,7 @@ public class MeteoService {
                 LOGGER.info("maj meteo termine: {}", res != null);
                 if (res != null) {
                     db.setMeteoGlobalModel(res);
+                    db.setDateMajMeteo(LocalDateTime.now());
                     baseService.save(db);
                     meteoGlobalModel = res;
                 }
