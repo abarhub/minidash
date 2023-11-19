@@ -1,16 +1,15 @@
-package org.minidash.minidash.service;
+package org.minidash.minidash.vacances.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import org.minidash.minidash.base.model.GlobalModel;
 import org.minidash.minidash.base.service.BaseService;
-import org.minidash.minidash.dto.VacancesDto;
+import org.minidash.minidash.vacances.dto.CalendrierDto;
+import org.minidash.minidash.vacances.dto.VacancesDto;
 import org.minidash.minidash.properties.AppProperties;
 import org.minidash.minidash.properties.VacancesProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -18,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -180,6 +180,26 @@ public class VacancesScolaireService {
         }
         LOGGER.atInfo().log("liste vacances: {}", liste);
         return liste;
+    }
+
+    public CalendrierDto getCalendrierDto(){
+        CalendrierDto calendrierDto=new CalendrierDto();
+        var listeVacances=getVacances();
+        calendrierDto.setListVacancesDto(listeVacances);
+        calculDecalageHoraire(calendrierDto);
+        return calendrierDto;
+    }
+
+    private void calculDecalageHoraire(CalendrierDto calendrierDto) {
+        LocalDate now=LocalDate.now();
+        var decalageEte=YearMonth.of( now.getYear() , Month.MARCH )                              // Represent the entirety of a specified month.
+                .atEndOfMonth()                                                // Get the date of the last day of that month.
+                .with( TemporalAdjusters.previousOrSame( DayOfWeek.SUNDAY ) );
+        calendrierDto.setJourDecalageEte(decalageEte);
+        var decalageHivert=YearMonth.of( now.getYear() , Month.OCTOBER )                              // Represent the entirety of a specified month.
+                .atEndOfMonth()                                                // Get the date of the last day of that month.
+                .with( TemporalAdjusters.previousOrSame( DayOfWeek.SUNDAY ) );
+        calendrierDto.setJourDecalageHivert(decalageHivert);
     }
 
     private LocalDate convertToDate(String date) {

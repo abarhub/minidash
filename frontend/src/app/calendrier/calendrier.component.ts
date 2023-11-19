@@ -7,6 +7,7 @@ import {Mois} from "../model/mois.model";
 import {JoursFerieService} from "../service/jours-ferie.service";
 import {VacanceModel} from "../model/vacance.model";
 import {PeriodeVacanceModel} from "../model/periodeVacanceModel";
+import {CalendrierModel} from "../model/calendrier.model";
 
 @Component({
   selector: 'app-calendrier',
@@ -23,6 +24,8 @@ export class CalendrierComponent implements OnInit {
   public anneeAffiche: number = 0;
   public nbMois: number = 0;
   public premierMois: number = 0;
+  public decalageHeureEte:DateTime|null=null;
+  public decalageHeureHivert:DateTime|null=null;
 
   constructor(private http: HttpClient, private joursFerieService: JoursFerieService) {
     this.getMois();
@@ -56,6 +59,7 @@ export class CalendrierComponent implements OnInit {
       mois.nomMois = this.getNomMois(premierMois);
       mois.annee = premierMois.year;
       mois.semaineDuMois = tab;
+      mois.numeroMois=tab[0].month;
       this.listeSemaineDuMois.push(mois);
       premierMois = premierMois.plus({month: 1}).startOf('month');
     }
@@ -98,16 +102,16 @@ export class CalendrierComponent implements OnInit {
     });
 
     let url='api/vacances';
-    this.http.get<VacanceModel[]>(url).subscribe(data => {
+    this.http.get<CalendrierModel>(url).subscribe(data => {
       console.log("data vacances", data);
       this.initVacances(data);
     });
   }
 
-  private initVacances(data: VacanceModel[]) {
+  private initVacances(data: CalendrierModel) {
     let liste: PeriodeVacanceModel[] = [];
-    if (data && data.length > 0) {
-      for (let vac of data) {
+    if (data &&data.listVacancesDto&& data.listVacancesDto.length > 0) {
+      for (let vac of data.listVacancesDto) {
         let zone = vac.zone;
         let dateDebut: DateTime | null = null;
         let dateFin: DateTime | null = null;
@@ -145,6 +149,18 @@ export class CalendrierComponent implements OnInit {
       }
     }
     this.listePeriodeVacances = liste;
+    if(data){
+      if(data.jourDecalageHivert){
+        var luxonDate = DateTime.fromSQL(data.jourDecalageHivert);
+        console.log("decalage1",data.jourDecalageHivert,luxonDate);
+        this.decalageHeureHivert=luxonDate;
+      }
+      if(data.jourDecalageEte){
+        var luxonDate = DateTime.fromSQL(data.jourDecalageEte);
+        console.log("decalage2",data.jourDecalageEte,luxonDate);
+        this.decalageHeureEte=luxonDate;
+      }
+    }
   }
 
   changenbMois($event: any) {

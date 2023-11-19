@@ -1,6 +1,6 @@
 package org.minidash.minidash.base.model;
 
-import org.minidash.minidash.dto.VacancesDto;
+import org.minidash.minidash.vacances.dto.VacancesDto;
 import org.minidash.minidash.meteo.model.MeteoGlobalModel;
 
 import java.time.LocalDateTime;

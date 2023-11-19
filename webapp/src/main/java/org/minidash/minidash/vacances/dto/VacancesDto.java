@@ -1,4 +1,4 @@
-package org.minidash.minidash.dto;
+package org.minidash.minidash.vacances.dto;
 
 import java.time.LocalDate;
 import java.util.StringJoiner;

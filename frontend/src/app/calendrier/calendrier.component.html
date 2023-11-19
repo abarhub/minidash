@@ -29,11 +29,26 @@
                               [listePeriodeVacance]="listePeriodeVacances"
       ></app-calendrier-semaine>
     </div>
-
+    <div *ngIf="decalageHeureEte &&decalageHeureEte.year===moisParAnnee.annee && decalageHeureEte.month===moisParAnnee.numeroMois">
+      decalage été le {{decalageHeureEte.day}} (+1h)
+    </div>
+    <div *ngIf="decalageHeureHivert &&decalageHeureHivert.year===moisParAnnee.annee && decalageHeureHivert.month===moisParAnnee.numeroMois">
+      decalage hivert le {{decalageHeureHivert.day}} (-1h)
+    </div>
 
 </div>
 
 </div>
+
+  <div class="piedPage">
+
+    <div class="zone zoneA"><div class="label">Zone A</div><div class="text">Besançon - Bordeaux - Clermont-Ferrand - Dijon - Grenoble - Limoges - Lyon - Poitiers</div></div>
+
+    <div class="zone zoneB"><div class="label">Zone B</div><div class="text">Aix-Marseille - Amiens - Caen - Lille - Nancy-Metz - Nantes - Nice - Orléans-Tours - Reims - Rennes - Rouen - Strasbourg</div></div>
+
+    <div class="zone zoneC"><div class="label">Zone C</div><div class="text">Créteil - Montpellier - Paris - Toulouse - Versailles</div></div>
+
+  </div>
 
 
 </div>
