@@ -29,14 +29,8 @@ public class VacancesScolaireService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VacancesScolaireService.class);
 
-//    @Value("${vacances.urlVacancesScolaires}")
-//    private String urlVacancesScolaires;
-//
-//    @Value("${vacances.dureeCache}")
-//    private Period cache;
     private final VacancesProperties vacancesProperties;
 
-//    @Autowired
     private final BaseService baseService;
 
     private List<VacancesDto> listeVacances;

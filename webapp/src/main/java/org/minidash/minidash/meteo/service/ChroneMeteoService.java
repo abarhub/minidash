@@ -5,8 +5,6 @@ import org.minidash.minidash.properties.AppProperties;
 import org.minidash.minidash.properties.MeteoProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Service;
@@ -19,10 +17,6 @@ public class ChroneMeteoService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChroneMeteoService.class);
 
-//    @Value("${meteo.cron}")
-//    private final String cronExpression;
-
-//    @Autowired
     private final MeteoService meteoService;
 
     private final MeteoProperties meteoProperties;

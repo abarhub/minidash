@@ -16,8 +16,6 @@ import java.util.Objects;
 
 @Service
 public class BookmarkService {
-
-//    @Autowired
     private final BookmarkProperties bookmarkProperties;
 
     private ListBookmarkModel listBookmarkModel;

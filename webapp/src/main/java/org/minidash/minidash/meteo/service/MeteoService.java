@@ -35,18 +35,6 @@ public class MeteoService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MeteoService.class);
 
-//    @Value("${meteo.url}")
-//    private String url;
-//
-//    @Value("${meteo.apiKey}")
-//    private String apiKey;
-//
-//    @Value("${repertoireDonnees}")
-//    private String repertoire;
-//
-//    @Value("${meteo.dureeCache}")
-//    private Duration dureeCache;
-
     private MeteoGlobalModel meteoGlobalModel;
 
     private final BaseService baseService;
