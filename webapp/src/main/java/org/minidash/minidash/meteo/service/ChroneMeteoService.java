@@ -1,6 +1,8 @@
 package org.minidash.minidash.meteo.service;
 
 import jakarta.annotation.PostConstruct;
+import org.minidash.minidash.properties.AppProperties;
+import org.minidash.minidash.properties.MeteoProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,22 +19,29 @@ public class ChroneMeteoService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChroneMeteoService.class);
 
-    @Value("${meteo.cron}")
-    private String cronExpression;
+//    @Value("${meteo.cron}")
+//    private final String cronExpression;
 
-    @Autowired
-    private MeteoService meteoService;
+//    @Autowired
+    private final MeteoService meteoService;
+
+    private final MeteoProperties meteoProperties;
 
     private LocalDateTime lastDate;
 
     private boolean erreurCronExpression;
 
+    public ChroneMeteoService(MeteoService meteoService, AppProperties appProperties) {
+        this.meteoService = meteoService;
+        this.meteoProperties= appProperties.getMeteo();
+    }
+
     @PostConstruct
     public void init() {
-        if (StringUtils.hasText(cronExpression)) {
-            erreurCronExpression = !CronExpression.isValidExpression(cronExpression);
+        if (StringUtils.hasText(meteoProperties.getCron())) {
+            erreurCronExpression = !CronExpression.isValidExpression(meteoProperties.getCron());
             if (erreurCronExpression) {
-                LOGGER.atError().log("Expression cron invalide : '{}'", cronExpression);
+                LOGGER.atError().log("Expression cron invalide : '{}'", meteoProperties.getCron());
             }
         }
     }
@@ -40,8 +49,8 @@ public class ChroneMeteoService {
     @Scheduled(cron = "* * * * * *")
     public void cron() {
         LOGGER.atDebug().log("cron");
-        if (StringUtils.hasText(cronExpression) && !erreurCronExpression) {
-            CronExpression cronExpression = CronExpression.parse(this.cronExpression);
+        if (StringUtils.hasText(meteoProperties.getCron()) && !erreurCronExpression) {
+            CronExpression cronExpression = CronExpression.parse(meteoProperties.getCron());
             var tmp = cronExpression.next(LocalDateTime.now());
             LOGGER.atDebug().log("tmp={}, lastDate={}", tmp, lastDate);
             if(lastDate==null){

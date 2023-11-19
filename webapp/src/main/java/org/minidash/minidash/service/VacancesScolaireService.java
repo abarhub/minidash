@@ -5,6 +5,8 @@ import jakarta.annotation.PostConstruct;
 import org.minidash.minidash.base.model.GlobalModel;
 import org.minidash.minidash.base.service.BaseService;
 import org.minidash.minidash.dto.VacancesDto;
+import org.minidash.minidash.properties.AppProperties;
+import org.minidash.minidash.properties.VacancesProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.OffsetDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -30,35 +29,60 @@ public class VacancesScolaireService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VacancesScolaireService.class);
 
-    @Value("${urlVacancesScolaires}")
-    private String urlVacancesScolaires;
+//    @Value("${vacances.urlVacancesScolaires}")
+//    private String urlVacancesScolaires;
+//
+//    @Value("${vacances.dureeCache}")
+//    private Period cache;
+    private final VacancesProperties vacancesProperties;
 
-    @Autowired
-    private BaseService baseService;
+//    @Autowired
+    private final BaseService baseService;
 
     private List<VacancesDto> listeVacances;
+
+    public VacancesScolaireService(BaseService baseService, AppProperties appProperties) {
+        this.baseService = baseService;
+        this.vacancesProperties=appProperties.getVacances();
+    }
 
     @PostConstruct
     public void init() {
         LOGGER.atInfo().log("init vacances");
-        List<VacancesDto> listeTotal=null;
+        LOGGER.atInfo().log("cache des vacances: {}", vacancesProperties.getDureeCache());
+        List<VacancesDto> listeTotal = null;
+        boolean forceMaj = true;
         try {
-            var global= baseService.get();
-            if(global!=null&&global.getVacances()!=null){
-                listeTotal=List.copyOf(global.getVacances());
+            var global = baseService.get();
+            if (global != null) {
+                if (global.getVacances() != null) {
+                    listeTotal = List.copyOf(global.getVacances());
+                }
+                if (listeTotal != null) {
+                    if (global.getDateMajVacances() == null) {
+                        forceMaj = true;
+                    } else {
+                        var derniereRecuperation = global.getDateMajVacances();
+                        var now = LocalDateTime.now();
+                        var limit = now.minus(vacancesProperties.getDureeCache());
+                        if (limit.isAfter(derniereRecuperation)) {
+                            forceMaj = true;
+                        }
+                    }
+                }
             }
-        }catch (IOException e){
-            LOGGER.atError().log("Erreur pour lire la base",e);
+        } catch (IOException e) {
+            LOGGER.atError().log("Erreur pour lire la base", e);
         }
-        if(listeTotal==null) {
+        if (listeTotal == null || forceMaj) {
             listeTotal = getVacancesDtos();
             try {
                 var global = new GlobalModel();
                 global.setVacances(listeTotal);
                 global.setDateMajVacances(LocalDateTime.now());
                 baseService.save(global);
-            }catch (IOException e){
-                LOGGER.atError().log("Erreur pour enregistrer la base",e);
+            } catch (IOException e) {
+                LOGGER.atError().log("Erreur pour enregistrer la base", e);
             }
         }
         LOGGER.atInfo().log("nb vacances={}", listeTotal.size());
@@ -67,12 +91,16 @@ public class VacancesScolaireService {
 
     private List<VacancesDto> getVacancesDtos() {
         List<VacancesDto> listeTotal = new ArrayList<>();
-        for(int annee=2017;annee<2027;annee+=2) {
-            LOGGER.atInfo().log("vacances annee {}-{}",annee,annee+1);
+        final var anneeCourante = LocalDate.now().getYear();
+        final var anneDebut = 2017;
+        final var anneeFin = anneeCourante + 4;
+        LOGGER.atInfo().log("récupérarion des vacances entre {} et {}", anneDebut, anneeFin);
+        for (int annee = anneDebut; annee <= anneeFin; annee += 2) {
+            LOGGER.atInfo().log("vacances annee {}-{}", annee, annee + 1);
             RestTemplate restTemplate = new RestTemplate();
-            String url = urlVacancesScolaires;
+            String url = vacancesProperties.getUrlVacancesScolaires();
             LocalDate dateDebut = LocalDate.of(annee, Month.JANUARY, 1);
-            LocalDate dateFin = LocalDate.of(annee+1, Month.DECEMBER, 31);
+            LocalDate dateFin = LocalDate.of(annee + 1, Month.DECEMBER, 31);
             int limite = 100;
             url += "?where=start_date>=\"" + dateDebut + "\" and end_date<=\"" + dateFin + "\" and zones in (\"Zone A\",\"Zone B\",\"Zone C\")&limit=" + limite;
             LOGGER.atInfo().log("url={}", url);
@@ -115,7 +143,7 @@ public class VacancesScolaireService {
                     }
                     LOGGER.atInfo().log("nb={}", liste.size());
                     liste = nettoyage(liste);
-                    LOGGER.atInfo().log("nb vacances {}={}", annee,liste.size());
+                    LOGGER.atInfo().log("nb vacances {}={}", annee, liste.size());
                     listeTotal.addAll(liste);
                 } catch (Exception e) {
                     LOGGER.atError().log("Erreur pour parser le résultat", e);

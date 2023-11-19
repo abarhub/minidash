@@ -1,29 +1,31 @@
 
-
-#urlVacancesScolaires: https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records?limit=20
-#urlVacancesScolaires: 'https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records?where=start_date>="2023-01-01" and end_date<"2025-01-01" and zones in ("Zone A","Zone B","Zone C")&limit=100'
-urlVacancesScolaires: https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records
-
-
-repertoireDonnees: ./data
-
-meteo:
-  url: https://api.openweathermap.org/data/3.0/onecall?lat=43.52&lon=5.44&lang=fr&units=metric&appid=${meteo.apiKey}
-  apiKey:
-  latitude:
-  longitude:
-  fichier:
-  cron: '0 0 8-20 * * *'
-  dureeCache: 15m
+app:
+  vacances:
+    #urlVacancesScolaires: https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records?limit=20
+    #urlVacancesScolaires: 'https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records?where=start_date>="2023-01-01" and end_date<"2025-01-01" and zones in ("Zone A","Zone B","Zone C")&limit=100'
+    urlVacancesScolaires: https://data.education.gouv.fr/api/explore/v2.1/catalog/datasets/fr-en-calendrier-scolaire/records
+    dureeCache: 6M
 
 
-bookmark:
-  listUrl:
-    -
-      url: https://www.google.fr
-      titre: Google
-    -
-      url: https://fr.wikipedia.org
-      titre: Wikipedia
+  repertoireDonnees: ./data
+
+  meteo:
+    url: https://api.openweathermap.org/data/3.0/onecall?lat=43.52&lon=5.44&lang=fr&units=metric&appid=${app.meteo.apiKey}
+    apiKey:
+    latitude:
+    longitude:
+    fichier:
+    cron: '0 0 8-20 * * *'
+    dureeCache: 15m
+
+
+  bookmark:
+    listUrl:
+      -
+        url: https://www.google.fr
+        titre: Google
+      -
+        url: https://fr.wikipedia.org
+        titre: Wikipedia
 
 

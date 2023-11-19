@@ -3,11 +3,13 @@ package org.minidash.minidash.base.service;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.minidash.minidash.base.model.GlobalModel;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class BaseService {
@@ -19,11 +21,12 @@ public class BaseService {
     private final ObjectMapper objectMapper;
 
     public BaseService(String repertoireDonnees) {
-        this.repertoireDonnees = Path.of(repertoireDonnees);
+        this.repertoireDonnees = Path.of(Objects.requireNonNull(repertoireDonnees,"Le répertoire de configuration est vide"));
         lock = new ReentrantReadWriteLock();
         objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     public GlobalModel get() throws IOException {

@@ -12,9 +12,10 @@ import org.minidash.minidash.meteo.model.MeteoCourante;
 import org.minidash.minidash.meteo.model.MeteoGlobalModel;
 import org.minidash.minidash.meteo.model.MeteoStatutModel;
 import org.minidash.minidash.meteo.model.PrecipitationModel;
+import org.minidash.minidash.properties.AppProperties;
+import org.minidash.minidash.properties.MeteoProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -24,7 +25,6 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -35,17 +35,17 @@ public class MeteoService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MeteoService.class);
 
-    @Value("${meteo.url}")
-    private String url;
-
-    @Value("${meteo.apiKey}")
-    private String apiKey;
-
-    @Value("${repertoireDonnees}")
-    private String repertoire;
-
-    @Value("${meteo.dureeCache}")
-    private Duration dureeCache;
+//    @Value("${meteo.url}")
+//    private String url;
+//
+//    @Value("${meteo.apiKey}")
+//    private String apiKey;
+//
+//    @Value("${repertoireDonnees}")
+//    private String repertoire;
+//
+//    @Value("${meteo.dureeCache}")
+//    private Duration dureeCache;
 
     private MeteoGlobalModel meteoGlobalModel;
 
@@ -53,14 +53,19 @@ public class MeteoService {
 
     private Path repertoireBackup;
 
-    public MeteoService(BaseService baseService) {
+    private final AppProperties appProperties;
+    private final MeteoProperties meteoProperties;
+
+    public MeteoService(BaseService baseService, AppProperties appProperties) {
         this.baseService = baseService;
+        this.appProperties = appProperties;
+        this.meteoProperties = appProperties.getMeteo();
     }
 
     @PostConstruct
     public void init() {
         try {
-            Path p = Path.of(repertoire);
+            Path p = Path.of(appProperties.getRepertoireDonnees());
             if (Files.exists(p)) {
                 Path p2 = p.resolve("backup");
                 if (Files.notExists(p2)) {
@@ -72,11 +77,11 @@ public class MeteoService {
             if (db.getMeteoGlobalModel() != null) {
                 try {
                     this.meteoGlobalModel = db.getMeteoGlobalModel();
-                }catch(Exception e){
+                } catch (Exception e) {
                     LOGGER.atError().log("Erreur pour charger la configuration", e);
                 }
             }
-            LOGGER.atInfo().log("cache:{}, {}",dureeCache, LocalDateTime.now().plus(dureeCache));
+            LOGGER.atInfo().log("cache:{}, {}", meteoProperties.getDureeCache(), LocalDateTime.now().plus(meteoProperties.getDureeCache()));
         } catch (Exception e) {
             LOGGER.atError().log("Erreur", e);
         }
@@ -319,7 +324,7 @@ public class MeteoService {
             var meteo = db.getMeteoGlobalModel();
             var faireMaj = false;
             if (meteo != null && meteo.getCourante() != null && meteo.getCourante().getDate() != null) {
-                if (db.getDateMajMeteo()==null||db.getDateMajMeteo().isBefore(LocalDateTime.now().minus(dureeCache))) {
+                if (db.getDateMajMeteo() == null || db.getDateMajMeteo().isBefore(LocalDateTime.now().minus(meteoProperties.getDureeCache()))) {
                     faireMaj = true;
                 } else {
                     faireMaj = false;
@@ -348,10 +353,10 @@ public class MeteoService {
 
 
     private MeteoGlobalModel getJson2() throws IOException {
-        if (StringUtils.hasText(url)) {
-            LOGGER.atInfo().log("url meteo={}", url);
+        if (StringUtils.hasText(meteoProperties.getUrl())) {
+            LOGGER.atInfo().log("url meteo={}", meteoProperties.getUrl());
             RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            ResponseEntity<String> response = restTemplate.getForEntity(meteoProperties.getUrl(), String.class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 LOGGER.atInfo().log("Appel Meteo reussi. code={}, body={}", response.getStatusCode(), response.getBody());
                 var res = response.getBody();

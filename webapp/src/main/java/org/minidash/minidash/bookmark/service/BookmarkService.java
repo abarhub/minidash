@@ -5,20 +5,26 @@ import org.minidash.minidash.bookmark.dto.BookmarkDto;
 import org.minidash.minidash.bookmark.dto.ListBookmarkDto;
 import org.minidash.minidash.bookmark.model.ListBookmarkModel;
 import org.minidash.minidash.bookmark.properties.BookmarkProperties;
+import org.minidash.minidash.properties.AppProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class BookmarkService {
 
-    @Autowired
-    private BookmarkProperties bookmarkProperties;
+//    @Autowired
+    private final BookmarkProperties bookmarkProperties;
 
     private ListBookmarkModel listBookmarkModel;
+
+    public BookmarkService(AppProperties appProperties) {
+        this.bookmarkProperties = Objects.requireNonNull(appProperties.getBookmark());
+    }
 
     @PostConstruct
     public void init() {

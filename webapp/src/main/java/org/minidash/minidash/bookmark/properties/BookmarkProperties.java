@@ -7,8 +7,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 
-@Component
-@ConfigurationProperties(prefix = "bookmark")
+//@Component
+//@ConfigurationProperties(prefix = "bookmark")
 public class BookmarkProperties {
 
     private List<BookmarkModel> listUrl;
