@@ -24,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -42,6 +43,9 @@ public class MeteoService {
 
     @Value("${repertoireDonnees}")
     private String repertoire;
+
+    @Value("${meteo.dureeCache}")
+    private Duration dureeCache;
 
     private MeteoGlobalModel meteoGlobalModel;
 
@@ -72,6 +76,7 @@ public class MeteoService {
                     LOGGER.atError().log("Erreur pour charger la configuration", e);
                 }
             }
+            LOGGER.atInfo().log("cache:{}, {}",dureeCache, LocalDateTime.now().plus(dureeCache));
         } catch (Exception e) {
             LOGGER.atError().log("Erreur", e);
         }
@@ -314,7 +319,7 @@ public class MeteoService {
             var meteo = db.getMeteoGlobalModel();
             var faireMaj = false;
             if (meteo != null && meteo.getCourante() != null && meteo.getCourante().getDate() != null) {
-                if (meteo.getCourante().getDate().isBefore(LocalDateTime.now().minusMinutes(15))) {
+                if (db.getDateMajMeteo()==null||db.getDateMajMeteo().isBefore(LocalDateTime.now().minus(dureeCache))) {
                     faireMaj = true;
                 } else {
                     faireMaj = false;

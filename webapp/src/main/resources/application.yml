@@ -13,7 +13,8 @@ meteo:
   latitude:
   longitude:
   fichier:
-  cron: '0 * * * * *'
+  cron: '0 0 8-20 * * *'
+  dureeCache: 15m
 
 
 bookmark:
