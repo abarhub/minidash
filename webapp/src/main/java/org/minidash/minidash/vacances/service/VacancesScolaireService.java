@@ -45,7 +45,7 @@ public class VacancesScolaireService {
         LOGGER.atInfo().log("init vacances");
         LOGGER.atInfo().log("cache des vacances: {}", vacancesProperties.getDureeCache());
         List<VacancesDto> listeTotal = null;
-        boolean forceMaj = true;
+        boolean forceMaj = false;
         try {
             var global = baseService.get();
             if (global != null) {
