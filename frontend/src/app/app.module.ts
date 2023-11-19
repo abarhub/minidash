@@ -21,6 +21,7 @@ import { PrevisionMeteoComponent } from './prevision-meteo/prevision-meteo.compo
 import {MatDividerModule} from "@angular/material/divider";
 import { BookmarkComponent } from './bookmark/bookmark.component';
 import { Horloge3Component } from './horloge3/horloge3.component';
+import { Horloge4Component } from './horloge4/horloge4.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { Horloge3Component } from './horloge3/horloge3.component';
     MeteoComponent,
     PrevisionMeteoComponent,
     BookmarkComponent,
-    Horloge3Component
+    Horloge3Component,
+    Horloge4Component
   ],
   imports: [
     BrowserModule,
