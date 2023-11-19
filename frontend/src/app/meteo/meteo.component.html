@@ -41,10 +41,18 @@
             Les précipitations
           </mat-panel-description>
         </mat-expansion-panel-header>
-        <div >
+        <div class="charts">
           <canvas baseChart width="400" height="400"
                   [type]="'line'"
                   [data]="lineChartData"
+                  [options]="lineChartOptions"
+                  [legend]="lineChartLegend">
+          </canvas>
+
+
+          <canvas baseChart width="400" height="400"
+                  [type]="'line'"
+                  [data]="lineChartData2"
                   [options]="lineChartOptions"
                   [legend]="lineChartLegend">
           </canvas>
