@@ -1,0 +1,10 @@
+<div class="clock">
+  <div class="hand hour" [style.transform]="hourHandTransform"></div>
+  <div class="hand minute" [style.transform]="minuteHandTransform"></div>
+  <div class="hand second" [style.transform]="secondHandTransform"></div>
+
+  <div class="hour-marks">
+    <div class="hour-mark" *ngFor="let hour of hours" [style.transform]="hour.markTransform">{{ hour.value }}</div>
+  </div>
+</div>
+
