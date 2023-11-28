@@ -12,6 +12,8 @@ public class MeteoProperties {
 
     private String longitude;
 
+    private String fichier;
+
     private String cron;
 
     private Duration dureeCache;
@@ -46,6 +48,14 @@ public class MeteoProperties {
 
     public void setLongitude(String longitude) {
         this.longitude = longitude;
+    }
+
+    public String getFichier() {
+        return fichier;
+    }
+
+    public void setFichier(String fichier) {
+        this.fichier = fichier;
     }
 
     public String getCron() {

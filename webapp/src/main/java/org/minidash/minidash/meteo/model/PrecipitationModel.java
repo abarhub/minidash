@@ -5,7 +5,7 @@ import java.util.StringJoiner;
 
 public class PrecipitationModel {
     private LocalDateTime date;
-    private long precipitation;
+    private double precipitation;
 
     public LocalDateTime getDate() {
         return date;
@@ -15,11 +15,11 @@ public class PrecipitationModel {
         this.date = date;
     }
 
-    public long getPrecipitation() {
+    public double getPrecipitation() {
         return precipitation;
     }
 
-    public void setPrecipitation(long precipitation) {
+    public void setPrecipitation(double precipitation) {
         this.precipitation = precipitation;
     }
 

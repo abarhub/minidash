@@ -23,6 +23,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -76,7 +77,7 @@ public class MeteoService {
     }
 
     public MeteoGlobalModel getMeteo() {
-        if (meteoGlobalModel != null) {
+        if (meteoGlobalModel != null&&false) {
             return meteoGlobalModel;
         } else {
             try {
@@ -213,8 +214,8 @@ public class MeteoService {
             }
         }
         if (tmp.has("precipitation")) {
-            var tmp2 = tmp.get("precipitation").asLong();
-            if (tmp2 > 0) {
+            var tmp2 = tmp.get("precipitation").asDouble();
+            if (tmp2 > 0.0) {
                 precipitationModel.setPrecipitation(tmp2);
             }
         }
@@ -341,7 +342,17 @@ public class MeteoService {
 
 
     private MeteoGlobalModel getJson2() throws IOException {
-        if (StringUtils.hasText(meteoProperties.getUrl())) {
+        if(StringUtils.hasText(meteoProperties.getFichier())) {
+            LOGGER.atInfo().log("lecture meteo fichier: {}",meteoProperties.getFichier());
+            var p=Path.of(meteoProperties.getFichier());
+            var s=Files.readString(p, StandardCharsets.UTF_8);
+            final MeteoGlobalModel meteoGlobalModel1 = construitModelMeteo(s);
+            if (meteoGlobalModel1 != null) {
+                return meteoGlobalModel1;
+            } else {
+                return null;
+            }
+        } else if (StringUtils.hasText(meteoProperties.getUrl())) {
             LOGGER.atInfo().log("url meteo={}", meteoProperties.getUrl());
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> response = restTemplate.getForEntity(meteoProperties.getUrl(), String.class);

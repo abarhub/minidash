@@ -3,6 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {MeteoModel} from "../model/meteo.model";
 import {ChartConfiguration, ChartOptions} from "chart.js";
 import {DatePipe} from "@angular/common";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 
 @Component({
@@ -15,32 +16,32 @@ export class MeteoComponent implements OnInit {
 
   public meteo: MeteoModel | null = null;
 
-
-
-  constructor(private http: HttpClient, private datePipe: DatePipe) {
+  constructor(private http: HttpClient, private datePipe: DatePipe, private _snackBar: MatSnackBar) {
   }
 
   ngOnInit(): void {
-    this.http.get<MeteoModel>('api/meteo').subscribe(data => {
-      console.log("data meteo", data);
-      this.meteo = data;
-
-      this.calculPrecipitation(data);
-
-      this.calculTemperatire(data);
-
-
-    });
-
+    this.rechargerMeteo();
   }
 
   recharger() {
-    this.http.post<MeteoModel>('api/meteo', null).subscribe(data => {
-      console.log("data meteo", data);
-      this.meteo = data;
+    this.rechargerMeteo();
+  }
+
+  private rechargerMeteo(){
+    this.http.get<MeteoModel>('api/meteo').subscribe(data => {
+      this.miseAJourMeteo(data);
+      this._snackBar.open("Mise à jour de la météo réussi");
     });
   }
 
+  private miseAJourMeteo(data:MeteoModel){
+    console.log("data meteo", data);
+    this.meteo = data;
+
+    this.calculPrecipitation(data);
+
+    this.calculTemperatire(data);
+  }
 
   public lineChartData: ChartConfiguration<'line'>['data'] = {
     labels: [
