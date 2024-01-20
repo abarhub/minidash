@@ -23,6 +23,7 @@ import { BookmarkComponent } from './bookmark/bookmark.component';
 import { Horloge3Component } from './horloge3/horloge3.component';
 import { Horloge4Component } from './horloge4/horloge4.component';
 import { Horloge6Component } from './horloge6/horloge6.component';
+import {Horloge7Component} from "./horloge7/horloge7.component";
 
 @NgModule({
   declarations: [
@@ -38,20 +39,21 @@ import { Horloge6Component } from './horloge6/horloge6.component';
     Horloge4Component,
     Horloge6Component
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    MatSlideToggleModule,
-    MatTabsModule,
-    MatButtonToggleModule,
-    MatButtonModule,
-    MatGridListModule,
-    NgChartsModule,
-    MatExpansionModule,
-    MatDividerModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        BrowserAnimationsModule,
+        MatSlideToggleModule,
+        MatTabsModule,
+        MatButtonToggleModule,
+        MatButtonModule,
+        MatGridListModule,
+        NgChartsModule,
+        MatExpansionModule,
+        MatDividerModule,
+        Horloge7Component
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })
