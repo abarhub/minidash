@@ -1,4 +1,4 @@
-import {Component, OnInit, signal} from '@angular/core';
+import {Component, ElementRef, OnInit, signal, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 
 @Component({
@@ -18,12 +18,22 @@ export class Horloge7Component implements OnInit//, AfterViewInit
   minsDegreesAsync = signal(0);
   hourDegreesAsync = signal(0);
 
+  @ViewChild('secondes') secondes: ElementRef<HTMLDivElement> | null = null;
+  @ViewChild('minutes') minutes: ElementRef<HTMLDivElement> | null = null;
+  @ViewChild('heures') heures: ElementRef<HTMLDivElement> | null = null;
+
   ngOnInit() {
-    setInterval(() => {
-      this.setDate();
-    }, 1000);
+    // setInterval(() => {
+    //   this.setDate();
+    // }, 1000);
 
   }
+
+
+  ngAfterViewInit() {
+    this.fonction2();
+  }
+
 
   private setDate() {
     const now = new Date();
@@ -39,16 +49,44 @@ export class Horloge7Component implements OnInit//, AfterViewInit
     const lastHourDegrees = this.hourDegrees;
     const hour = now.getHours();
     this.hourDegrees = ((hour / 12) * 360) + ((mins / 60) * 30) + 90;
-    if (lastSecondsDegrees != this.secondsDegrees) {
-      this.secondsDegreesAsync.set(this.secondsDegrees);
-    }
-    if (lastMinsDegrees != this.minsDegrees) {
-      this.minsDegreesAsync.set(this.minsDegrees);
-    }
-    if (lastHourDegrees != this.hourDegrees) {
-      this.hourDegreesAsync.set(this.hourDegrees);
-    }
+    // if (lastSecondsDegrees != this.secondsDegrees) {
+    //   this.secondsDegreesAsync.set(this.secondsDegrees);
+    // }
+    // if (lastMinsDegrees != this.minsDegrees) {
+    //   this.minsDegreesAsync.set(this.minsDegrees);
+    // }
+    // if (lastHourDegrees != this.hourDegrees) {
+    //   this.hourDegreesAsync.set(this.hourDegrees);
+    // }
+
+
+
   }
 
+
+  fonction2() {
+
+    const sec = this.secondes?.nativeElement;
+    const min = this.minutes?.nativeElement;
+    const heure = this.heures?.nativeElement;
+
+    setInterval(function () {
+      let time = new Date();
+      let secondes = time.getSeconds() * 6;
+      let minutes = time.getMinutes() * 6;
+      let heures = time.getHours() * 30;
+
+
+      if (sec) {
+        (sec as HTMLElement).style.transform = `rotateZ(${secondes}deg)`;
+      }
+      if (min) {
+        (min as HTMLElement).style.transform = `rotateZ(${minutes}deg)`;
+      }
+      if (heure) {
+        (heure as HTMLElement).style.transform = `rotateZ(${heures + (minutes / 12)}deg)`;
+      }
+    })
+  }
 
 }

@@ -12,9 +12,13 @@
     <div class="inner-clock-face">
 
 
-      <div class="hand hour-hand" [style.transform]="'rotate('+hourDegreesAsync()+'deg)'"></div>
-      <div class="hand min-hand" [style.transform]="'rotate('+minsDegreesAsync()+'deg)'"></div>
-      <div class="hand second-hand" [style.transform]="'rotate('+secondsDegreesAsync()+'deg)'"></div>
+<!--      <div class="hand hour-hand" [style.transform]="'rotate('+hourDegreesAsync()+'deg)'"></div>-->
+<!--      <div class="hand min-hand" [style.transform]="'rotate('+minsDegreesAsync()+'deg)'"></div>-->
+<!--      <div class="hand second-hand" [style.transform]="'rotate('+secondsDegreesAsync()+'deg)'"></div>-->
+
+      <div class="hand hour-hand"  #heures></div>
+      <div class="hand min-hand" #minutes></div>
+      <div class="hand second-hand"  #secondes></div>
 
     </div>
 
