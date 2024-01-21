@@ -19,13 +19,12 @@ import {MatExpansionModule} from "@angular/material/expansion";
 import { PrevisionMeteoComponent } from './prevision-meteo/prevision-meteo.component';
 import {MatDividerModule} from "@angular/material/divider";
 import { BookmarkComponent } from './bookmark/bookmark.component';
-import {Horloge7Component} from "./horloge7/horloge7.component";
+
 
 @NgModule({
   declarations: [
     AppComponent,
     CalendrierComponent,
-    HorlogeComponent,
     CalendrierSemaineComponent,
     MeteoComponent,
     PrevisionMeteoComponent,
@@ -44,7 +43,7 @@ import {Horloge7Component} from "./horloge7/horloge7.component";
         NgChartsModule,
         MatExpansionModule,
         MatDividerModule,
-        Horloge7Component
+        HorlogeComponent
     ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,69 +1,92 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, signal, ViewChild} from '@angular/core';
+import {CommonModule} from '@angular/common';
 
 @Component({
-  selector: 'app-horloge',
+  selector: 'app-horloge7',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './horloge.component.html',
-  styleUrls: ['./horloge.component.scss']
+  styleUrl: './horloge.component.scss'
 })
-export class HorlogeComponent implements OnInit{
+export class HorlogeComponent implements OnInit//, AfterViewInit
+{
 
-  ngOnInit(): void{
-    this.fonction();
+  secondsDegrees: number = 0;
+  minsDegrees: number = 0;
+  hourDegrees: number = 0;
+  secondsDegreesAsync = signal(0);
+  minsDegreesAsync = signal(0);
+  hourDegreesAsync = signal(0);
+
+  @ViewChild('secondes') secondes: ElementRef<HTMLDivElement> | null = null;
+  @ViewChild('minutes') minutes: ElementRef<HTMLDivElement> | null = null;
+  @ViewChild('heures') heures: ElementRef<HTMLDivElement> | null = null;
+
+  ngOnInit() {
+    // setInterval(() => {
+    //   this.setDate();
+    // }, 1000);
+
   }
 
-  fonction(){
-    var d    = new Date();
-    var time = d.getSeconds() + 60 * d.getMinutes() + 3600 * d.getHours();
 
-    var aigS = document.getElementById('aigS');
-    var aigM = document.getElementById('aigM');
-    var aigH = document.getElementById('aigH');
-
-    if(aigS) {
-      // aigS.style.MozTransform = 'rotate(' + (time * 6) + 'deg)';
-      // aigS.style.WebkitTransform = 'rotate(' + (time * 6) + 'deg)';
-      // aigS.style.OTransform = 'rotate(' + (time * 6) + 'deg)';
-      // aigS.style.msTransform = 'rotate(' + (time * 6) + 'deg)';
-      aigS.style.transform = 'rotate(' + (time * 6) + 'deg)';
-    }
-    if(aigM) {
-      // aigM.style.MozTransform = 'rotate(' + Math.round(time / 10) + 'deg)';
-      // aigM.style.WebkitTransform = 'rotate(' + Math.round(time / 10) + 'deg)';
-      // aigM.style.OTransform = 'rotate(' + Math.round(time / 10) + 'deg)';
-      // aigM.style.msTransform = 'rotate(' + Math.round(time / 10) + 'deg)';
-      aigM.style.transform = 'rotate(' + Math.round(time / 10) + 'deg)';
-    }
-    if(aigH) {
-      // aigH.style.MozTransform = 'rotate(' + Math.round(time / 120) + 'deg)';
-      // aigH.style.WebkitTransform = 'rotate(' + Math.round(time / 120) + 'deg)';
-      // aigH.style.OTransform = 'rotate(' + Math.round(time / 120) + 'deg)';
-      // aigH.style.msTransform = 'rotate(' + Math.round(time / 120) + 'deg)';
-      aigH.style.transform = 'rotate(' + Math.round(time / 120) + 'deg)';
-    }
-
-    setInterval(function() {
-      time++;
-      if(aigS) {
-        // aigS.style.MozTransform = 'rotate(' + (time * 6) + 'deg)';
-        // aigS.style.WebkitTransform = 'rotate(' + (time * 6) + 'deg)';
-        // aigS.style.OTransform = 'rotate(' + (time * 6) + 'deg)';
-        // aigS.style.msTransform = 'rotate(' + (time * 6) + 'deg)';
-        aigS.style.transform = 'rotate(' + (time * 6) + 'deg)';
-      }
-      if(aigM) {
-        // aigM.style.MozTransform = 'rotate(' + Math.round(time / 10) + 'deg)';
-        // aigM.style.WebkitTransform = 'rotate(' + Math.round(time / 10) + 'deg)';
-        // aigM.style.OTransform = 'rotate(' + Math.round(time / 10) + 'deg)';
-        // aigM.style.msTransform = 'rotate(' + Math.round(time / 10) + 'deg)';
-        aigM.style.transform = 'rotate(' + Math.round(time / 10) + 'deg)';
-      }
-      if(aigH) {
-        // aigH.style.MozTransform = 'rotate(' + Math.round(time / 120) + 'deg)';
-        // aigH.style.WebkitTransform = 'rotate(' + Math.round(time / 120) + 'deg)';
-        // aigH.style.OTransform = 'rotate(' + Math.round(time / 120) + 'deg)';
-        // aigH.style.msTransform = 'rotate(' + Math.round(time / 120) + 'deg)';
-        aigH.style.transform = 'rotate(' + Math.round(time / 120) + 'deg)';
-      }
-    }, 1000);
+  ngAfterViewInit() {
+    this.fonction2();
   }
+
+
+  private setDate() {
+    const now = new Date();
+
+    const lastSecondsDegrees = this.secondsDegrees;
+    const seconds = now.getSeconds();
+    this.secondsDegrees = ((seconds / 60) * 360) + 90;
+
+    const lastMinsDegrees = this.minsDegrees;
+    const mins = now.getMinutes();
+    this.minsDegrees = ((mins / 60) * 360) + ((seconds / 60) * 6) + 90;
+
+    const lastHourDegrees = this.hourDegrees;
+    const hour = now.getHours();
+    this.hourDegrees = ((hour / 12) * 360) + ((mins / 60) * 30) + 90;
+    // if (lastSecondsDegrees != this.secondsDegrees) {
+    //   this.secondsDegreesAsync.set(this.secondsDegrees);
+    // }
+    // if (lastMinsDegrees != this.minsDegrees) {
+    //   this.minsDegreesAsync.set(this.minsDegrees);
+    // }
+    // if (lastHourDegrees != this.hourDegrees) {
+    //   this.hourDegreesAsync.set(this.hourDegrees);
+    // }
+
+
+
+  }
+
+
+  fonction2() {
+
+    const sec = this.secondes?.nativeElement;
+    const min = this.minutes?.nativeElement;
+    const heure = this.heures?.nativeElement;
+
+    setInterval(function () {
+      let time = new Date();
+      let secondes = time.getSeconds() * 6;
+      let minutes = time.getMinutes() * 6;
+      let heures = time.getHours() * 30;
+
+
+      if (sec) {
+        (sec as HTMLElement).style.transform = `rotateZ(${secondes}deg)`;
+      }
+      if (min) {
+        (min as HTMLElement).style.transform = `rotateZ(${minutes}deg)`;
+      }
+      if (heure) {
+        (heure as HTMLElement).style.transform = `rotateZ(${heures + (minutes / 12)}deg)`;
+      }
+    })
+  }
+
 }
