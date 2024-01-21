@@ -30,7 +30,9 @@ export class MeteoComponent implements OnInit {
   private rechargerMeteo(){
     this.http.get<MeteoModel>('api/meteo').subscribe(data => {
       this.miseAJourMeteo(data);
-      this._snackBar.open("Mise à jour de la météo réussi");
+      this._snackBar.open("Mise à jour de la météo réussi","", {
+        duration: 3000
+      });
     });
   }
 
