@@ -77,7 +77,7 @@ public class MeteoService {
     }
 
     public MeteoGlobalModel getMeteo() {
-        if (meteoGlobalModel != null&&false) {
+        if (meteoGlobalModel != null) {
             return meteoGlobalModel;
         } else {
             try {
@@ -342,10 +342,10 @@ public class MeteoService {
 
 
     private MeteoGlobalModel getJson2() throws IOException {
-        if(StringUtils.hasText(meteoProperties.getFichier())) {
-            LOGGER.atInfo().log("lecture meteo fichier: {}",meteoProperties.getFichier());
-            var p=Path.of(meteoProperties.getFichier());
-            var s=Files.readString(p, StandardCharsets.UTF_8);
+        if (StringUtils.hasText(meteoProperties.getFichier()) && fichierExiste(meteoProperties.getFichier())) {
+            LOGGER.atInfo().log("lecture meteo fichier: {}", meteoProperties.getFichier());
+            var p = Path.of(meteoProperties.getFichier());
+            var s = Files.readString(p, StandardCharsets.UTF_8);
             final MeteoGlobalModel meteoGlobalModel1 = construitModelMeteo(s);
             if (meteoGlobalModel1 != null) {
                 return meteoGlobalModel1;
@@ -373,6 +373,11 @@ public class MeteoService {
         } else {
             throw new RuntimeException("Erreur");
         }
+    }
+
+    private boolean fichierExiste(String fichier) {
+        Path p = Path.of(fichier);
+        return Files.exists(p) && Files.isRegularFile(p);
     }
 
     private void sauveJson(String res) {

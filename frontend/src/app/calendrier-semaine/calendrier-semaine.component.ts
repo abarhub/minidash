@@ -72,16 +72,19 @@ export class CalendrierSemaineComponent implements OnInit {
         dt2 = dt3;
       }
     }
-    console.log('listeJours', this.listeJours);
+    console.log('listeJours',this.dateDebut.toISODate(), this.listeJours);
     console.log('listeSaints', this.listeSaints);
 
   }
 
   private updateVacances(value: PeriodeVacanceModel[]) {
     this._listePeriodeVacance = value;
-    if(this.dateDebut.month==11&&this.dateDebut.day==1){
-      console.log('vacances',this.dateDebut,value);
-    }
+    // if(this.dateDebut.month==11&&this.dateDebut.day==1){
+    //   console.log('vacances',this.dateDebut,value);
+    // }
+    // if(this.dateDebut.month==2&&this.dateDebut.day==19){
+    //     console.log('vacances',this.dateDebut.toISODate(),value);
+    //   }
     for (let journee of this.listeJours) {
       if (journee.date != null&&this._listePeriodeVacance) {
         this.updateZone(journee,this._listePeriodeVacance);
@@ -100,22 +103,30 @@ export class CalendrierSemaineComponent implements OnInit {
         journee.vacancesC = false;
       }
     }
-    if(this.dateDebut.month==11&&this.dateDebut.day==1){
-      console.log('vacances resultat',this.dateDebut,this.listeJours);
-    }
+    // if(this.dateDebut.month==11&&this.dateDebut.day==1){
+    //   console.log('vacances resultat',this.dateDebut,this.listeJours);
+    // }
+    // if(this.dateDebut.month==2&&this.dateDebut.day==19){
+    //   console.log('vacances resultat',this.dateDebut.toISODate(),this.listeJours);
+    // }
   }
 
   private updateZone(journee:JourneeModel,listePeriodeVacance:PeriodeVacanceModel[]):void{
     journee.vacancesA = listePeriodeVacance.findIndex(x =>
-      x.zone === 'zoneA' && x.dateDebut != null && journee.date != null && journee.date >= x.dateDebut && x.dateFin != null && journee.date <= x.dateFin
+      this.isZone('zoneA',x, journee)
     ) >= 0;
     journee.vacancesB = listePeriodeVacance.findIndex(x =>
-      x.zone === 'zoneB' && x.dateDebut != null && journee.date != null && journee.date >= x.dateDebut && x.dateFin != null && journee.date <= x.dateFin
+      this.isZone('zoneB',x, journee)
     ) >= 0;
     journee.vacancesC = listePeriodeVacance.findIndex(x =>
-      x.zone === 'zoneC' && x.dateDebut != null && journee.date != null && journee.date >= x.dateDebut && x.dateFin != null && journee.date <= x.dateFin
+      this.isZone('zoneC',x, journee)
     ) >= 0;
   }
+
+  private isZone(zone:string, x: PeriodeVacanceModel, journee: JourneeModel) {
+    return x.zone === zone && x.dateDebut != null && journee.date != null && journee.date >= x.dateDebut && x.dateFin != null && journee.date <= x.dateFin;
+  }
+
   private getJourSemaine(dt2: DateTime): string {
     switch (dt2.weekday) {
       case 1:

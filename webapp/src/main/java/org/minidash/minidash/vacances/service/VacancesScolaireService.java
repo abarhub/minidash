@@ -89,12 +89,12 @@ public class VacancesScolaireService {
         final var anneDebut = 2017;
         final var anneeFin = anneeCourante + 4;
         LOGGER.atInfo().log("récupérarion des vacances entre {} et {}", anneDebut, anneeFin);
-        for (int annee = anneDebut; annee <= anneeFin; annee += 2) {
-            LOGGER.atInfo().log("vacances annee {}-{}", annee, annee + 1);
+        for (int annee = anneDebut; annee <= anneeFin; annee ++) {
+            LOGGER.atInfo().log("vacances annee {}", annee);
             RestTemplate restTemplate = new RestTemplate();
             String url = vacancesProperties.getUrlVacancesScolaires();
             LocalDate dateDebut = LocalDate.of(annee, Month.JANUARY, 1);
-            LocalDate dateFin = LocalDate.of(annee + 1, Month.DECEMBER, 31);
+            LocalDate dateFin = LocalDate.of(annee, Month.DECEMBER, 31);
             int limite = 100;
             url += "?where=start_date>=\"" + dateDebut + "\" and end_date<=\"" + dateFin + "\" and zones in (\"Zone A\",\"Zone B\",\"Zone C\")&limit=" + limite;
             LOGGER.atInfo().log("url={}", url);

@@ -144,6 +144,8 @@ export class CalendrierComponent implements OnInit {
             vacance.dateDebut = dateDebut;
             vacance.dateFin = dateFin;
             liste.push(vacance);
+          } else {
+            console.error("Type de zone invalide:",zone,dateDebut,dateFin);
           }
         }
       }
