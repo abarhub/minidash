@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, signal, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit, signal, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 
 @Component({
@@ -8,15 +8,12 @@ import {CommonModule} from '@angular/common';
   templateUrl: './horloge.component.html',
   styleUrl: './horloge.component.scss'
 })
-export class HorlogeComponent implements OnInit//, AfterViewInit
+export class HorlogeComponent implements OnInit, AfterViewInit
 {
 
   secondsDegrees: number = 0;
   minsDegrees: number = 0;
   hourDegrees: number = 0;
-  secondsDegreesAsync = signal(0);
-  minsDegreesAsync = signal(0);
-  hourDegreesAsync = signal(0);
 
   @ViewChild('secondes') secondes: ElementRef<HTMLDivElement> | null = null;
   @ViewChild('minutes') minutes: ElementRef<HTMLDivElement> | null = null;
@@ -35,32 +32,32 @@ export class HorlogeComponent implements OnInit//, AfterViewInit
   }
 
 
-  private setDate() {
-    const now = new Date();
-
-    const lastSecondsDegrees = this.secondsDegrees;
-    const seconds = now.getSeconds();
-    this.secondsDegrees = ((seconds / 60) * 360) + 90;
-
-    const lastMinsDegrees = this.minsDegrees;
-    const mins = now.getMinutes();
-    this.minsDegrees = ((mins / 60) * 360) + ((seconds / 60) * 6) + 90;
-
-    const lastHourDegrees = this.hourDegrees;
-    const hour = now.getHours();
-    this.hourDegrees = ((hour / 12) * 360) + ((mins / 60) * 30) + 90;
-    // if (lastSecondsDegrees != this.secondsDegrees) {
-    //   this.secondsDegreesAsync.set(this.secondsDegrees);
-    // }
-    // if (lastMinsDegrees != this.minsDegrees) {
-    //   this.minsDegreesAsync.set(this.minsDegrees);
-    // }
-    // if (lastHourDegrees != this.hourDegrees) {
-    //   this.hourDegreesAsync.set(this.hourDegrees);
-    // }
-
-
-  }
+  // private setDate() {
+  //   const now = new Date();
+  //
+  //   const lastSecondsDegrees = this.secondsDegrees;
+  //   const seconds = now.getSeconds();
+  //   this.secondsDegrees = ((seconds / 60) * 360) + 90;
+  //
+  //   const lastMinsDegrees = this.minsDegrees;
+  //   const mins = now.getMinutes();
+  //   this.minsDegrees = ((mins / 60) * 360) + ((seconds / 60) * 6) + 90;
+  //
+  //   const lastHourDegrees = this.hourDegrees;
+  //   const hour = now.getHours();
+  //   this.hourDegrees = ((hour / 12) * 360) + ((mins / 60) * 30) + 90;
+  //   // if (lastSecondsDegrees != this.secondsDegrees) {
+  //   //   this.secondsDegreesAsync.set(this.secondsDegrees);
+  //   // }
+  //   // if (lastMinsDegrees != this.minsDegrees) {
+  //   //   this.minsDegreesAsync.set(this.minsDegrees);
+  //   // }
+  //   // if (lastHourDegrees != this.hourDegrees) {
+  //   //   this.hourDegreesAsync.set(this.hourDegrees);
+  //   // }
+  //
+  //
+  // }
 
 
   fonction2() {
