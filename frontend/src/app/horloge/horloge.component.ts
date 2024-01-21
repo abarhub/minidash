@@ -60,7 +60,6 @@ export class HorlogeComponent implements OnInit//, AfterViewInit
     // }
 
 
-
   }
 
 
@@ -72,19 +71,22 @@ export class HorlogeComponent implements OnInit//, AfterViewInit
 
     setInterval(function () {
       let time = new Date();
-      let secondes = time.getSeconds() * 6;
-      let minutes = time.getMinutes() * 6;
-      let heures = time.getHours() * 30;
+      let secondes = time.getSeconds();
+      let minutes = time.getMinutes();
+      let heures = time.getHours();
 
 
       if (sec) {
-        (sec as HTMLElement).style.transform = `rotateZ(${secondes}deg)`;
+        const tmp = ((secondes / 60) * 360) + 90;
+        (sec as HTMLElement).style.transform = `rotate(${tmp}deg`;
       }
       if (min) {
-        (min as HTMLElement).style.transform = `rotateZ(${minutes}deg)`;
+        const tmp = ((minutes / 60) * 360) + ((secondes / 60) * 6) + 90;
+        (min as HTMLElement).style.transform = `rotate(${tmp}deg)`;
       }
       if (heure) {
-        (heure as HTMLElement).style.transform = `rotateZ(${heures + (minutes / 12)}deg)`;
+        const tmp = ((heures / 12) * 360) + ((minutes / 60) * 30) + 90;
+        (heure as HTMLElement).style.transform = `rotate(${tmp}deg)`;
       }
     })
   }
