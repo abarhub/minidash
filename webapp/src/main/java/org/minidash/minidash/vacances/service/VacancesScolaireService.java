@@ -42,8 +42,8 @@ public class VacancesScolaireService {
 
     @PostConstruct
     public void init() {
-        LOGGER.atInfo().log("init vacances");
-        LOGGER.atInfo().log("cache des vacances: {}", vacancesProperties.getDureeCache());
+        LOGGER.atDebug().log("init vacances");
+        LOGGER.atDebug().log("cache des vacances: {}", vacancesProperties.getDureeCache());
         List<VacancesDto> listeTotal = null;
         boolean forceMaj = false;
         try {
@@ -88,13 +88,13 @@ public class VacancesScolaireService {
         final var anneeCourante = LocalDate.now().getYear();
         final var anneDebut = 2017;
         final var anneeFin = anneeCourante + 4;
-        LOGGER.atInfo().log("récupérarion des vacances entre {} et {}", anneDebut, anneeFin);
+        LOGGER.atDebug().log("récupérarion des vacances entre {} et {}", anneDebut, anneeFin);
         for (int annee = anneDebut; annee <= anneeFin; annee ++) {
-            LOGGER.atInfo().log("vacances annee {}", annee);
+            LOGGER.atDebug().log("vacances annee {}", annee);
             RestTemplate restTemplate = new RestTemplate();
             String url = vacancesProperties.getUrlVacancesScolaires();
-            LocalDate dateDebut = LocalDate.of(annee, Month.JANUARY, 1);
-            LocalDate dateFin = LocalDate.of(annee, Month.DECEMBER, 31);
+            LocalDate dateDebut = LocalDate.of(annee, Month.JANUARY, 1).minusMonths(1);
+            LocalDate dateFin = LocalDate.of(annee, Month.DECEMBER, 31).plusMonths(1);
             int limite = 100;
             url += "?where=start_date>=\"" + dateDebut + "\" and end_date<=\"" + dateFin + "\" and zones in (\"Zone A\",\"Zone B\",\"Zone C\")&limit=" + limite;
             LOGGER.atInfo().log("url={}", url);

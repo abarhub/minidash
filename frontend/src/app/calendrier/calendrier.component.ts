@@ -77,7 +77,7 @@ export class CalendrierComponent implements OnInit {
   private calculDuMois(premierjourDuMois: DateTime): DateTime[] {
     let semaineDuMois: DateTime[] = [];
     let dte = premierjourDuMois;
-    console.log('startOf month', dte.toISODate());
+    console.debug('startOf month', dte.toISODate());
     let dte2 = dte;
     while (true) {
       semaineDuMois.push(dte);
@@ -103,7 +103,7 @@ export class CalendrierComponent implements OnInit {
 
     let url='api/vacances';
     this.http.get<CalendrierModel>(url).subscribe(data => {
-      console.log("data vacances", data);
+      console.debug("data vacances", data);
       this.initVacances(data);
     });
   }
@@ -153,20 +153,20 @@ export class CalendrierComponent implements OnInit {
     this.listePeriodeVacances = liste;
     if(data){
       if(data.jourDecalageHivert){
-        var luxonDate = DateTime.fromSQL(data.jourDecalageHivert);
-        console.log("decalage1",data.jourDecalageHivert,luxonDate);
+        const luxonDate = DateTime.fromSQL(data.jourDecalageHivert);
+        console.debug("decalage1",data.jourDecalageHivert,luxonDate);
         this.decalageHeureHivert=luxonDate;
       }
       if(data.jourDecalageEte){
-        var luxonDate = DateTime.fromSQL(data.jourDecalageEte);
-        console.log("decalage2",data.jourDecalageEte,luxonDate);
+        const luxonDate = DateTime.fromSQL(data.jourDecalageEte);
+        console.debug("decalage2",data.jourDecalageEte,luxonDate);
         this.decalageHeureEte=luxonDate;
       }
     }
   }
 
   changenbMois($event: any) {
-    console.log('toggle', $event);
+    console.debug('toggle', $event);
     let nbMois = 0;
     if ($event === 'trois') {
       nbMois = 3;
