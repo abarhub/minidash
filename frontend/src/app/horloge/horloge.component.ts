@@ -1,66 +1,24 @@
-import {AfterViewInit, Component, ElementRef, OnInit, signal, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 
 @Component({
-  selector: 'app-horloge7',
+  selector: 'app-horloge',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './horloge.component.html',
   styleUrl: './horloge.component.scss'
 })
-export class HorlogeComponent implements OnInit, AfterViewInit
-{
-
-  secondsDegrees: number = 0;
-  minsDegrees: number = 0;
-  hourDegrees: number = 0;
+export class HorlogeComponent implements AfterViewInit {
 
   @ViewChild('secondes') secondes: ElementRef<HTMLDivElement> | null = null;
   @ViewChild('minutes') minutes: ElementRef<HTMLDivElement> | null = null;
   @ViewChild('heures') heures: ElementRef<HTMLDivElement> | null = null;
 
-  ngOnInit() {
-    // setInterval(() => {
-    //   this.setDate();
-    // }, 1000);
-
-  }
-
-
   ngAfterViewInit() {
-    this.fonction2();
+    this.fonction();
   }
 
-
-  // private setDate() {
-  //   const now = new Date();
-  //
-  //   const lastSecondsDegrees = this.secondsDegrees;
-  //   const seconds = now.getSeconds();
-  //   this.secondsDegrees = ((seconds / 60) * 360) + 90;
-  //
-  //   const lastMinsDegrees = this.minsDegrees;
-  //   const mins = now.getMinutes();
-  //   this.minsDegrees = ((mins / 60) * 360) + ((seconds / 60) * 6) + 90;
-  //
-  //   const lastHourDegrees = this.hourDegrees;
-  //   const hour = now.getHours();
-  //   this.hourDegrees = ((hour / 12) * 360) + ((mins / 60) * 30) + 90;
-  //   // if (lastSecondsDegrees != this.secondsDegrees) {
-  //   //   this.secondsDegreesAsync.set(this.secondsDegrees);
-  //   // }
-  //   // if (lastMinsDegrees != this.minsDegrees) {
-  //   //   this.minsDegreesAsync.set(this.minsDegrees);
-  //   // }
-  //   // if (lastHourDegrees != this.hourDegrees) {
-  //   //   this.hourDegreesAsync.set(this.hourDegrees);
-  //   // }
-  //
-  //
-  // }
-
-
-  fonction2() {
+  fonction() {
 
     const sec = this.secondes?.nativeElement;
     const min = this.minutes?.nativeElement;
