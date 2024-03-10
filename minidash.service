@@ -1,0 +1,23 @@
+[Unit]
+Description=Minidash server daemon
+After=network.target
+
+[Service]
+#Type=simple
+Type=forking
+#Type=exec
+#EnvironmentFile=/etc/sysconfig/sshd
+ExecStart=/home/abarret/minidash/run.sh start
+ExecStop=/home/abarret/minidash/run.sh stop
+ExecReload=/home/abarret/minidash/run.sh restart
+#Restart= always
+User=abarret
+KillMode=process
+#Environment=CASSANDRA_HOME=/usr/share/cassandra
+#Environment=CASSANDRA_CONF=/etc/cassandra/conf
+#Environment=CASSANDRA_INCLUDE=/usr/share/cassandra/cassandra.in.sh
+#Environment=LOCAL_JMX=false
+WorkingDirectory=/home/abarret/minidash
+
+[Install]
+WantedBy=multi-user.target
