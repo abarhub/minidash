@@ -39,6 +39,7 @@ export class CalendrierSemaineComponent implements OnInit {
     this.listeJours = [];
     this.listeSaints = [];
     this.listeJourSemaine = [];
+    console.log('width',window.innerWidth);
     //let dt2 = dt.startOf('week');
     let dt2 = this.dateDebut;
     for (let i = 0; i < 7; i++) {

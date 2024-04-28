@@ -1,9 +1,28 @@
 
+// semble ne pas fonctionner
+@media all and (min-width: 10px) {
+
+  .semaine {
+    width: 150px;
+    font-size: 10px;
+  }
+}
+
+//@media screen and (max-width: 3000px) {
+//
+//  .semaine {
+//    width: 200px;
+//    font-size: 14px;
+//  }
+//}
+
+
 .semaine {
   border: 3px;
-  //width: 150px;
-  width: 200px;
+  width: 150px;
+  //width: 200px;
   min-width: 150px;
+  font-size: 10px;
 }
 
 .journee {
