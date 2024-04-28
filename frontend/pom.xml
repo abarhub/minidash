@@ -13,7 +13,7 @@
     <artifactId>minidash-frontend</artifactId>
   <properties>
     <frontend-maven-plugin.version>1.15.0</frontend-maven-plugin.version>
-    <frontend-maven-plugin.nodeVersion>v18.14.2</frontend-maven-plugin.nodeVersion>
+    <frontend-maven-plugin.nodeVersion>v20.12.2</frontend-maven-plugin.nodeVersion>
   </properties>
 
   <build>
