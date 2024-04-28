@@ -26,8 +26,50 @@
 
   </div>
 
-<!--  <hr/>-->
+  <div class="aujourd-hui">
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Aujourd'hui
+        </mat-panel-title>
+        <mat-panel-description>
+          Aujourd'hui
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div>
 
+        <div *ngIf="meteo.meteoCourante?.matin">
+          Matin :
+          <img *ngIf="meteo.meteoCourante?.matin?.iconeStatut"
+               src="https://openweathermap.org/img/wn/{{meteo.meteoCourante?.matin?.iconeStatut}}@4x.png">
+        </div>
+
+        <div *ngIf="meteo.meteoCourante?.apresMidi">
+          Apres midi :
+          <img *ngIf="meteo.meteoCourante?.apresMidi?.iconeStatut"
+               src="https://openweathermap.org/img/wn/{{meteo.meteoCourante?.apresMidi?.iconeStatut}}@4x.png">
+        </div>
+
+      </div>
+    </mat-expansion-panel>
+  </div>
+
+  <div class="prochains-jours">
+
+    <mat-expansion-panel expanded="true">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Prochains jours
+        </mat-panel-title>
+        <mat-panel-description>
+          Prochains jours
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <div>
+
+      </div>
+    </mat-expansion-panel>
+  </div>
 
   <div class="precipitation">
 

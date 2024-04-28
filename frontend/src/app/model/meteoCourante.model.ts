@@ -1,3 +1,5 @@
+import {MeteoStatutModel} from "./meteoStatut.model";
+
 export class MeteoCouranteModel {
   date: Date | null = null;
   temperature: number = 0;
@@ -14,4 +16,9 @@ export class MeteoCouranteModel {
   codeStatut: number = 0;
   descriptionStatut: string = '';
   iconeStatut: string = '';
+
+  matin: MeteoStatutModel | null = null;
+  apresMidi: MeteoStatutModel | null = null;
+
+
 }
