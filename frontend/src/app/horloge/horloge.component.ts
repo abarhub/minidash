@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 
 @Component({
@@ -8,7 +8,9 @@ import {CommonModule} from '@angular/common';
   templateUrl: './horloge.component.html',
   styleUrl: './horloge.component.scss'
 })
-export class HorlogeComponent implements AfterViewInit {
+export class HorlogeComponent implements AfterViewInit, OnDestroy {
+
+  private intervalID: number | null = null;
 
   @ViewChild('secondes') secondes: ElementRef<HTMLDivElement> | null = null;
   @ViewChild('minutes') minutes: ElementRef<HTMLDivElement> | null = null;
@@ -24,7 +26,7 @@ export class HorlogeComponent implements AfterViewInit {
     const min = this.minutes?.nativeElement;
     const heure = this.heures?.nativeElement;
 
-    setInterval(function () {
+    this.intervalID = setInterval(function () {
       let time = new Date();
       let secondes = time.getSeconds();
       let minutes = time.getMinutes();
@@ -43,7 +45,14 @@ export class HorlogeComponent implements AfterViewInit {
         const tmp = ((heures / 12) * 360) + ((minutes / 60) * 30) + 90;
         (heure as HTMLElement).style.transform = `rotate(${tmp}deg)`;
       }
-    })
+    });
+
+  }
+
+  ngOnDestroy(): void {
+    if (this.intervalID) {
+      clearInterval(this.intervalID);
+    }
   }
 
 }
