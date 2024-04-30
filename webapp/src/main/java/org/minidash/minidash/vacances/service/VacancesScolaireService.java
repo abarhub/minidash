@@ -1,22 +1,21 @@
 package org.minidash.minidash.vacances.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import org.minidash.minidash.base.model.GlobalModel;
 import org.minidash.minidash.base.service.BaseService;
-import org.minidash.minidash.vacances.dto.CalendrierDto;
-import org.minidash.minidash.vacances.dto.VacancesDto;
 import org.minidash.minidash.properties.AppProperties;
 import org.minidash.minidash.properties.VacancesProperties;
+import org.minidash.minidash.vacances.dto.CalendrierDto;
+import org.minidash.minidash.vacances.dto.ListResultatDto;
+import org.minidash.minidash.vacances.dto.ResultatDto;
+import org.minidash.minidash.vacances.dto.VacancesDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestClientException;
 
 import java.io.IOException;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Service
 public class VacancesScolaireService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VacancesScolaireService.class);
@@ -35,9 +33,13 @@ public class VacancesScolaireService {
 
     private List<VacancesDto> listeVacances;
 
-    public VacancesScolaireService(BaseService baseService, AppProperties appProperties) {
+    private final VacanceRestService vacanceRestService;
+
+    public VacancesScolaireService(BaseService baseService, AppProperties appProperties,
+                                   VacanceRestService vacanceRestService) {
         this.baseService = baseService;
-        this.vacancesProperties=appProperties.getVacances();
+        this.vacancesProperties = appProperties.getVacances();
+        this.vacanceRestService = vacanceRestService;
     }
 
     @PostConstruct
@@ -83,54 +85,37 @@ public class VacancesScolaireService {
         this.listeVacances = List.copyOf(listeTotal);
     }
 
+
     private List<VacancesDto> getVacancesDtos() {
         List<VacancesDto> listeTotal = new ArrayList<>();
         final var anneeCourante = LocalDate.now().getYear();
         final var anneDebut = 2017;
         final var anneeFin = anneeCourante + 4;
         LOGGER.atDebug().log("récupérarion des vacances entre {} et {}", anneDebut, anneeFin);
-        for (int annee = anneDebut; annee <= anneeFin; annee ++) {
+        for (int annee = anneDebut; annee <= anneeFin; annee++) {
             LOGGER.atDebug().log("vacances annee {}", annee);
-            RestTemplate restTemplate = new RestTemplate();
-            String url = vacancesProperties.getUrlVacancesScolaires();
             LocalDate dateDebut = LocalDate.of(annee, Month.JANUARY, 1).minusMonths(1);
             LocalDate dateFin = LocalDate.of(annee, Month.DECEMBER, 31).plusMonths(1);
             int limite = 100;
-            url += "?where=start_date>=\"" + dateDebut + "\" and end_date<=\"" + dateFin + "\" and zones in (\"Zone A\",\"Zone B\",\"Zone C\")&limit=" + limite;
-            LOGGER.atInfo().log("url={}", url);
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            if (response.getStatusCode().is2xxSuccessful()) {
+
+            try {
+                ListResultatDto body = getListeVacances(dateDebut, dateFin, limite);
                 try {
                     List<VacancesDto> liste = new ArrayList<>();
-                    String body = response.getBody();
                     LOGGER.atInfo().log("response: {}", body);
-                    ObjectMapper mapper = new ObjectMapper();
-                    var res = mapper.readTree(body);
-                    if (res != null) {
-                        if (res.has("results")) {
-                            var res2 = res.get("results");
-                            if (res2.isArray() && !res2.isEmpty()) {
-                                for (int i = 0; i < res2.size(); i++) {
-                                    var res3 = res2.get(i);
-                                    VacancesDto vacancesDto = new VacancesDto();
-                                    if (res3.has("description")) {
-                                        vacancesDto.setDescription(res3.get("description").asText());
-                                    }
-                                    if (res3.has("start_date")) {
-                                        vacancesDto.setDateDebut(convertToDate(res3.get("start_date").asText()));
-                                    }
-                                    if (res3.has("end_date")) {
-                                        vacancesDto.setDateFin(convertToDate(res3.get("end_date").asText()));
-                                    }
-                                    if (res3.has("zones")) {
-                                        vacancesDto.setZone(res3.get("zones").asText());
-                                    }
-                                    if (res3.has("annee_scolaire")) {
-                                        vacancesDto.setAnneeScolaire(res3.get("annee_scolaire").asText());
-                                    }
-                                    if (vacancesDto.getDateDebut() != null && vacancesDto.getDateFin() != null) {
-                                        liste.add(vacancesDto);
-                                    }
+                    if (body != null) {
+                        if (!CollectionUtils.isEmpty(body.results())) {
+                            var res2 = body.results();
+                            for (ResultatDto res3 : res2) {
+                                VacancesDto vacancesDto = new VacancesDto();
+                                vacancesDto.setDescription(res3.description());
+                                vacancesDto.setDateDebut(convertToDate(res3.start_date(), true));
+                                vacancesDto.setDateFin(convertToDate(res3.end_date(), false));
+                                vacancesDto.setZone(res3.zones());
+                                vacancesDto.setAnneeScolaire(res3.annee_scolaire());
+
+                                if (vacancesDto.getDateDebut() != null && vacancesDto.getDateFin() != null) {
+                                    liste.add(vacancesDto);
                                 }
                             }
                         }
@@ -142,12 +127,18 @@ public class VacancesScolaireService {
                 } catch (Exception e) {
                     LOGGER.atError().log("Erreur pour parser le résultat", e);
                 }
-            } else {
-                LOGGER.atError().log("Erreur pour récupérer les vacances: {}", response.getStatusCode());
+            } catch (RestClientException e) {
+                LOGGER.atError().log("Erreur pour récupérer les vacances pour la periode {} et {}", dateDebut, dateFin, e);
+                break;
             }
         }
         listeTotal = nettoyage(listeTotal);
         return listeTotal;
+    }
+
+    private ListResultatDto getListeVacances(LocalDate dateDebut, LocalDate dateFin, int limit) {
+        String where = "start_date>=\"" + dateDebut + "\" and end_date<=\"" + dateFin + "\" and zones in (\"Zone A\",\"Zone B\",\"Zone C\")";
+        return vacanceRestService.get(where, limit);
     }
 
     private static List<VacancesDto> nettoyage(List<VacancesDto> liste) {
@@ -176,31 +167,35 @@ public class VacancesScolaireService {
         return liste;
     }
 
-    public CalendrierDto getCalendrierDto(){
-        CalendrierDto calendrierDto=new CalendrierDto();
-        var listeVacances=getVacances();
+    public CalendrierDto getCalendrierDto() {
+        CalendrierDto calendrierDto = new CalendrierDto();
+        var listeVacances = getVacances();
         calendrierDto.setListVacancesDto(listeVacances);
         calculDecalageHoraire(calendrierDto);
         return calendrierDto;
     }
 
     private void calculDecalageHoraire(CalendrierDto calendrierDto) {
-        LocalDate now=LocalDate.now();
-        var decalageEte=YearMonth.of( now.getYear() , Month.MARCH )                              // Represent the entirety of a specified month.
-                .atEndOfMonth()                                                // Get the date of the last day of that month.
-                .with( TemporalAdjusters.previousOrSame( DayOfWeek.SUNDAY ) );
+        LocalDate now = LocalDate.now();
+        var decalageEte = YearMonth.of(now.getYear(), Month.MARCH)    // Represent the entirety of a specified month.
+                .atEndOfMonth()                                       // Get the date of the last day of that month.
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
         calendrierDto.setJourDecalageEte(decalageEte);
-        var decalageHivert=YearMonth.of( now.getYear() , Month.OCTOBER )                              // Represent the entirety of a specified month.
-                .atEndOfMonth()                                                // Get the date of the last day of that month.
-                .with( TemporalAdjusters.previousOrSame( DayOfWeek.SUNDAY ) );
+        var decalageHivert = YearMonth.of(now.getYear(), Month.OCTOBER) // Represent the entirety of a specified month.
+                .atEndOfMonth()                                         // Get the date of the last day of that month.
+                .with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
         calendrierDto.setJourDecalageHivert(decalageHivert);
     }
 
-    private LocalDate convertToDate(String date) {
-        if (date != null && !date.trim().isEmpty()) {
-            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-            var zdt = OffsetDateTime.parse(date, formatter);
-            return zdt.toLocalDate();
+    private LocalDate convertToDate(OffsetDateTime dateTime, boolean dateDebut) {
+        if (dateTime != null) {
+            LocalDate date = dateTime.toLocalDate();
+            if (dateDebut) {
+                if (dateTime.getHour() >= 16) {
+                    date = date.plusDays(1);
+                }
+            }
+            return date;
         } else {
             return null;
         }
