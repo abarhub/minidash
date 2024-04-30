@@ -35,11 +35,14 @@ public class VacancesScolaireService {
 
     private final VacanceRestService vacanceRestService;
 
+    private Clock clock;
+
     public VacancesScolaireService(BaseService baseService, AppProperties appProperties,
-                                   VacanceRestService vacanceRestService) {
+                                   VacanceRestService vacanceRestService, Clock clock) {
         this.baseService = baseService;
         this.vacancesProperties = appProperties.getVacances();
         this.vacanceRestService = vacanceRestService;
+        this.clock = clock;
     }
 
     @PostConstruct
@@ -59,7 +62,7 @@ public class VacancesScolaireService {
                         forceMaj = true;
                     } else {
                         var derniereRecuperation = global.getDateMajVacances();
-                        var now = LocalDateTime.now();
+                        var now = LocalDateTime.now(clock);
                         var limit = now.minus(vacancesProperties.getDureeCache());
                         if (limit.isAfter(derniereRecuperation)) {
                             forceMaj = true;
@@ -75,7 +78,7 @@ public class VacancesScolaireService {
             try {
                 var global = new GlobalModel();
                 global.setVacances(listeTotal);
-                global.setDateMajVacances(LocalDateTime.now());
+                global.setDateMajVacances(LocalDateTime.now(clock));
                 baseService.save(global);
             } catch (IOException e) {
                 LOGGER.atError().log("Erreur pour enregistrer la base", e);
@@ -88,7 +91,7 @@ public class VacancesScolaireService {
 
     private List<VacancesDto> getVacancesDtos() {
         List<VacancesDto> listeTotal = new ArrayList<>();
-        final var anneeCourante = LocalDate.now().getYear();
+        final var anneeCourante = LocalDate.now(clock).getYear();
         final var anneDebut = 2017;
         final var anneeFin = anneeCourante + 4;
         LOGGER.atDebug().log("récupérarion des vacances entre {} et {}", anneDebut, anneeFin);
@@ -157,7 +160,7 @@ public class VacancesScolaireService {
         return liste;
     }
 
-    public List<VacancesDto> getVacances() {
+    protected List<VacancesDto> getVacances() {
         LOGGER.atInfo().log("getVacances");
         List<VacancesDto> liste = this.listeVacances;
         if (liste == null) {
@@ -176,7 +179,7 @@ public class VacancesScolaireService {
     }
 
     private void calculDecalageHoraire(CalendrierDto calendrierDto) {
-        LocalDate now = LocalDate.now();
+        LocalDate now = LocalDate.now(clock);
         var decalageEte = YearMonth.of(now.getYear(), Month.MARCH)    // Represent the entirety of a specified month.
                 .atEndOfMonth()                                       // Get the date of the last day of that month.
                 .with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
@@ -201,5 +204,7 @@ public class VacancesScolaireService {
         }
     }
 
-
+    public void setClock(Clock clock) {
+        this.clock = clock;
+    }
 }

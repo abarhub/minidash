@@ -1,4 +1,4 @@
-package org.minidash.minidash.vacances.config;
+package org.minidash.minidash.config;
 
 import org.minidash.minidash.base.service.BaseService;
 import org.minidash.minidash.properties.AppProperties;
@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+
+import java.time.Clock;
 
 @Configuration
 public class VacanceConfig {
@@ -26,7 +28,8 @@ public class VacanceConfig {
     public VacancesScolaireService vacancesScolaireService(BaseService baseService,
                                                            AppProperties appProperties,
                                                            VacanceRestService vacanceRestService) {
-        return new VacancesScolaireService(baseService, appProperties, vacanceRestService);
+        return new VacancesScolaireService(baseService, appProperties,
+                vacanceRestService, Clock.systemDefaultZone());
     }
 
 }
