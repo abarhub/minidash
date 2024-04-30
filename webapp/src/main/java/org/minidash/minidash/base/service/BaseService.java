@@ -36,8 +36,7 @@ public class BaseService {
             var file = getFile();
             if(Files.exists(file)) {
                 try (var reader = Files.newBufferedReader(file)) {
-                    var res = objectMapper.readValue(reader, GlobalModel.class);
-                    return res;
+                    return objectMapper.readValue(reader, GlobalModel.class);
                 }
             } else {
                 return null;
