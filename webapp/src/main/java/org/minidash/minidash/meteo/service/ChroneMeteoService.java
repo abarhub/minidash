@@ -27,7 +27,7 @@ public class ChroneMeteoService {
 
     public ChroneMeteoService(MeteoService meteoService, AppProperties appProperties) {
         this.meteoService = meteoService;
-        this.meteoProperties= appProperties.getMeteo();
+        this.meteoProperties = appProperties.getMeteo();
     }
 
     @PostConstruct
@@ -47,10 +47,10 @@ public class ChroneMeteoService {
             CronExpression cronExpression = CronExpression.parse(meteoProperties.getCron());
             var tmp = cronExpression.next(LocalDateTime.now());
             LOGGER.atDebug().log("tmp={}, lastDate={}", tmp, lastDate);
-            if(lastDate==null){
-                LOGGER.atInfo().log("prochaine mise à jour de la météo : {}",tmp);
+            if (lastDate == null) {
+                LOGGER.atInfo().log("prochaine mise à jour de la météo : {}", tmp);
             }
-            if (lastDate == null||!lastDate.equals(tmp)) {
+            if (lastDate == null || !lastDate.equals(tmp)) {
                 traitement();
                 lastDate = tmp;
             }

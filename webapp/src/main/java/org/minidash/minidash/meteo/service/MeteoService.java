@@ -376,7 +376,7 @@ public class MeteoService {
 
     private ResponseEntity<String> appelMeteo() {
         return meteoRestService.get(meteoProperties.getLongitude(), meteoProperties.getLatitude(),
-                "fr", meteoProperties.getApiKey());
+                "fr", "metric", meteoProperties.getApiKey());
     }
 
 
