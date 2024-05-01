@@ -150,9 +150,13 @@ public class MeteoService {
             meteoCourante.setDescriptionStatut(meteo2.getStatut().getDescription());
             meteoCourante.setIconeStatut(meteo2.getStatut().getIcone());
         }
-        if(meteo2.getTemperatureJournee()!=null){
+        if (meteo2.getTemperatureJournee() != null) {
             meteoCourante.setTemperatureMin(meteo2.getTemperatureJournee().min());
             meteoCourante.setTemperatureMax(meteo2.getTemperatureJournee().max());
+            meteoCourante.setTemperature(meteo2.getTemperatureJournee().journee());
+        }
+        if (meteo2.getTemperatureJourneeRessentie() != null) {
+            meteoCourante.setTemperatureResentie(meteo2.getTemperatureJourneeRessentie().journee());
         }
         return meteoCourante;
     }
@@ -252,15 +256,36 @@ public class MeteoService {
                     max = temperature.get("max").floatValue();
                 }
 
-                meteoCourante.setTemperatureJournee(new TemperatureJournee(matin, apresMidi, journee, nuit, min, max));
+                meteoCourante.setTemperatureJournee(new TemperatureJournee(matin, apresMidi,
+                        journee, nuit, min, max));
             } else if (temperature.isDouble()) {
                 var tmp2 = tmp.get("temp").asDouble();
                 meteoCourante.setTemperature((float) tmp2);
             }
         }
         if (tmp.has("feels_like")) {
-            var tmp2 = tmp.get("feels_like").asDouble();
-            meteoCourante.setTemperatureResentie((float) tmp2);
+            var feelsLike = tmp.get("feels_like");
+            if (feelsLike.has("day")) {
+                float matin = 0.0f;
+                float apresMidi = 0.0f;
+                float journee;
+                float nuit = 0.0f;
+                journee = feelsLike.get("day").floatValue();
+                if (feelsLike.has("morn")) {
+                    matin = feelsLike.get("morn").floatValue();
+                }
+                if (feelsLike.has("eve")) {
+                    apresMidi = feelsLike.get("eve").floatValue();
+                }
+                if (feelsLike.has("night")) {
+                    nuit = feelsLike.get("night").floatValue();
+                }
+                meteoCourante.setTemperatureJourneeRessentie(new TemperatureJournee(matin, apresMidi,
+                        journee, nuit, 0.0f, 0.0f));
+            } else {
+                var tmp2 = tmp.get("feels_like").asDouble();
+                meteoCourante.setTemperatureResentie((float) tmp2);
+            }
         }
         if (tmp.has("sunrise")) {
             var tmp2 = tmp.get("sunrise").asLong();

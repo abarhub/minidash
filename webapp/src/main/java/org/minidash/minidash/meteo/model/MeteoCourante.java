@@ -17,6 +17,7 @@ public class MeteoCourante  {
     private LocalDateTime heureCoucheSoleil;
     private float precipitation;
     private TemperatureJournee temperatureJournee;
+    private TemperatureJournee temperatureJourneeRessentie;
 
     private MeteoStatutModel statut;
 
@@ -132,6 +133,14 @@ public class MeteoCourante  {
         this.temperatureJournee = temperatureJournee;
     }
 
+    public TemperatureJournee getTemperatureJourneeRessentie() {
+        return temperatureJourneeRessentie;
+    }
+
+    public void setTemperatureJourneeRessentie(TemperatureJournee temperatureJourneeRessentie) {
+        this.temperatureJourneeRessentie = temperatureJourneeRessentie;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", MeteoCourante.class.getSimpleName() + "[", "]")
@@ -149,6 +158,7 @@ public class MeteoCourante  {
                 .add("statut=" + statut)
                 .add("precipitation=" + precipitation)
                 .add("temperaturejournee=" + temperatureJournee)
+                .add("temperatureJourneeRessentie=" + temperatureJourneeRessentie)
                 .toString();
     }
 }
