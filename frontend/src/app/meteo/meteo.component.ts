@@ -181,10 +181,12 @@ export class MeteoComponent implements OnInit {
         let date = new Date();
         let listeMatin: MeteoCouranteModel[] = [];
         let listeApresMidi: MeteoCouranteModel[] = [];
+        let temperatureMin: number | null = null;
+        let temperatureMax: number | null = null;
 
-        for (let d of data.prochainsJours) {
+        for (let d of data.prochainesHeures) {
           if (d.date) {
-            let d2=new Date(d.date);
+            let d2 = new Date(d.date);
             if (d2.getFullYear() === date.getFullYear() &&
               d2.getMonth() === date.getMonth() &&
               d2.getDate() === date.getDate()) {
@@ -192,6 +194,16 @@ export class MeteoComponent implements OnInit {
                 listeMatin.push(d);
               } else {
                 listeApresMidi.push(d);
+              }
+              if (temperatureMin === null) {
+                temperatureMin = d.temperature;
+              } else if (temperatureMin > d.temperature) {
+                temperatureMin = d.temperature;
+              }
+              if (temperatureMax === null) {
+                temperatureMax = d.temperature;
+              } else if (temperatureMax < d.temperature) {
+                temperatureMax = d.temperature;
               }
             }
           }
@@ -205,6 +217,12 @@ export class MeteoComponent implements OnInit {
           data.meteoCourante.apresMidi = this.calculDescription(listeApresMidi);
         }
 
+        if (temperatureMin !== null) {
+          data.meteoCourante.temperatureMin = temperatureMin;
+        }
+        if (temperatureMax !== null) {
+          data.meteoCourante.temperatureMax = temperatureMax;
+        }
       }
     }
 

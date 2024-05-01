@@ -36,18 +36,29 @@
           Aujourd'hui
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <div>
+      <div class="meteo-jour">
 
-        <div *ngIf="meteo.meteoCourante?.matin">
-          Matin :
-          <img *ngIf="meteo.meteoCourante?.matin?.iconeStatut"
-               src="https://openweathermap.org/img/wn/{{meteo.meteoCourante?.matin?.iconeStatut}}@4x.png">
-        </div>
+        <div class="parent">
 
-        <div *ngIf="meteo.meteoCourante?.apresMidi">
-          Apres midi :
-          <img *ngIf="meteo.meteoCourante?.apresMidi?.iconeStatut"
-               src="https://openweathermap.org/img/wn/{{meteo.meteoCourante?.apresMidi?.iconeStatut}}@4x.png">
+          <div class="div1">Matin</div>
+
+          <div class="div2">Apres midi</div>
+
+          <div class="div3">
+            <img *ngIf="meteo.meteoCourante?.matin?.iconeStatut"
+                 src="https://openweathermap.org/img/wn/{{meteo.meteoCourante?.matin?.iconeStatut}}@2x.png"
+                 width="100px" height="100px">
+          </div>
+
+          <div class="div4">
+            <img *ngIf="meteo.meteoCourante?.apresMidi?.iconeStatut"
+                 src="https://openweathermap.org/img/wn/{{meteo.meteoCourante?.apresMidi?.iconeStatut}}@2x.png"
+                 width="100px" height="100px">
+          </div>
+
+          <div class="div5">Temperature : min={{meteo.meteoCourante?.temperatureMin}}°  max={{meteo.meteoCourante?.temperatureMax}}°</div>
+
+
         </div>
 
       </div>

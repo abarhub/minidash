@@ -3,7 +3,7 @@ import {PrecipitationModel} from "./precipitation.model";
 
 export class MeteoModel {
   meteoCourante:MeteoCouranteModel|null=null;
-  precipitations:PrecipitationModel[]=[]
+  precipitations:PrecipitationModel[]=[];
   prochainesHeures:MeteoCouranteModel[]=[];
   prochainsJours:MeteoCouranteModel[]=[];
 }

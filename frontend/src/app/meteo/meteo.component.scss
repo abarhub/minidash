@@ -44,5 +44,24 @@
   justify-content: center;
 }
 
+.aujourd-hui{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.parent {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: 0.3fr 1fr 0.3fr;
+  grid-column-gap: 4px;
+  grid-row-gap: 4px;
+}
+
+.div1 { grid-area: 1 / 1 / 2 / 2; }
+.div2 { grid-area: 1 / 2 / 2 / 3; }
+.div3 { grid-area: 2 / 1 / 3 / 2; }
+.div4 { grid-area: 2 / 2 / 3 / 3; }
+.div5 { grid-area: 3 / 1 / 4 / 3; }
 
 
