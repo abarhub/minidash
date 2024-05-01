@@ -7,6 +7,7 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {MeteoCouranteModel} from "../model/meteoCourante.model";
 import {StatusEnum} from "../model/statut.enum";
 import {MeteoStatutModel} from "../model/meteoStatut.model";
+import {DateTime} from "luxon";
 
 
 @Component({
@@ -173,23 +174,67 @@ export class MeteoComponent implements OnInit {
     // data.prochainesHeures
     console.log('data', data);
 
-    if (data.meteoCourante) {
-      data.meteoCourante.matin = null;
-      data.meteoCourante.apresMidi = null;
+    this.calculResumejournee(data.meteoCourante, data.prochainesHeures, DateTime.now());
 
-      if (data && data.prochainesHeures && data.prochainesHeures.length > 0) {
-        let date = new Date();
+    if (data.prochainsJours?.length > 0) {
+
+      console.log('prochain jours', data.prochainsJours);
+
+      let map: Map<String, MeteoCouranteModel[]> = new Map();
+      for (let jour of data.prochainsJours) {
+        if (jour.date) {
+          let d = DateTime.fromJSDate(new Date(jour.date));
+          let key = d.toISODate();
+          console.log('key', key, d, d.toFormat('yyyy-LL-dd'));
+          if (key) {
+            if (map.has(key)) {
+              map.get(key)?.push(jour);
+            } else {
+              map.set(key, [jour]);
+            }
+          }
+        }
+      }
+      console.log('map', map);
+
+      data.resumeProchainsjours = [];
+      for (let key of map.keys()) {
+        let liste = map.get(key);
+        if (liste && liste?.length > 0) {
+          let d = DateTime.fromISO(key.toString());
+          // let meteo = new MeteoCouranteModel();
+          // meteo.date = d.toJSDate();
+          let meteo=this.calculResumeProchainsJours(liste, d);
+          data.resumeProchainsjours.push(meteo);
+        }
+      }
+
+      console.log("resume", data.resumeProchainsjours);
+
+    }
+
+  }
+
+  private calculResumejournee(meteoCourante: MeteoCouranteModel | null,
+                              listeMeteo: MeteoCouranteModel[],
+                              date: DateTime) {
+    if (meteoCourante) {
+      meteoCourante.matin = null;
+      meteoCourante.apresMidi = null;
+
+      if (listeMeteo && listeMeteo.length > 0) {
+        let date2 = date.toJSDate();
         let listeMatin: MeteoCouranteModel[] = [];
         let listeApresMidi: MeteoCouranteModel[] = [];
         let temperatureMin: number | null = null;
         let temperatureMax: number | null = null;
 
-        for (let d of data.prochainesHeures) {
+        for (let d of listeMeteo) {
           if (d.date) {
             let d2 = new Date(d.date);
-            if (d2.getFullYear() === date.getFullYear() &&
-              d2.getMonth() === date.getMonth() &&
-              d2.getDate() === date.getDate()) {
+            if (d2.getFullYear() === date2.getFullYear() &&
+              d2.getMonth() === date2.getMonth() &&
+              d2.getDate() === date2.getDate()) {
               if (d2.getHours() < 12) {
                 listeMatin.push(d);
               } else {
@@ -210,22 +255,73 @@ export class MeteoComponent implements OnInit {
         }
 
         if (listeMatin.length > 0) {
-          data.meteoCourante.matin = this.calculDescription(listeMatin);
+          meteoCourante.matin = this.calculDescription(listeMatin);
         }
 
         if (listeApresMidi.length > 0) {
-          data.meteoCourante.apresMidi = this.calculDescription(listeApresMidi);
+          meteoCourante.apresMidi = this.calculDescription(listeApresMidi);
         }
 
         if (temperatureMin !== null) {
-          data.meteoCourante.temperatureMin = temperatureMin;
+          meteoCourante.temperatureMin = temperatureMin;
         }
         if (temperatureMax !== null) {
-          data.meteoCourante.temperatureMax = temperatureMax;
+          meteoCourante.temperatureMax = temperatureMax;
         }
       }
     }
+  }
 
+  private calculResumeProchainsJours(
+                              listeMeteo: MeteoCouranteModel[],
+                              date: DateTime):MeteoCouranteModel {
+    let meteoCourante: MeteoCouranteModel | null;
+    meteoCourante=new MeteoCouranteModel();
+    // if (meteoCourante) {
+      meteoCourante.matin = null;
+      meteoCourante.date=date.toJSDate();
+
+      if (listeMeteo && listeMeteo.length > 0) {
+        let date2 = date.toJSDate();
+        let listeMatin: MeteoCouranteModel[] = [];
+        let temperatureMin: number | null = null;
+        let temperatureMax: number | null = null;
+
+        for (let d of listeMeteo) {
+          if (d.date) {
+            let d2 = new Date(d.date);
+            if (d2.getFullYear() === date2.getFullYear() &&
+              d2.getMonth() === date2.getMonth() &&
+              d2.getDate() === date2.getDate()) {
+              listeMatin.push(d);
+              if (temperatureMin === null) {
+                temperatureMin = d.temperature;
+              } else if (temperatureMin > d.temperature) {
+                temperatureMin = d.temperature;
+              }
+              if (temperatureMax === null) {
+                temperatureMax = d.temperature;
+              } else if (temperatureMax < d.temperature) {
+                temperatureMax = d.temperature;
+              }
+            }
+          }
+        }
+        console.log('temp',temperatureMin,temperatureMax);
+
+        if (listeMatin.length > 0) {
+          meteoCourante.matin = this.calculDescription(listeMatin);
+        }
+
+        if (temperatureMin !== null) {
+          meteoCourante.temperatureMin = temperatureMin;
+        }
+        if (temperatureMax !== null) {
+          meteoCourante.temperatureMax = temperatureMax;
+        }
+      }
+    // }
+    return meteoCourante;
   }
 
   private calculProchainsJours(data: MeteoModel) {
@@ -246,15 +342,6 @@ export class MeteoComponent implements OnInit {
             icone = meteo.iconeStatut;
             statut = nouveauStatut;
           }
-          // if (statut == StatusEnum.INCONNU) {
-          //   codeStatut = meteo.codeStatut;
-          //   icone = meteo.iconeStatut;
-          //   statut = this.getStatut(codeStatut);
-          // } else if (nouveauStatut==StatusEnum.ORAGE) {
-          //   if (codeStatut == 0) {
-          //
-          //   }
-          // }
         }
       }
 

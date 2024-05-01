@@ -76,7 +76,25 @@
           Prochains jours
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <div>
+      <div class="meteo-prochains-jours-resume">
+
+        @for (meteo2 of meteo.resumeProchainsjours; track meteo){
+
+          <div class="meteo-prochains-jours-resume-journee">
+
+            <div class="jour" >{{meteo2.date | date : 'EEEE d'}}</div>
+
+            <div class="image">
+              <img *ngIf="meteo2.matin?.iconeStatut"
+                   src="https://openweathermap.org/img/wn/{{meteo2.matin?.iconeStatut}}@2x.png"
+                   width="100px" height="100px">
+            </div>
+
+            <div class="temperature">min={{meteo2.temperatureMin}}°  max={{meteo2.temperatureMax}}°</div>
+
+          </div>
+
+        }
 
       </div>
     </mat-expansion-panel>

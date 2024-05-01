@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import {LOCALE_ID, NgModule} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -19,6 +19,9 @@ import {MatExpansionModule} from "@angular/material/expansion";
 import { PrevisionMeteoComponent } from './prevision-meteo/prevision-meteo.component';
 import {MatDividerModule} from "@angular/material/divider";
 import { BookmarkComponent } from './bookmark/bookmark.component';
+import localeFr from '@angular/common/locales/fr';
+import {registerLocaleData} from "@angular/common";
+registerLocaleData(localeFr);
 
 
 @NgModule({
@@ -45,7 +48,7 @@ import { BookmarkComponent } from './bookmark/bookmark.component';
         MatDividerModule,
         HorlogeComponent
     ],
-  providers: [],
+  providers: [{ provide: LOCALE_ID, useValue: "fr-FR" }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

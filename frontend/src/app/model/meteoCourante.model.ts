@@ -21,6 +21,4 @@ export class MeteoCouranteModel {
   apresMidi: MeteoStatutModel | null = null;
   temperatureMin: number = 0;
   temperatureMax: number = 0;
-
-
 }

@@ -64,4 +64,19 @@
 .div4 { grid-area: 2 / 2 / 3 / 3; }
 .div5 { grid-area: 3 / 1 / 4 / 3; }
 
+.prochains-jours{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
 
+.meteo-prochains-jours-resume{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.meteo-prochains-jours-resume-journee {
+  display: flex;
+  flex-direction: column;
+}
