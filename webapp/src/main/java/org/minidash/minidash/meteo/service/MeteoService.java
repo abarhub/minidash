@@ -17,10 +17,8 @@ import org.minidash.minidash.properties.MeteoProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -31,7 +29,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 
-@Service
 public class MeteoService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MeteoService.class);
@@ -44,11 +41,14 @@ public class MeteoService {
 
     private final AppProperties appProperties;
     private final MeteoProperties meteoProperties;
+    private final MeteoRestService meteoRestService;
 
-    public MeteoService(BaseService baseService, AppProperties appProperties) {
+    public MeteoService(BaseService baseService, AppProperties appProperties,
+                        MeteoRestService meteoRestService) {
         this.baseService = baseService;
         this.appProperties = appProperties;
         this.meteoProperties = appProperties.getMeteo();
+        this.meteoRestService = meteoRestService;
     }
 
     @PostConstruct
@@ -354,8 +354,7 @@ public class MeteoService {
             }
         } else if (StringUtils.hasText(meteoProperties.getUrl())) {
             LOGGER.atInfo().log("url meteo={}", meteoProperties.getUrl());
-            RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<String> response = restTemplate.getForEntity(meteoProperties.getUrl(), String.class);
+            ResponseEntity<String> response = appelMeteo();
             if (response.getStatusCode().is2xxSuccessful()) {
                 LOGGER.atInfo().log("Appel Meteo reussi. code={}, body={}", response.getStatusCode(), response.getBody());
                 var res = response.getBody();
@@ -374,6 +373,12 @@ public class MeteoService {
             throw new RuntimeException("Erreur");
         }
     }
+
+    private ResponseEntity<String> appelMeteo() {
+        return meteoRestService.get(meteoProperties.getLongitude(), meteoProperties.getLatitude(),
+                "fr", meteoProperties.getApiKey());
+    }
+
 
     private boolean fichierExiste(String fichier) {
         Path p = Path.of(fichier);

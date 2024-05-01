@@ -10,10 +10,11 @@ app:
   repertoireDonnees: ./data
 
   meteo:
-    url: https://api.openweathermap.org/data/3.0/onecall?lat=43.52&lon=5.44&lang=fr&units=metric&appid=${app.meteo.apiKey}
+    #url: https://api.openweathermap.org/data/3.0/onecall?lat=${app.meteo.latitude}&lon=${app.meteo.longitude}&lang=fr&units=metric&appid=${app.meteo.apiKey}
+    url: https://api.openweathermap.org/data/3.0/onecall
     apiKey:
-    latitude:
-    longitude:
+    latitude: 43.52
+    longitude: 5.44
     fichier:
     cron: '0 0 8-20 * * *'
     dureeCache: 15m
