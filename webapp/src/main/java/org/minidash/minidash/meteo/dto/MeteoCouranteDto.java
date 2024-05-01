@@ -21,6 +21,8 @@ public class MeteoCouranteDto {
     private int codeStatut;
     private String descriptionStatut;
     private String iconeStatut;
+    private float temperatureMin;
+    private float temperatureMax;
 
 
     public LocalDateTime getDate() {
@@ -133,5 +135,21 @@ public class MeteoCouranteDto {
 
     public void setIconeStatut(String iconeStatut) {
         this.iconeStatut = iconeStatut;
+    }
+
+    public float getTemperatureMin() {
+        return temperatureMin;
+    }
+
+    public void setTemperatureMin(float temperatureMin) {
+        this.temperatureMin = temperatureMin;
+    }
+
+    public float getTemperatureMax() {
+        return temperatureMax;
+    }
+
+    public void setTemperatureMax(float temperatureMax) {
+        this.temperatureMax = temperatureMax;
     }
 }

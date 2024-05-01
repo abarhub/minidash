@@ -8,10 +8,7 @@ import org.minidash.minidash.base.service.BaseService;
 import org.minidash.minidash.meteo.dto.MeteoCouranteDto;
 import org.minidash.minidash.meteo.dto.MeteoDto;
 import org.minidash.minidash.meteo.dto.PrecipitationDto;
-import org.minidash.minidash.meteo.model.MeteoCourante;
-import org.minidash.minidash.meteo.model.MeteoGlobalModel;
-import org.minidash.minidash.meteo.model.MeteoStatutModel;
-import org.minidash.minidash.meteo.model.PrecipitationModel;
+import org.minidash.minidash.meteo.model.*;
 import org.minidash.minidash.properties.AppProperties;
 import org.minidash.minidash.properties.MeteoProperties;
 import org.slf4j.Logger;
@@ -153,6 +150,10 @@ public class MeteoService {
             meteoCourante.setDescriptionStatut(meteo2.getStatut().getDescription());
             meteoCourante.setIconeStatut(meteo2.getStatut().getIcone());
         }
+        if(meteo2.getTemperatureJournee()!=null){
+            meteoCourante.setTemperatureMin(meteo2.getTemperatureJournee().min());
+            meteoCourante.setTemperatureMax(meteo2.getTemperatureJournee().max());
+        }
         return meteoCourante;
     }
 
@@ -231,8 +232,31 @@ public class MeteoService {
             }
         }
         if (tmp.has("temp")) {
-            var tmp2 = tmp.get("temp").asDouble();
-            meteoCourante.setTemperature((float) tmp2);
+            var temperature = tmp.get("temp");
+            if (temperature.has("day")) {
+                float matin = 0.0f, apresMidi = 0.0f, journee, nuit = 0.0f, min = 0.0f, max = 0.0f;
+                journee = temperature.get("day").floatValue();
+                if (temperature.has("morn")) {
+                    matin = temperature.get("morn").floatValue();
+                }
+                if (temperature.has("eve")) {
+                    apresMidi = temperature.get("eve").floatValue();
+                }
+                if (temperature.has("night")) {
+                    nuit = temperature.get("night").floatValue();
+                }
+                if (temperature.has("min")) {
+                    min = temperature.get("min").floatValue();
+                }
+                if (temperature.has("max")) {
+                    max = temperature.get("max").floatValue();
+                }
+
+                meteoCourante.setTemperatureJournee(new TemperatureJournee(matin, apresMidi, journee, nuit, min, max));
+            } else if (temperature.isDouble()) {
+                var tmp2 = tmp.get("temp").asDouble();
+                meteoCourante.setTemperature((float) tmp2);
+            }
         }
         if (tmp.has("feels_like")) {
             var tmp2 = tmp.get("feels_like").asDouble();
@@ -301,6 +325,12 @@ public class MeteoService {
                 if (tmp3.has("icon")) {
                     meteoStatutModel.setIcone(tmp3.get("icon").asText());
                 }
+            }
+        }
+        if (tmp.has("rain")) {
+            var tmp2 = tmp.get("rain");
+            if (tmp2.has("1h")) {
+                meteoCourante.setPrecipitation(tmp.floatValue());
             }
         }
         return meteoCourante;

@@ -38,25 +38,25 @@
       </mat-expansion-panel-header>
       <div class="meteo-jour">
 
-        <div class="parent">
+        <div class="jour-parent">
 
-          <div class="div1">Matin</div>
+          <div class="jour-matin-label">Matin</div>
 
-          <div class="div2">Apres midi</div>
+          <div class="jour-apresMidi-label">Apres midi</div>
 
-          <div class="div3">
+          <div class="jour-matin-statut">
             <img *ngIf="meteo.meteoCourante?.matin?.iconeStatut"
                  src="https://openweathermap.org/img/wn/{{meteo.meteoCourante?.matin?.iconeStatut}}@2x.png"
                  width="100px" height="100px">
           </div>
 
-          <div class="div4">
+          <div class="jour-apresMidi-statut">
             <img *ngIf="meteo.meteoCourante?.apresMidi?.iconeStatut"
                  src="https://openweathermap.org/img/wn/{{meteo.meteoCourante?.apresMidi?.iconeStatut}}@2x.png"
                  width="100px" height="100px">
           </div>
 
-          <div class="div5">Temperature : min={{meteo.meteoCourante?.temperatureMin}}°  max={{meteo.meteoCourante?.temperatureMax}}°</div>
+          <div class="jour-temperature">Temperature : min={{meteo.meteoCourante?.temperatureMin}}°  max={{meteo.meteoCourante?.temperatureMax}}°</div>
 
 
         </div>
@@ -90,7 +90,7 @@
                    width="100px" height="100px">
             </div>
 
-            <div class="temperature">min={{meteo2.temperatureMin}}°  max={{meteo2.temperatureMax}}°</div>
+            <div class="temperature">{{meteo2.temperatureMin}}° -> {{meteo2.temperatureMax}}°</div>
 
           </div>
 

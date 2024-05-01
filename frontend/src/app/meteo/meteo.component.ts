@@ -46,11 +46,9 @@ export class MeteoComponent implements OnInit {
 
     this.calculJournee(data);
 
-    this.calculProchainsJours(data);
-
     this.calculPrecipitation(data);
 
-    this.calculTemperatire(data);
+    this.calculTemperature(data);
   }
 
   public lineChartData: ChartConfiguration<'line'>['data'] = {
@@ -134,7 +132,7 @@ export class MeteoComponent implements OnInit {
 
   }
 
-  private calculTemperatire(data: MeteoModel) {
+  private calculTemperature(data: MeteoModel) {
     if (data && data.prochainesHeures) {
       let labels: string[] = [];
       let datas: number[] = [];
@@ -171,51 +169,37 @@ export class MeteoComponent implements OnInit {
   }
 
   private calculJournee(data: MeteoModel) {
-    // data.prochainesHeures
-    console.log('data', data);
 
-    this.calculResumejournee(data.meteoCourante, data.prochainesHeures, DateTime.now());
+    this.calculResumeJournee(data.meteoCourante, data.prochainesHeures, DateTime.now());
 
     if (data.prochainsJours?.length > 0) {
 
-      console.log('prochain jours', data.prochainsJours);
-
-      let map: Map<String, MeteoCouranteModel[]> = new Map();
+      let map: Map<String, MeteoCouranteModel> = new Map();
       for (let jour of data.prochainsJours) {
         if (jour.date) {
           let d = DateTime.fromJSDate(new Date(jour.date));
           let key = d.toISODate();
-          console.log('key', key, d, d.toFormat('yyyy-LL-dd'));
           if (key) {
-            if (map.has(key)) {
-              map.get(key)?.push(jour);
-            } else {
-              map.set(key, [jour]);
-            }
+            map.set(key, jour);
           }
         }
       }
-      console.log('map', map);
 
       data.resumeProchainsjours = [];
       for (let key of map.keys()) {
-        let liste = map.get(key);
-        if (liste && liste?.length > 0) {
+        let meteoJour = map.get(key);
+        if (meteoJour) {
           let d = DateTime.fromISO(key.toString());
-          // let meteo = new MeteoCouranteModel();
-          // meteo.date = d.toJSDate();
-          let meteo=this.calculResumeProchainsJours(liste, d);
+          let meteo = this.calculResumeProchainsJours(meteoJour, d);
           data.resumeProchainsjours.push(meteo);
         }
       }
-
-      console.log("resume", data.resumeProchainsjours);
 
     }
 
   }
 
-  private calculResumejournee(meteoCourante: MeteoCouranteModel | null,
+  private calculResumeJournee(meteoCourante: MeteoCouranteModel | null,
                               listeMeteo: MeteoCouranteModel[],
                               date: DateTime) {
     if (meteoCourante) {
@@ -273,59 +257,27 @@ export class MeteoComponent implements OnInit {
   }
 
   private calculResumeProchainsJours(
-                              listeMeteo: MeteoCouranteModel[],
-                              date: DateTime):MeteoCouranteModel {
+    meteo: MeteoCouranteModel,
+    date: DateTime): MeteoCouranteModel {
     let meteoCourante: MeteoCouranteModel | null;
-    meteoCourante=new MeteoCouranteModel();
-    // if (meteoCourante) {
-      meteoCourante.matin = null;
-      meteoCourante.date=date.toJSDate();
+    meteoCourante = new MeteoCouranteModel();
 
-      if (listeMeteo && listeMeteo.length > 0) {
-        let date2 = date.toJSDate();
-        let listeMatin: MeteoCouranteModel[] = [];
-        let temperatureMin: number | null = null;
-        let temperatureMax: number | null = null;
+    meteoCourante.matin = null;
+    meteoCourante.date = date.toJSDate();
 
-        for (let d of listeMeteo) {
-          if (d.date) {
-            let d2 = new Date(d.date);
-            if (d2.getFullYear() === date2.getFullYear() &&
-              d2.getMonth() === date2.getMonth() &&
-              d2.getDate() === date2.getDate()) {
-              listeMatin.push(d);
-              if (temperatureMin === null) {
-                temperatureMin = d.temperature;
-              } else if (temperatureMin > d.temperature) {
-                temperatureMin = d.temperature;
-              }
-              if (temperatureMax === null) {
-                temperatureMax = d.temperature;
-              } else if (temperatureMax < d.temperature) {
-                temperatureMax = d.temperature;
-              }
-            }
-          }
-        }
-        console.log('temp',temperatureMin,temperatureMax);
+    let listeMatin: MeteoCouranteModel[] = [];
 
-        if (listeMatin.length > 0) {
-          meteoCourante.matin = this.calculDescription(listeMatin);
-        }
+    if (meteo.date) {
+      listeMatin.push(meteo);
+    }
 
-        if (temperatureMin !== null) {
-          meteoCourante.temperatureMin = temperatureMin;
-        }
-        if (temperatureMax !== null) {
-          meteoCourante.temperatureMax = temperatureMax;
-        }
-      }
-    // }
+    if (listeMatin.length > 0) {
+      meteoCourante.matin = this.calculDescription(listeMatin);
+    }
+
+    meteoCourante.temperatureMin = meteo.temperatureMin;
+    meteoCourante.temperatureMax = meteo.temperatureMax;
     return meteoCourante;
-  }
-
-  private calculProchainsJours(data: MeteoModel) {
-
   }
 
   private calculDescription(listeMatin: MeteoCouranteModel[]): MeteoStatutModel | null {

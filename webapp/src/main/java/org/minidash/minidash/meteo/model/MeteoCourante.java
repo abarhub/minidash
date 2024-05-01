@@ -1,7 +1,6 @@
 package org.minidash.minidash.meteo.model;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.StringJoiner;
 
 public class MeteoCourante  {
@@ -16,6 +15,8 @@ public class MeteoCourante  {
     private int directionVent;
     private LocalDateTime heureLeveSoleil;
     private LocalDateTime heureCoucheSoleil;
+    private float precipitation;
+    private TemperatureJournee temperatureJournee;
 
     private MeteoStatutModel statut;
 
@@ -115,6 +116,22 @@ public class MeteoCourante  {
         this.statut = statut;
     }
 
+    public float getPrecipitation() {
+        return precipitation;
+    }
+
+    public void setPrecipitation(float precipitation) {
+        this.precipitation = precipitation;
+    }
+
+    public TemperatureJournee getTemperatureJournee() {
+        return temperatureJournee;
+    }
+
+    public void setTemperatureJournee(TemperatureJournee temperatureJournee) {
+        this.temperatureJournee = temperatureJournee;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", MeteoCourante.class.getSimpleName() + "[", "]")
@@ -130,6 +147,8 @@ public class MeteoCourante  {
                 .add("heureLeveSoleil=" + heureLeveSoleil)
                 .add("heureCoucheSoleil=" + heureCoucheSoleil)
                 .add("statut=" + statut)
+                .add("precipitation=" + precipitation)
+                .add("temperaturejournee=" + temperatureJournee)
                 .toString();
     }
 }
