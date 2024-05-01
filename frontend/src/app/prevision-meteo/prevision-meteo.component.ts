@@ -1,5 +1,4 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {MeteoModel} from "../model/meteo.model";
 import {MeteoCouranteModel} from "../model/meteoCourante.model";
 
 @Component({
