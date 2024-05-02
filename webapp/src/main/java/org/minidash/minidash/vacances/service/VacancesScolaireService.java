@@ -102,34 +102,53 @@ public class VacancesScolaireService {
             int limite = 100;
 
             try {
-                ListResultatDto body = getListeVacances(dateDebut, dateFin, limite);
-                try {
-                    List<VacancesDto> liste = new ArrayList<>();
-                    LOGGER.atInfo().log("response: {}", body);
-                    if (body != null) {
-                        if (!CollectionUtils.isEmpty(body.results())) {
-                            var res2 = body.results();
-                            for (ResultatDto res3 : res2) {
-                                VacancesDto vacancesDto = new VacancesDto();
-                                vacancesDto.setDescription(res3.description());
-                                vacancesDto.setDateDebut(convertToDate(res3.start_date(), true));
-                                vacancesDto.setDateFin(convertToDate(res3.end_date(), false));
-                                vacancesDto.setZone(res3.zones());
-                                vacancesDto.setAnneeScolaire(res3.annee_scolaire());
-
-                                if (vacancesDto.getDateDebut() != null && vacancesDto.getDateFin() != null) {
-                                    liste.add(vacancesDto);
-                                }
-                            }
-                        }
+                boolean fin = false;
+                int offset = 0, nbElement = -1;
+                List<VacancesDto> liste = new ArrayList<>();
+                do {
+                    LOGGER.info("getVacances offset: {}", offset);
+                    ListResultatDto body = getListeVacances(dateDebut, dateFin, limite, offset);
+                    if (nbElement == -1) {
+                        nbElement = Math.max(body.total_count(), 0);
                     }
-                    LOGGER.atInfo().log("nb={}", liste.size());
-                    liste = nettoyage(liste);
-                    LOGGER.atInfo().log("nb vacances {}={}", annee, liste.size());
-                    listeTotal.addAll(liste);
-                } catch (Exception e) {
-                    LOGGER.atError().log("Erreur pour parser le résultat", e);
-                }
+                    try {
+                        LOGGER.atInfo().log("response: {}", body);
+                        if (body != null) {
+                            if (!CollectionUtils.isEmpty(body.results())) {
+                                var res2 = body.results();
+                                LOGGER.info("nb vacances={}", res2.size());
+                                for (ResultatDto res3 : res2) {
+                                    VacancesDto vacancesDto = new VacancesDto();
+                                    vacancesDto.setDescription(res3.description());
+                                    vacancesDto.setDateDebut(convertToDate(res3.start_date(), true));
+                                    vacancesDto.setDateFin(convertToDate(res3.end_date(), false));
+                                    vacancesDto.setZone(res3.zones());
+                                    vacancesDto.setAnneeScolaire(res3.annee_scolaire());
+
+                                    if (vacancesDto.getDateDebut() != null && vacancesDto.getDateFin() != null) {
+                                        liste.add(vacancesDto);
+                                    }
+                                }
+                                offset += res2.size();
+                                if (offset > nbElement) {
+                                    fin = true;
+                                }
+                            } else {
+                                fin = true;
+                            }
+                        } else {
+                            fin = true;
+                        }
+                        LOGGER.atInfo().log("nb={}", liste.size());
+                        liste = nettoyage(liste);
+                        LOGGER.atInfo().log("nb vacances {}={}", annee, liste.size());
+                    } catch (Exception e) {
+                        LOGGER.atError().log("Erreur pour parser le résultat", e);
+                        fin = true;
+                    }
+                } while (!fin);
+                liste = nettoyage(liste);
+                listeTotal.addAll(liste);
             } catch (RestClientException e) {
                 LOGGER.atError().log("Erreur pour récupérer les vacances pour la periode {} et {}", dateDebut, dateFin, e);
                 break;
@@ -139,9 +158,9 @@ public class VacancesScolaireService {
         return listeTotal;
     }
 
-    private ListResultatDto getListeVacances(LocalDate dateDebut, LocalDate dateFin, int limit) {
+    private ListResultatDto getListeVacances(LocalDate dateDebut, LocalDate dateFin, int limit, int offset) {
         String where = "start_date>=\"" + dateDebut + "\" and end_date<=\"" + dateFin + "\" and zones in (\"Zone A\",\"Zone B\",\"Zone C\")";
-        return vacanceRestService.get(where, limit);
+        return vacanceRestService.get(where, limit, offset);
     }
 
     private static List<VacancesDto> nettoyage(List<VacancesDto> liste) {

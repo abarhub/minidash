@@ -6,5 +6,5 @@ import org.springframework.web.service.annotation.GetExchange;
 
 public interface VacanceRestService {
     @GetExchange("")
-    ListResultatDto get(@RequestParam String where, @RequestParam int limit);
+    ListResultatDto get(@RequestParam String where, @RequestParam int limit, @RequestParam int offset);
 }
