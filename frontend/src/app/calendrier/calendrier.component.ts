@@ -5,9 +5,9 @@ import {MoisEpiphanie} from "../model/moisEpiphanie";
 import {DateTime, Settings} from "luxon";
 import {Mois} from "../model/mois.model";
 import {JoursFerieService} from "../service/jours-ferie.service";
-import {VacanceModel} from "../model/vacance.model";
 import {PeriodeVacanceModel} from "../model/periodeVacanceModel";
 import {CalendrierModel} from "../model/calendrier.model";
+import {environment} from "../../environments/environment";
 
 @Component({
   selector: 'app-calendrier',
@@ -24,8 +24,9 @@ export class CalendrierComponent implements OnInit {
   public anneeAffiche: number = 0;
   public nbMois: number = 0;
   public premierMois: number = 0;
-  public decalageHeureEte:DateTime|null=null;
-  public decalageHeureHivert:DateTime|null=null;
+  public decalageHeureEte: DateTime | null = null;
+  public decalageHeureHivert: DateTime | null = null;
+  private backend = environment.backend;
 
   constructor(private http: HttpClient, private joursFerieService: JoursFerieService) {
     this.getMois();
@@ -59,7 +60,7 @@ export class CalendrierComponent implements OnInit {
       mois.nomMois = this.getNomMois(premierMois);
       mois.annee = premierMois.year;
       mois.semaineDuMois = tab;
-      mois.numeroMois=tab[0].month;
+      mois.numeroMois = tab[0].month;
       this.listeSemaineDuMois.push(mois);
       premierMois = premierMois.plus({month: 1}).startOf('month');
     }
@@ -101,7 +102,10 @@ export class CalendrierComponent implements OnInit {
       this.mois = data;
     });
 
-    let url='api/vacances';
+    let url = 'api/vacances';
+    if (!this.backend) {
+      url = 'assets/vacances.json';
+    }
     this.http.get<CalendrierModel>(url).subscribe(data => {
       console.debug("data vacances", data);
       this.initVacances(data);
@@ -110,7 +114,7 @@ export class CalendrierComponent implements OnInit {
 
   private initVacances(data: CalendrierModel) {
     let liste: PeriodeVacanceModel[] = [];
-    if (data &&data.listVacancesDto&& data.listVacancesDto.length > 0) {
+    if (data && data.listVacancesDto && data.listVacancesDto.length > 0) {
       for (let vac of data.listVacancesDto) {
         let zone = vac.zone;
         let dateDebut: DateTime | null = null;
@@ -145,22 +149,22 @@ export class CalendrierComponent implements OnInit {
             vacance.dateFin = dateFin;
             liste.push(vacance);
           } else {
-            console.error("Type de zone invalide:",zone,dateDebut,dateFin);
+            console.error("Type de zone invalide:", zone, dateDebut, dateFin);
           }
         }
       }
     }
     this.listePeriodeVacances = liste;
-    if(data){
-      if(data.jourDecalageHivert){
+    if (data) {
+      if (data.jourDecalageHivert) {
         const luxonDate = DateTime.fromSQL(data.jourDecalageHivert);
-        console.debug("decalage1",data.jourDecalageHivert,luxonDate);
-        this.decalageHeureHivert=luxonDate;
+        console.debug("decalage1", data.jourDecalageHivert, luxonDate);
+        this.decalageHeureHivert = luxonDate;
       }
-      if(data.jourDecalageEte){
+      if (data.jourDecalageEte) {
         const luxonDate = DateTime.fromSQL(data.jourDecalageEte);
-        console.debug("decalage2",data.jourDecalageEte,luxonDate);
-        this.decalageHeureEte=luxonDate;
+        console.debug("decalage2", data.jourDecalageEte, luxonDate);
+        this.decalageHeureEte = luxonDate;
       }
     }
   }

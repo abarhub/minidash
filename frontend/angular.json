@@ -57,7 +57,27 @@
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ]
+            },
+            "nobackend": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.nobackend.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -70,6 +90,9 @@
             },
             "development": {
               "buildTarget": "frontend:build:development"
+            },
+            "nobackend": {
+              "buildTarget": "frontend:build:nobackend"
             }
           },
           "options": {
