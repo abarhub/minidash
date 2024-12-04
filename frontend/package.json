@@ -6,6 +6,7 @@
     "start": "ng serve",
     "start_no_backend": "ng serve --configuration=nobackend",
     "build": "ng build",
+    "build_no_backend": "ng build --configuration=nobackend",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
