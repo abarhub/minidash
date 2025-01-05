@@ -2,11 +2,10 @@ import {AfterViewInit, Component, ElementRef, OnDestroy, ViewChild} from '@angul
 import {CommonModule} from '@angular/common';
 
 @Component({
-  selector: 'app-horloge',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './horloge.component.html',
-  styleUrl: './horloge.component.scss'
+    selector: 'app-horloge',
+    imports: [CommonModule],
+    templateUrl: './horloge.component.html',
+    styleUrl: './horloge.component.scss'
 })
 export class HorlogeComponent implements AfterViewInit, OnDestroy {
 

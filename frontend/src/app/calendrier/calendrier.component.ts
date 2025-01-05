@@ -10,9 +10,10 @@ import {CalendrierModel} from "../model/calendrier.model";
 import {environment} from "../../environments/environment";
 
 @Component({
-  selector: 'app-calendrier',
-  templateUrl: './calendrier.component.html',
-  styleUrls: ['./calendrier.component.scss']
+    selector: 'app-calendrier',
+    templateUrl: './calendrier.component.html',
+    styleUrls: ['./calendrier.component.scss'],
+    standalone: false
 })
 export class CalendrierComponent implements OnInit {
 

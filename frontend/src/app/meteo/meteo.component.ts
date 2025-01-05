@@ -11,10 +11,11 @@ import {DateTime} from "luxon";
 
 
 @Component({
-  selector: 'app-meteo',
-  templateUrl: './meteo.component.html',
-  styleUrls: ['./meteo.component.scss'],
-  providers: [DatePipe]
+    selector: 'app-meteo',
+    templateUrl: './meteo.component.html',
+    styleUrls: ['./meteo.component.scss'],
+    providers: [DatePipe],
+    standalone: false
 })
 export class MeteoComponent implements OnInit {
 

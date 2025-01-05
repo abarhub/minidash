@@ -2,9 +2,10 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {MeteoCouranteModel} from "../model/meteoCourante.model";
 
 @Component({
-  selector: 'app-prevision-meteo',
-  templateUrl: './prevision-meteo.component.html',
-  styleUrls: ['./prevision-meteo.component.scss']
+    selector: 'app-prevision-meteo',
+    templateUrl: './prevision-meteo.component.html',
+    styleUrls: ['./prevision-meteo.component.scss'],
+    standalone: false
 })
 export class PrevisionMeteoComponent {
 

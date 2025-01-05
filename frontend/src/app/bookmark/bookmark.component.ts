@@ -3,9 +3,10 @@ import { HttpClient } from "@angular/common/http";
 import {ListeBookmarkModel} from "../model/listeBookmark.model";
 
 @Component({
-  selector: 'app-bookmark',
-  templateUrl: './bookmark.component.html',
-  styleUrls: ['./bookmark.component.scss']
+    selector: 'app-bookmark',
+    templateUrl: './bookmark.component.html',
+    styleUrls: ['./bookmark.component.scss'],
+    standalone: false
 })
 export class BookmarkComponent implements OnInit {
 

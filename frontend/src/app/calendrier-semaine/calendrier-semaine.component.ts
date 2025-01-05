@@ -5,9 +5,10 @@ import {JourneeModel} from "../model/journee.model";
 import {PeriodeVacanceModel} from "../model/periodeVacanceModel";
 
 @Component({
-  selector: 'app-calendrier-semaine',
-  templateUrl: './calendrier-semaine.component.html',
-  styleUrls: ['./calendrier-semaine.component.scss']
+    selector: 'app-calendrier-semaine',
+    templateUrl: './calendrier-semaine.component.html',
+    styleUrls: ['./calendrier-semaine.component.scss'],
+    standalone: false
 })
 export class CalendrierSemaineComponent implements OnInit {
 
