@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import {MeteoModel} from "../model/meteo.model";
 import {ChartConfiguration, ChartOptions} from "chart.js";
 import {DatePipe} from "@angular/common";

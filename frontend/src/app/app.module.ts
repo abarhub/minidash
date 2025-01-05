@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CalendrierComponent } from './calendrier/calendrier.component';
 import { HorlogeComponent } from './horloge/horloge.component';
-import {HttpClientModule} from "@angular/common/http";
+import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
 import { CalendrierSemaineComponent } from './calendrier-semaine/calendrier-semaine.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
@@ -24,19 +24,16 @@ import {registerLocaleData} from "@angular/common";
 registerLocaleData(localeFr);
 
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    CalendrierComponent,
-    CalendrierSemaineComponent,
-    MeteoComponent,
-    PrevisionMeteoComponent,
-    BookmarkComponent
-  ],
-    imports: [
-        BrowserModule,
+@NgModule({ declarations: [
+        AppComponent,
+        CalendrierComponent,
+        CalendrierSemaineComponent,
+        MeteoComponent,
+        PrevisionMeteoComponent,
+        BookmarkComponent
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
         AppRoutingModule,
-        HttpClientModule,
         BrowserAnimationsModule,
         MatSlideToggleModule,
         MatTabsModule,
@@ -46,9 +43,5 @@ registerLocaleData(localeFr);
         NgChartsModule,
         MatExpansionModule,
         MatDividerModule,
-        HorlogeComponent
-    ],
-  providers: [{ provide: LOCALE_ID, useValue: "fr-FR" }],
-  bootstrap: [AppComponent]
-})
+        HorlogeComponent], providers: [{ provide: LOCALE_ID, useValue: "fr-FR" }, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule { }
