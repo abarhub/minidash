@@ -4,41 +4,48 @@
     <div>&nbsp;</div>
     <div class="affichageAnnee">{{anneeAffiche}}</div>
     <div class="bouton-entete">
-    <div >
-      <mat-button-toggle-group name="nbMois" aria-label="Nombre de mois" (valueChange)="changenbMois($event)">
-        <mat-button-toggle value="trois">3</mat-button-toggle>
-        <mat-button-toggle value="six">6</mat-button-toggle>
-        <mat-button-toggle value="douze">12</mat-button-toggle>
-      </mat-button-toggle-group>
-    </div>
-    <div><button mat-raised-button (click)="recule()">&larr;</button><button mat-raised-button (click)="avance()">&rarr;</button></div>
+      <div >
+        <mat-button-toggle-group name="nbMois" aria-label="Nombre de mois" (valueChange)="changenbMois($event)">
+          <mat-button-toggle value="trois">3</mat-button-toggle>
+          <mat-button-toggle value="six">6</mat-button-toggle>
+          <mat-button-toggle value="douze">12</mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+      <div><button mat-raised-button (click)="recule()">&larr;</button><button mat-raised-button (click)="avance()">&rarr;</button></div>
     </div>
   </div>
 
 
 
-<div class="annee">
+  <div class="annee">
 
-<div class="boucleFor" *ngFor="let moisParAnnee of listeSemaineDuMois">
+    @for (moisParAnnee of listeSemaineDuMois; track moisParAnnee) {
+      <div class="boucleFor">
+        <div class="titre-mois">{{moisParAnnee.nomMois}} {{moisParAnnee.annee}}</div>
+        @for (semaine of moisParAnnee.semaineDuMois; track semaine) {
+          <div class="mois">
+            @if (mois) {
+              <app-calendrier-semaine [listeSaint]="mois" [dateDebut]="semaine"
+                [listeJourFerier]="listeJourFerier"
+                [listePeriodeVacance]="listePeriodeVacances"
+              ></app-calendrier-semaine>
+            }
+          </div>
+        }
+        @if (decalageHeureEte &&decalageHeureEte.year===moisParAnnee.annee && decalageHeureEte.month===moisParAnnee.numeroMois) {
+          <div>
+            decalage été le {{decalageHeureEte.day}} (+1h)
+          </div>
+        }
+        @if (decalageHeureHivert &&decalageHeureHivert.year===moisParAnnee.annee && decalageHeureHivert.month===moisParAnnee.numeroMois) {
+          <div>
+            decalage hiver le {{decalageHeureHivert.day}} (-1h)
+          </div>
+        }
+      </div>
+    }
 
-
-    <div class="titre-mois">{{moisParAnnee.nomMois}} {{moisParAnnee.annee}}</div>
-    <div class="mois" *ngFor="let semaine of moisParAnnee.semaineDuMois">
-        <app-calendrier-semaine *ngIf="mois" [listeSaint]="mois" [dateDebut]="semaine"
-                              [listeJourFerier]="listeJourFerier"
-                              [listePeriodeVacance]="listePeriodeVacances"
-      ></app-calendrier-semaine>
-    </div>
-    <div *ngIf="decalageHeureEte &&decalageHeureEte.year===moisParAnnee.annee && decalageHeureEte.month===moisParAnnee.numeroMois">
-      decalage été le {{decalageHeureEte.day}} (+1h)
-    </div>
-    <div *ngIf="decalageHeureHivert &&decalageHeureHivert.year===moisParAnnee.annee && decalageHeureHivert.month===moisParAnnee.numeroMois">
-      decalage hiver le {{decalageHeureHivert.day}} (-1h)
-    </div>
-
-</div>
-
-</div>
+  </div>
 
   <div class="piedPage">
 

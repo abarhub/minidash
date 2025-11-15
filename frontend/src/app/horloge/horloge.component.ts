@@ -1,9 +1,9 @@
 import {AfterViewInit, Component, ElementRef, OnDestroy, ViewChild} from '@angular/core';
-import {CommonModule} from '@angular/common';
+
 
 @Component({
     selector: 'app-horloge',
-    imports: [CommonModule],
+    imports: [],
     templateUrl: './horloge.component.html',
     styleUrl: './horloge.component.scss'
 })

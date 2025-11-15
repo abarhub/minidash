@@ -1,23 +1,39 @@
 <div class="semaine">
-  <div class="journee" *ngFor="let jour of listeJours; let index = index"
-       [ngClass]="{'dimanche':jour.dimanche,'ferier':jour.jourFerier,'jourActuel':jour.jourActuel}">
-    <div class="no-jour">{{jour.numero}}</div>
-    <div class="jour-semaine">{{jour.journeeSemaine}}</div>
-    <div class="nom-saint">{{jour.nomSaint}}</div>
-    <div class="fin-ligne">
-    <div class="no-semaine" *ngIf="jour.noSemaine>0">{{jour.noSemaine}}</div>
-    <div class="vacances-scolaires">
-      <div class="zone-a" *ngIf="jour.vacancesA"></div>
-      <div class="zone-sansVacance" *ngIf="!jour.vacancesA"></div>
-      <div class="separateur-zone"></div>
-      <div class="zone-b" *ngIf="jour.vacancesB"></div>
-      <div class="zone-sansVacance" *ngIf="!jour.vacancesB"></div>
-      <div class="separateur-zone"></div>
-      <div class="zone-c" *ngIf="jour.vacancesC"></div>
-      <div class="zone-sansVacance" *ngIf="!jour.vacancesC"></div>
-      <div class="separateur-zone"></div>
+  @for (jour of listeJours; track jour; let index = $index) {
+    <div class="journee"
+      [ngClass]="{'dimanche':jour.dimanche,'ferier':jour.jourFerier,'jourActuel':jour.jourActuel}">
+      <div class="no-jour">{{jour.numero}}</div>
+      <div class="jour-semaine">{{jour.journeeSemaine}}</div>
+      <div class="nom-saint">{{jour.nomSaint}}</div>
+      <div class="fin-ligne">
+        @if (jour.noSemaine>0) {
+          <div class="no-semaine">{{jour.noSemaine}}</div>
+        }
+        <div class="vacances-scolaires">
+          @if (jour.vacancesA) {
+            <div class="zone-a"></div>
+          }
+          @if (!jour.vacancesA) {
+            <div class="zone-sansVacance"></div>
+          }
+          <div class="separateur-zone"></div>
+          @if (jour.vacancesB) {
+            <div class="zone-b"></div>
+          }
+          @if (!jour.vacancesB) {
+            <div class="zone-sansVacance"></div>
+          }
+          <div class="separateur-zone"></div>
+          @if (jour.vacancesC) {
+            <div class="zone-c"></div>
+          }
+          @if (!jour.vacancesC) {
+            <div class="zone-sansVacance"></div>
+          }
+          <div class="separateur-zone"></div>
+        </div>
+      </div>
     </div>
-    </div>
-  </div>
+  }
 </div>
 

@@ -1,31 +1,29 @@
 
-<div *ngIf="meteo" style="width: 100%" class="page">
-  <div>
-
-    <div class="meteo-courante" *ngIf="meteo.meteoCourante">
-      <mat-expansion-panel expanded="true">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Météo
-          </mat-panel-title>
-<!--          <mat-panel-description>-->
-<!--            Les précipitations-->
-<!--          </mat-panel-description>-->
-        </mat-expansion-panel-header>
-        <div >
-          <app-prevision-meteo [meteo]="meteo.meteoCourante"
-                               [boutonRecharger]="true" (emitRecharger)="recharger()"
-                               [afficheCoucheSoleil]="true"
-                               [afficheHeureUniquement]="false"
-          ></app-prevision-meteo>
-        </div>
-      </mat-expansion-panel>
-    </div>
-
-
-
+@if (meteo) {
+  <div style="width: 100%" class="page">
+    <div>
+      @if (meteo.meteoCourante) {
+        <div class="meteo-courante">
+          <mat-expansion-panel expanded="true">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                Météo
+              </mat-panel-title>
+              <!--          <mat-panel-description>-->
+              <!--            Les précipitations-->
+            <!--          </mat-panel-description>-->
+          </mat-expansion-panel-header>
+          <div >
+            <app-prevision-meteo [meteo]="meteo.meteoCourante"
+              [boutonRecharger]="true" (emitRecharger)="recharger()"
+              [afficheCoucheSoleil]="true"
+              [afficheHeureUniquement]="false"
+            ></app-prevision-meteo>
+          </div>
+        </mat-expansion-panel>
+      </div>
+    }
   </div>
-
   <div class="aujourd-hui">
     <mat-expansion-panel expanded="true">
       <mat-expansion-panel-header>
@@ -37,36 +35,29 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="meteo-jour">
-
         <div class="jour-parent">
-
           <div class="jour-matin-label">Matin</div>
-
           <div class="jour-apresMidi-label">Apres midi</div>
-
           <div class="jour-matin-statut">
-            <img *ngIf="meteo.meteoCourante?.matin?.iconeStatut"
-                 src="https://openweathermap.org/img/wn/{{meteo.meteoCourante?.matin?.iconeStatut}}@2x.png"
-                 width="100px" height="100px">
+            @if (meteo.meteoCourante?.matin?.iconeStatut) {
+              <img
+                src="https://openweathermap.org/img/wn/{{meteo.meteoCourante?.matin?.iconeStatut}}@2x.png"
+                width="100px" height="100px">
+            }
           </div>
-
           <div class="jour-apresMidi-statut">
-            <img *ngIf="meteo.meteoCourante?.apresMidi?.iconeStatut"
-                 src="https://openweathermap.org/img/wn/{{meteo.meteoCourante?.apresMidi?.iconeStatut}}@2x.png"
-                 width="100px" height="100px">
+            @if (meteo.meteoCourante?.apresMidi?.iconeStatut) {
+              <img
+                src="https://openweathermap.org/img/wn/{{meteo.meteoCourante?.apresMidi?.iconeStatut}}@2x.png"
+                width="100px" height="100px">
+            }
           </div>
-
           <div class="jour-temperature">Temperature : min={{meteo.meteoCourante?.temperatureMin}}°  max={{meteo.meteoCourante?.temperatureMax}}°</div>
-
-
         </div>
-
       </div>
     </mat-expansion-panel>
   </div>
-
   <div class="prochains-jours">
-
     <mat-expansion-panel expanded="true">
       <mat-expansion-panel-header>
         <mat-panel-title>
@@ -77,108 +68,104 @@
         </mat-panel-description>
       </mat-expansion-panel-header>
       <div class="meteo-prochains-jours-resume">
-
         @for (meteo2 of meteo.resumeProchainsjours; track meteo){
-
           <div class="meteo-prochains-jours-resume-journee">
-
             <div class="jour" >{{meteo2.date | date : 'EEEE d'}}</div>
-
             <div class="image">
-              <img *ngIf="meteo2.matin?.iconeStatut"
-                   src="https://openweathermap.org/img/wn/{{meteo2.matin?.iconeStatut}}@2x.png"
-                   width="100px" height="100px">
+              @if (meteo2.matin?.iconeStatut) {
+                <img
+                  src="https://openweathermap.org/img/wn/{{meteo2.matin?.iconeStatut}}@2x.png"
+                  width="100px" height="100px">
+              }
             </div>
-
             <div class="temperature">{{meteo2.temperatureMin}}° -> {{meteo2.temperatureMax}}°</div>
-
           </div>
-
         }
-
       </div>
     </mat-expansion-panel>
   </div>
-
   <div class="precipitation">
-
-    <div class="meteo-prochaines-heures" *ngIf="meteo.prochainesHeures">
-      <mat-expansion-panel expanded="true">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            Précipitations
-          </mat-panel-title>
-          <mat-panel-description>
-            Les précipitations
-          </mat-panel-description>
-        </mat-expansion-panel-header>
-        <div class="charts">
-          <canvas baseChart width="400" height="400"
-                  [type]="'line'"
-                  [data]="lineChartData"
-                  [options]="lineChartOptions"
-                  [legend]="lineChartLegend">
-          </canvas>
-
-
-          <canvas baseChart width="400" height="400"
-                  [type]="'line'"
-                  [data]="lineChartData2"
-                  [options]="lineChartOptions"
-                  [legend]="lineChartLegend">
-          </canvas>
-        </div>
-      </mat-expansion-panel>
-    </div>
-
-
+    @if (meteo.prochainesHeures) {
+      <div class="meteo-prochaines-heures">
+        <mat-expansion-panel expanded="true">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Précipitations
+            </mat-panel-title>
+            <mat-panel-description>
+              Les précipitations
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <div class="charts">
+            <canvas baseChart width="400" height="400"
+              [type]="'line'"
+              [data]="lineChartData"
+              [options]="lineChartOptions"
+              [legend]="lineChartLegend">
+            </canvas>
+            <canvas baseChart width="400" height="400"
+              [type]="'line'"
+              [data]="lineChartData2"
+              [options]="lineChartOptions"
+              [legend]="lineChartLegend">
+            </canvas>
+          </div>
+        </mat-expansion-panel>
+      </div>
+    }
   </div>
-
   <div class="meteo-prochaine">
-
-  <div class="meteo-prochaines-heures" *ngIf="meteo.prochainesHeures">
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Météo des prochaines heures
-        </mat-panel-title>
-        <mat-panel-description>
-          C'est la météo des prochaines heures
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <div *ngFor="let meteo of meteo.prochainesHeures">
-        <app-prevision-meteo [meteo]="meteo" [boutonRecharger]="false"
-                             [afficheCoucheSoleil]="false"
-                             [afficheHeureUniquement]="true"
-        ></app-prevision-meteo>
-        <mat-divider></mat-divider>
+    @if (meteo.prochainesHeures) {
+      <div class="meteo-prochaines-heures">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Météo des prochaines heures
+            </mat-panel-title>
+            <mat-panel-description>
+              C'est la météo des prochaines heures
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          @for (meteo of meteo.prochainesHeures; track meteo) {
+            <div>
+              <app-prevision-meteo [meteo]="meteo" [boutonRecharger]="false"
+                [afficheCoucheSoleil]="false"
+                [afficheHeureUniquement]="true"
+              ></app-prevision-meteo>
+              <mat-divider></mat-divider>
+            </div>
+          }
+        </mat-expansion-panel>
       </div>
-    </mat-expansion-panel>
-  </div>
-
-  <div class="meteo-prochains-jours" *ngIf="meteo.prochainsJours">
-    <mat-expansion-panel>
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Météo des prochains jours
-        </mat-panel-title>
-        <mat-panel-description>
-          C'est la météo des prochains jours
-        </mat-panel-description>
-      </mat-expansion-panel-header>
-      <div *ngFor="let meteo of meteo.prochainsJours">
-        <app-prevision-meteo [meteo]="meteo" [boutonRecharger]="false"
-                             [afficheCoucheSoleil]="false"
-                             [afficheHeureUniquement]="false"
-        ></app-prevision-meteo>
-        <mat-divider></mat-divider>
+    }
+    @if (meteo.prochainsJours) {
+      <div class="meteo-prochains-jours">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Météo des prochains jours
+            </mat-panel-title>
+            <mat-panel-description>
+              C'est la météo des prochains jours
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          @for (meteo of meteo.prochainsJours; track meteo) {
+            <div>
+              <app-prevision-meteo [meteo]="meteo" [boutonRecharger]="false"
+                [afficheCoucheSoleil]="false"
+                [afficheHeureUniquement]="false"
+              ></app-prevision-meteo>
+              <mat-divider></mat-divider>
+            </div>
+          }
+        </mat-expansion-panel>
       </div>
-    </mat-expansion-panel>
+    }
   </div>
-
+</div>
+}
+@if (!meteo) {
+  <div>
+    <div><button mat-button color="primary" (click)="recharger()">Recharger</button></div>
   </div>
-
-</div>
-<div *ngIf="!meteo">
-  <div><button mat-button color="primary" (click)="recharger()">Recharger</button></div>
-</div>
+}

@@ -9,16 +9,20 @@
       <app-calendrier></app-calendrier>
     </div>
   </mat-tab>
-  <mat-tab label="Météo" *ngIf="backend">
-    <div class="page">
-      <app-meteo style="width: 100%"></app-meteo>
-    </div>
-  </mat-tab>
-  <mat-tab label="Bookmark" *ngIf="backend">
-    <div class="page">
-      <app-bookmark style="width: 100%"></app-bookmark>
-    </div>
-  </mat-tab>
+  @if (backend) {
+    <mat-tab label="Météo">
+      <div class="page">
+        <app-meteo style="width: 100%"></app-meteo>
+      </div>
+    </mat-tab>
+  }
+  @if (backend) {
+    <mat-tab label="Bookmark">
+      <div class="page">
+        <app-bookmark style="width: 100%"></app-bookmark>
+      </div>
+    </mat-tab>
+  }
 
 </mat-tab-group>
 

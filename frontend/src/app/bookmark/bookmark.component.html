@@ -1,9 +1,13 @@
-<div *ngIf="listeBookmark"  class="liste-url-global">
-  <div>
-  <div *ngFor="let bookmark of listeBookmark?.liste" class="liste-url">
+@if (listeBookmark) {
+  <div  class="liste-url-global">
     <div>
-      <a [href]="bookmark.url" target="_blank">{{bookmark.titre}}</a>
+      @for (bookmark of listeBookmark?.liste; track bookmark) {
+        <div class="liste-url">
+          <div>
+            <a [href]="bookmark.url" target="_blank">{{bookmark.titre}}</a>
+          </div>
+        </div>
+      }
     </div>
   </div>
-  </div>
-</div>
+}
