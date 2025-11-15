@@ -14,8 +14,8 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 public class MeteoConfig {
 
     @Bean
-    public MeteoRestService meteoRestService(AppProperties appProperties) {
-        RestClient restClient = RestClient.builder().baseUrl(appProperties.getMeteo().getUrl()).build();
+    public MeteoRestService meteoRestService(AppProperties appProperties, RestClient.Builder restClientBuilder) {
+        RestClient restClient = restClientBuilder.baseUrl(appProperties.getMeteo().getUrl()).build();
         RestClientAdapter adapter = RestClientAdapter.create(restClient);
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
 
