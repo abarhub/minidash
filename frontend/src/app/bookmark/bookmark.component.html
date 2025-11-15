@@ -1,7 +1,7 @@
 @if (listeBookmark) {
   <div  class="liste-url-global">
     <div>
-      @for (bookmark of listeBookmark?.liste; track bookmark) {
+      @for (bookmark of listeBookmark.liste; track bookmark) {
         <div class="liste-url">
           <div>
             <a [href]="bookmark.url" target="_blank">{{bookmark.titre}}</a>
