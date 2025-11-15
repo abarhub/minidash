@@ -16,8 +16,14 @@ import java.time.Clock;
 public class VacanceConfig {
 
     @Bean
-    public VacanceRestService vacanceRestService(AppProperties appProperties) {
-        RestClient restClient = RestClient.builder().baseUrl(appProperties.getVacances().getUrlVacancesScolaires()).build();
+    public RestClient.Builder restClientBuilder() {
+        return RestClient.builder();
+    }
+
+    @Bean
+    public VacanceRestService vacanceRestService(AppProperties appProperties,
+                                                 RestClient.Builder restClientBuilder) {
+        RestClient restClient = restClientBuilder.baseUrl(appProperties.getVacances().getUrlVacancesScolaires()).build();
         RestClientAdapter adapter = RestClientAdapter.create(restClient);
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
 
