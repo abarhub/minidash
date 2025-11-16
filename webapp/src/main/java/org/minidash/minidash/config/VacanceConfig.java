@@ -16,11 +16,6 @@ import java.time.Clock;
 public class VacanceConfig {
 
     @Bean
-    public RestClient.Builder restClientBuilder() {
-        return RestClient.builder();
-    }
-
-    @Bean
     public VacanceRestService vacanceRestService(AppProperties appProperties,
                                                  RestClient.Builder restClientBuilder) {
         RestClient restClient = restClientBuilder.baseUrl(appProperties.getVacances().getUrlVacancesScolaires()).build();
