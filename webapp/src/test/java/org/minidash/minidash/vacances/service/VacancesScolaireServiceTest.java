@@ -1,5 +1,6 @@
 package org.minidash.minidash.vacances.service;
 
+import io.micrometer.observation.tck.TestObservationRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +40,8 @@ class VacancesScolaireServiceTest {
     @TempDir
     private Path tempDir;
 
+    private TestObservationRegistry observationRegistry = TestObservationRegistry.create();
+
     @BeforeEach
     void setUp() throws IOException {
         File file = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("data/data1.json")).getFile());
@@ -48,7 +51,7 @@ class VacancesScolaireServiceTest {
         appProperties.setVacances(new VacancesProperties());
         appProperties.getVacances().setUrlVacancesScolaires("http://testvacances/");
         appProperties.getVacances().setDureeCache(Period.of(0, 0, 1));
-        vacancesScolaireService = new VacancesScolaireService(baseService, appProperties, vacanceRestService, clock);
+        vacancesScolaireService = new VacancesScolaireService(baseService, appProperties, vacanceRestService, clock, observationRegistry);
     }
 
     @Test

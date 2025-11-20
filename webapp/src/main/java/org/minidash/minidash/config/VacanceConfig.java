@@ -1,5 +1,6 @@
 package org.minidash.minidash.config;
 
+import io.micrometer.observation.ObservationRegistry;
 import org.minidash.minidash.base.service.BaseService;
 import org.minidash.minidash.properties.AppProperties;
 import org.minidash.minidash.vacances.service.VacanceRestService;
@@ -28,9 +29,10 @@ public class VacanceConfig {
     @Bean
     public VacancesScolaireService vacancesScolaireService(BaseService baseService,
                                                            AppProperties appProperties,
-                                                           VacanceRestService vacanceRestService) {
+                                                           VacanceRestService vacanceRestService,
+                                                           ObservationRegistry observationRegistry) {
         return new VacancesScolaireService(baseService, appProperties,
-                vacanceRestService, Clock.systemDefaultZone());
+                vacanceRestService, Clock.systemDefaultZone(), observationRegistry);
     }
 
 }

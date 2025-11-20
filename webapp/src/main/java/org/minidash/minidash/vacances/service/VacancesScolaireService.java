@@ -1,5 +1,7 @@
 package org.minidash.minidash.vacances.service;
 
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import jakarta.annotation.PostConstruct;
 import org.minidash.minidash.base.model.GlobalModel;
 import org.minidash.minidash.base.service.BaseService;
@@ -37,55 +39,64 @@ public class VacancesScolaireService {
 
     private Clock clock;
 
+    private final ObservationRegistry observationRegistry;
+
     public VacancesScolaireService(BaseService baseService, AppProperties appProperties,
-                                   VacanceRestService vacanceRestService, Clock clock) {
+                                   VacanceRestService vacanceRestService, Clock clock, ObservationRegistry observationRegistry) {
         this.baseService = baseService;
         this.vacancesProperties = appProperties.getVacances();
         this.vacanceRestService = vacanceRestService;
         this.clock = clock;
+        this.observationRegistry = observationRegistry;
     }
 
     @PostConstruct
     public void init() {
         LOGGER.atDebug().log("init vacances");
-        LOGGER.atDebug().log("cache des vacances: {}", vacancesProperties.getDureeCache());
-        List<VacancesDto> listeTotal = null;
-        boolean forceMaj = false;
-        try {
-            var global = baseService.get();
-            if (global != null) {
-                if (global.getVacances() != null) {
-                    listeTotal = List.copyOf(global.getVacances());
-                }
-                if (listeTotal != null) {
-                    if (global.getDateMajVacances() == null) {
-                        forceMaj = true;
-                    } else {
-                        var derniereRecuperation = global.getDateMajVacances();
-                        var now = LocalDateTime.now(clock);
-                        var limit = now.minus(vacancesProperties.getDureeCache());
-                        if (limit.isAfter(derniereRecuperation)) {
-                            forceMaj = true;
+        var listeTotal2 = Observation.createNotStarted("init_vacances", this.observationRegistry)
+                .lowCardinalityKeyValue("action", "charge_vacances")
+                //.highCardinalityKeyValue("demarrage", "" + Instant.now().toEpochMilli())
+                .observe(() -> {
+                    LOGGER.atDebug().log("cache des vacances: {}", vacancesProperties.getDureeCache());
+                    List<VacancesDto> listeTotal = null;
+                    boolean forceMaj = false;
+                    try {
+                        var global = baseService.get();
+                        if (global != null) {
+                            if (global.getVacances() != null) {
+                                listeTotal = List.copyOf(global.getVacances());
+                            }
+                            if (listeTotal != null) {
+                                if (global.getDateMajVacances() == null) {
+                                    forceMaj = true;
+                                } else {
+                                    var derniereRecuperation = global.getDateMajVacances();
+                                    var now = LocalDateTime.now(clock);
+                                    var limit = now.minus(vacancesProperties.getDureeCache());
+                                    if (limit.isAfter(derniereRecuperation)) {
+                                        forceMaj = true;
+                                    }
+                                }
+                            }
+                        }
+                    } catch (IOException e) {
+                        LOGGER.atError().log("Erreur pour lire la base", e);
+                    }
+                    if (listeTotal == null || forceMaj) {
+                        listeTotal = getVacancesDtos();
+                        try {
+                            var global = new GlobalModel();
+                            global.setVacances(listeTotal);
+                            global.setDateMajVacances(LocalDateTime.now(clock));
+                            baseService.save(global);
+                        } catch (IOException e) {
+                            LOGGER.atError().log("Erreur pour enregistrer la base", e);
                         }
                     }
-                }
-            }
-        } catch (IOException e) {
-            LOGGER.atError().log("Erreur pour lire la base", e);
-        }
-        if (listeTotal == null || forceMaj) {
-            listeTotal = getVacancesDtos();
-            try {
-                var global = new GlobalModel();
-                global.setVacances(listeTotal);
-                global.setDateMajVacances(LocalDateTime.now(clock));
-                baseService.save(global);
-            } catch (IOException e) {
-                LOGGER.atError().log("Erreur pour enregistrer la base", e);
-            }
-        }
-        LOGGER.atInfo().log("nb vacances={}", listeTotal.size());
-        this.listeVacances = List.copyOf(listeTotal);
+                    return listeTotal;
+                });
+        LOGGER.atInfo().log("nb vacances={}", (listeTotal2 != null) ? listeTotal2.size() : 0);
+        this.listeVacances = List.copyOf(listeTotal2);
     }
 
 

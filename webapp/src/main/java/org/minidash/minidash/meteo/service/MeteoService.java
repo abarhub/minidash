@@ -3,6 +3,8 @@ package org.minidash.minidash.meteo.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import jakarta.annotation.PostConstruct;
 import org.minidash.minidash.base.service.BaseService;
 import org.minidash.minidash.meteo.dto.MeteoCouranteDto;
@@ -25,6 +27,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class MeteoService {
 
@@ -39,13 +42,15 @@ public class MeteoService {
     private final AppProperties appProperties;
     private final MeteoProperties meteoProperties;
     private final MeteoRestService meteoRestService;
+    private final ObservationRegistry observationRegistry;
 
     public MeteoService(BaseService baseService, AppProperties appProperties,
-                        MeteoRestService meteoRestService) {
+                        MeteoRestService meteoRestService, ObservationRegistry observationRegistry) {
         this.baseService = baseService;
         this.appProperties = appProperties;
         this.meteoProperties = appProperties.getMeteo();
         this.meteoRestService = meteoRestService;
+        this.observationRegistry = observationRegistry;
     }
 
     @PostConstruct
@@ -377,10 +382,17 @@ public class MeteoService {
                 faireMaj = true;
             }
             if (faireMaj) {
-                LOGGER.info("maj meteo");
-                var res = getJson2();
-                LOGGER.info("maj meteo termine: {}", res != null);
-                if (res != null) {
+                var resOpt=Observation.createNotStarted("update_meteo", this.observationRegistry)
+                        .lowCardinalityKeyValue("action", "update_meteo")
+                        //.highCardinalityKeyValue("demarrage", ""+ Instant.now().toEpochMilli())
+                        .observeChecked(() -> {
+                            LOGGER.info("maj meteo");
+                            var res2 = getJson2();
+                            LOGGER.info("maj meteo termine: {}", res2 != null);
+                            return Optional.ofNullable(res2);
+                        });
+                if (resOpt.isPresent()) {
+                    var res=resOpt.get();
                     db.setMeteoGlobalModel(res);
                     db.setDateMajMeteo(LocalDateTime.now());
                     baseService.save(db);

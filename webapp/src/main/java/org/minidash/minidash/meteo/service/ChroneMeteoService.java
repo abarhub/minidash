@@ -1,5 +1,7 @@
 package org.minidash.minidash.meteo.service;
 
+import io.micrometer.observation.Observation;
+import io.micrometer.observation.ObservationRegistry;
 import jakarta.annotation.PostConstruct;
 import org.minidash.minidash.properties.AppProperties;
 import org.minidash.minidash.properties.MeteoProperties;
@@ -10,6 +12,7 @@ import org.springframework.scheduling.support.CronExpression;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Service
@@ -25,9 +28,12 @@ public class ChroneMeteoService {
 
     private boolean erreurCronExpression;
 
-    public ChroneMeteoService(MeteoService meteoService, AppProperties appProperties) {
+    private final ObservationRegistry observationRegistry;
+
+    public ChroneMeteoService(MeteoService meteoService, AppProperties appProperties, ObservationRegistry observationRegistry) {
         this.meteoService = meteoService;
         this.meteoProperties = appProperties.getMeteo();
+        this.observationRegistry = observationRegistry;
     }
 
     @PostConstruct
@@ -43,19 +49,24 @@ public class ChroneMeteoService {
     @Scheduled(cron = "* * * * * *")
     public void cron() {
         LOGGER.atDebug().log("cron");
-        if (StringUtils.hasText(meteoProperties.getCron()) && !erreurCronExpression) {
-            CronExpression cronExpression = CronExpression.parse(meteoProperties.getCron());
-            var tmp = cronExpression.next(LocalDateTime.now());
-            LOGGER.atDebug().log("tmp={}, lastDate={}", tmp, lastDate);
-            if (lastDate == null) {
-                LOGGER.atInfo().log("prochaine mise à jour de la météo : {}", tmp);
-            }
-            if (lastDate == null || !lastDate.equals(tmp)) {
-                traitement();
-                lastDate = tmp;
-            }
+        Observation.createNotStarted("cron_meteo", this.observationRegistry)
+                .lowCardinalityKeyValue("action", "charge_meteo")
+                //.highCardinalityKeyValue("demarrage", ""+ Instant.now().toEpochMilli())
+                .observe(() -> {
+                    if (StringUtils.hasText(meteoProperties.getCron()) && !erreurCronExpression) {
+                        CronExpression cronExpression = CronExpression.parse(meteoProperties.getCron());
+                        var tmp = cronExpression.next(LocalDateTime.now());
+                        LOGGER.atDebug().log("tmp={}, lastDate={}", tmp, lastDate);
+                        if (lastDate == null) {
+                            LOGGER.atInfo().log("prochaine mise à jour de la météo : {}", tmp);
+                        }
+                        if (lastDate == null || !lastDate.equals(tmp)) {
+                            traitement();
+                            lastDate = tmp;
+                        }
 
-        }
+                    }
+                });
     }
 
     private void traitement() {
