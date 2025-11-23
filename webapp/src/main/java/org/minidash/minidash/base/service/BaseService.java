@@ -1,10 +1,9 @@
 package org.minidash.minidash.base.service;
 
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.minidash.minidash.base.model.GlobalModel;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,12 +20,12 @@ public class BaseService {
     private final ObjectMapper objectMapper;
 
     public BaseService(String repertoireDonnees) {
-        this.repertoireDonnees = Path.of(Objects.requireNonNull(repertoireDonnees,"Le répertoire de configuration est vide"));
+        this.repertoireDonnees = Path.of(Objects.requireNonNull(repertoireDonnees, "Le répertoire de configuration est vide"));
         lock = new ReentrantReadWriteLock();
-        objectMapper = new ObjectMapper();
-        objectMapper.findAndRegisterModules();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper = new ObjectMapper()
+                .rebuild()
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .build();
     }
 
     public GlobalModel get() throws IOException {
@@ -34,7 +33,7 @@ public class BaseService {
         try {
             readerLock.lock();
             var file = getFile();
-            if(Files.exists(file)) {
+            if (Files.exists(file)) {
                 try (var reader = Files.newBufferedReader(file)) {
                     return objectMapper.readValue(reader, GlobalModel.class);
                 }

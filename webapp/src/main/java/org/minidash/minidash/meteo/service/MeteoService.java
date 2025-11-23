@@ -1,8 +1,5 @@
 package org.minidash.minidash.meteo.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import jakarta.annotation.PostConstruct;
@@ -18,6 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -166,7 +166,7 @@ public class MeteoService {
         return meteoCourante;
     }
 
-    private MeteoGlobalModel construitModelMeteo(String res) throws JsonProcessingException {
+    private MeteoGlobalModel construitModelMeteo(String res) throws JacksonException {
         ObjectMapper mapper = new ObjectMapper();
         var res2 = mapper.readTree(res);
         if (res2 != null) {
@@ -360,7 +360,7 @@ public class MeteoService {
         if (tmp.has("rain")) {
             var tmp2 = tmp.get("rain");
             if (tmp2.has("1h")) {
-                meteoCourante.setPrecipitation(tmp.floatValue());
+                meteoCourante.setPrecipitation(tmp2.get("1h").floatValue());
             }
         }
         return meteoCourante;
