@@ -1,5 +1,6 @@
 package org.minidash.minidash.config;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.ObservationRegistry;
 import org.minidash.minidash.base.service.BaseService;
 import org.minidash.minidash.meteo.service.MeteoRestService;
@@ -25,8 +26,9 @@ public class MeteoConfig {
 
     @Bean
     public MeteoService meteoService(BaseService baseService, AppProperties appProperties,
-                                     MeteoRestService meteoRestService, ObservationRegistry observationRegistry) {
-        return new MeteoService(baseService, appProperties, meteoRestService, observationRegistry);
+                                     MeteoRestService meteoRestService, ObservationRegistry observationRegistry,
+                                     MeterRegistry meterRegistry) {
+        return new MeteoService(baseService, appProperties, meteoRestService, observationRegistry,meterRegistry);
     }
 
 }

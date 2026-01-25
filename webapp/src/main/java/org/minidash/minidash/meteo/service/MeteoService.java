@@ -1,5 +1,7 @@
 package org.minidash.minidash.meteo.service;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tag;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationRegistry;
 import jakarta.annotation.PostConstruct;
@@ -23,10 +25,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class MeteoService {
@@ -43,14 +47,17 @@ public class MeteoService {
     private final MeteoProperties meteoProperties;
     private final MeteoRestService meteoRestService;
     private final ObservationRegistry observationRegistry;
+    private final MeterRegistry meterRegistry;
 
     public MeteoService(BaseService baseService, AppProperties appProperties,
-                        MeteoRestService meteoRestService, ObservationRegistry observationRegistry) {
+                        MeteoRestService meteoRestService, ObservationRegistry observationRegistry,
+                        MeterRegistry meterRegistry) {
         this.baseService = baseService;
         this.appProperties = appProperties;
         this.meteoProperties = appProperties.getMeteo();
         this.meteoRestService = meteoRestService;
         this.observationRegistry = observationRegistry;
+        this.meterRegistry = meterRegistry;
     }
 
     @PostConstruct
@@ -65,9 +72,12 @@ public class MeteoService {
                 repertoireBackup = p2;
             }
             var db = baseService.get();
-            if (db.getMeteoGlobalModel() != null) {
+            if (db == null) {
+                update();
+            } else if (db.getMeteoGlobalModel() != null) {
                 try {
                     this.meteoGlobalModel = db.getMeteoGlobalModel();
+                    exposeMeteo(meteoGlobalModel);
                 } catch (Exception e) {
                     LOGGER.atError().log("Erreur pour charger la configuration", e);
                 }
@@ -89,6 +99,7 @@ public class MeteoService {
                 db.setDateMajMeteo(LocalDateTime.now());
                 baseService.save(db);
                 meteoGlobalModel = res;
+                exposeMeteo(res);
                 return res;
             } catch (Exception e) {
                 LOGGER.atError().log("Erreur", e);
@@ -369,20 +380,24 @@ public class MeteoService {
     public MeteoDto update() {
         LOGGER.info("update");
         try {
-            var db = baseService.get();
-            var meteo = db.getMeteoGlobalModel();
             var faireMaj = false;
-            if (meteo != null && meteo.getCourante() != null && meteo.getCourante().getDate() != null) {
-                if (db.getDateMajMeteo() == null || db.getDateMajMeteo().isBefore(LocalDateTime.now().minus(meteoProperties.getDureeCache()))) {
-                    faireMaj = true;
+            var db = baseService.get();
+            if (db == null) {
+                var meteo = db.getMeteoGlobalModel();
+                if (meteo != null && meteo.getCourante() != null && meteo.getCourante().getDate() != null) {
+                    if (db.getDateMajMeteo() == null || db.getDateMajMeteo().isBefore(LocalDateTime.now().minus(meteoProperties.getDureeCache()))) {
+                        faireMaj = true;
+                    } else {
+                        faireMaj = false;
+                    }
                 } else {
-                    faireMaj = false;
+                    faireMaj = true;
                 }
             } else {
                 faireMaj = true;
             }
             if (faireMaj) {
-                var resOpt=Observation.createNotStarted("update_meteo", this.observationRegistry)
+                var resOpt = Observation.createNotStarted("update_meteo", this.observationRegistry)
                         .lowCardinalityKeyValue("action", "update_meteo")
                         //.highCardinalityKeyValue("demarrage", ""+ Instant.now().toEpochMilli())
                         .observeChecked(() -> {
@@ -392,11 +407,12 @@ public class MeteoService {
                             return Optional.ofNullable(res2);
                         });
                 if (resOpt.isPresent()) {
-                    var res=resOpt.get();
+                    var res = resOpt.get();
                     db.setMeteoGlobalModel(res);
                     db.setDateMajMeteo(LocalDateTime.now());
                     baseService.save(db);
                     meteoGlobalModel = res;
+                    exposeMeteo(res);
                 }
             } else {
                 LOGGER.info("pas de maj meteo");
@@ -464,6 +480,65 @@ public class MeteoService {
         } catch (IOException e) {
             LOGGER.atError().log("Impossible d'enregistrer la meteo dans le fichier {}", f, e);
         }
+    }
+
+    private void exposeMeteo(MeteoGlobalModel res) {
+        if (res != null) {
+            if (res.getCourante() != null) {
+                var meteoCourante = res.getCourante();
+                var prefix = "meteo_courante_";
+                exposeMeteo(prefix, meteoCourante, List.of());
+            }
+            var now = LocalDateTime.now();
+            res.getProchainesPrecipitations().forEach(precipitation -> {
+                var prefix = "meteo_estimation_";
+                var heureLocale = precipitation.getDate().toLocalTime();
+                var decalage = Duration.between(now.toLocalTime(), heureLocale);
+                if (!decalage.isNegative()) {
+                    var minutes = decalage.toMinutesPart();
+                    LOGGER.debug("heure={}, minutes={}, decalage= {}, date={}, minutes2={}",
+                            heureLocale, minutes, decalage, precipitation.getDate(), decalage.toMinutesPart());
+                    meterRegistry.gauge(prefix + "precipitation_prochaine_minutes",
+                            List.of(Tag.of("minute", minutes + "m"), Tag.of("date", precipitation.getDate().toLocalTime().toString())),
+                            precipitation.getPrecipitation());
+                }
+            });
+            res.getProchainesHeures().forEach(meteo -> {
+                var heure = meteo.getDate();
+                var decalage = Duration.between(now, heure);
+                if (!decalage.isNegative()) {
+                    var decalageHeure = decalage.toHours();
+                    LOGGER.debug("extimation prochaines heures : date={}, decalage= {}, heure={}",
+                            meteo.getDate(), decalage, decalageHeure);
+                    var prefix = "meteo_estimation_prochaine_heure_";
+                    exposeMeteo(prefix, meteo, List.of(Tag.of("heure", decalageHeure + "h"),
+                            Tag.of("date", meteo.getDate().toLocalTime().toString())));
+                }
+            });
+            res.getProchainsJours().forEach(meteo -> {
+                var jour = meteo.getDate();
+                var decalage = Duration.between(now, jour);
+                if (!decalage.isNegative()) {
+                    var decalageJour = decalage.toDays();
+                    LOGGER.debug("extimation prochaines jours : date={}, decalage={}", jour, decalageJour);
+                    var prefix = "meteo_estimation_prochain_jour_";
+                    exposeMeteo(prefix, meteo, List.of(Tag.of("jour", jour.toString()),
+                            Tag.of("date", meteo.getDate().toLocalTime().toString())));
+                }
+            });
+        }
+    }
+
+    private void exposeMeteo(String prefix, MeteoCourante meteoCourante, List<Tag> tags) {
+        meterRegistry.gauge(prefix + "temperature", tags, meteoCourante.getTemperature());
+        meterRegistry.gauge(prefix + "humidite", tags, meteoCourante.getHumidite());
+        meterRegistry.gauge(prefix + "pressionAthmospherique", tags, meteoCourante.getPressionAthmospherique());
+        meterRegistry.gauge(prefix + "vitesse_vent", tags, meteoCourante.getVitesseVent());
+        meterRegistry.gauge(prefix + "direction_vent", tags, meteoCourante.getDirectionVent());
+        meterRegistry.gauge(prefix + "nuage", tags, meteoCourante.getNuage());
+        meterRegistry.gauge(prefix + "visibilite", tags, meteoCourante.getVisibilite());
+        meterRegistry.gauge(prefix + "precipitation", tags, meteoCourante.getPrecipitation());
+        meterRegistry.gauge(prefix + "status", tags, meteoCourante.getStatut().getCode());
     }
 
 }
