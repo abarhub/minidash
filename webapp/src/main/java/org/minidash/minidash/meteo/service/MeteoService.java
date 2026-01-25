@@ -1,5 +1,6 @@
 package org.minidash.minidash.meteo.service;
 
+import com.google.common.util.concurrent.AtomicDouble;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.observation.Observation;
@@ -29,9 +30,8 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MeteoService {
 
@@ -48,6 +48,8 @@ public class MeteoService {
     private final MeteoRestService meteoRestService;
     private final ObservationRegistry observationRegistry;
     private final MeterRegistry meterRegistry;
+    private final Map<String, AtomicInteger> mapInteger = new HashMap<>();
+    private final Map<String, AtomicDouble> mapFloat = new HashMap<>();
 
     public MeteoService(BaseService baseService, AppProperties appProperties,
                         MeteoRestService meteoRestService, ObservationRegistry observationRegistry,
@@ -498,9 +500,9 @@ public class MeteoService {
                     var minutes = decalage.toMinutesPart();
                     LOGGER.debug("heure={}, minutes={}, decalage= {}, date={}, minutes2={}",
                             heureLocale, minutes, decalage, precipitation.getDate(), decalage.toMinutesPart());
-                    meterRegistry.gauge(prefix + "precipitation_prochaine_minutes",
+                    setGauge(prefix + "precipitation_prochaine_minutes",
                             List.of(Tag.of("minute", minutes + "m"), Tag.of("date", precipitation.getDate().toLocalTime().toString())),
-                            precipitation.getPrecipitation());
+                            precipitation.getPrecipitation(), "Les précipitations dans les prochaines minutes");
                 }
             });
             res.getProchainesHeures().forEach(meteo -> {
@@ -530,15 +532,37 @@ public class MeteoService {
     }
 
     private void exposeMeteo(String prefix, MeteoCourante meteoCourante, List<Tag> tags) {
-        meterRegistry.gauge(prefix + "temperature", tags, meteoCourante.getTemperature());
-        meterRegistry.gauge(prefix + "humidite", tags, meteoCourante.getHumidite());
-        meterRegistry.gauge(prefix + "pressionAthmospherique", tags, meteoCourante.getPressionAthmospherique());
-        meterRegistry.gauge(prefix + "vitesse_vent", tags, meteoCourante.getVitesseVent());
-        meterRegistry.gauge(prefix + "direction_vent", tags, meteoCourante.getDirectionVent());
-        meterRegistry.gauge(prefix + "nuage", tags, meteoCourante.getNuage());
-        meterRegistry.gauge(prefix + "visibilite", tags, meteoCourante.getVisibilite());
-        meterRegistry.gauge(prefix + "precipitation", tags, meteoCourante.getPrecipitation());
-        meterRegistry.gauge(prefix + "status", tags, meteoCourante.getStatut().getCode());
+        setGauge(prefix + "temperature", tags, meteoCourante.getTemperature(), "La temperature");
+        setGauge(prefix + "humidite", tags, meteoCourante.getHumidite(), "L'humidité");
+        setGauge(prefix + "pressionAthmospherique", tags, meteoCourante.getPressionAthmospherique(), "La préssion athospherique");
+        setGauge(prefix + "vitesse_vent", tags, meteoCourante.getVitesseVent(), "La vitesse du vent");
+        setGauge(prefix + "direction_vent", tags, meteoCourante.getDirectionVent(), "La direction du vent");
+        setGauge(prefix + "nuage", tags, meteoCourante.getNuage(), "Les nuages");
+        setGauge(prefix + "visibilite", tags, meteoCourante.getVisibilite(), "La visibilitée");
+        setGauge(prefix + "precipitation", tags, meteoCourante.getPrecipitation(), "Les precipitations");
+        setGauge(prefix + "status", tags, meteoCourante.getStatut().getCode(), "Le status");
     }
 
+    private void setGauge(String nom, List<Tag> tags, int valeur, String description) {
+        AtomicInteger gauge;
+        if (mapInteger.containsKey(nom)) {
+            gauge = mapInteger.get(nom);
+        } else {
+            gauge = meterRegistry.gauge(nom, tags, new AtomicInteger(0));
+            mapInteger.put(nom, gauge);
+        }
+        gauge.set(valeur);
+    }
+
+    private void setGauge(String nom, List<Tag> tags, double valeur, String description) {
+        AtomicDouble gauge;
+        if (mapFloat.containsKey(nom)) {
+            gauge = mapFloat.get(nom);
+        } else {
+            var atomic = new AtomicDouble(0.0);
+            gauge = meterRegistry.gauge(nom, tags, atomic);
+            mapFloat.put(nom, gauge);
+        }
+        gauge.set(valeur);
+    }
 }
