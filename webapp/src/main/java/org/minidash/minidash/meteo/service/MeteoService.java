@@ -15,6 +15,8 @@ import org.minidash.minidash.properties.AppProperties;
 import org.minidash.minidash.properties.MeteoProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -51,15 +53,26 @@ public class MeteoService {
     private final Map<String, AtomicInteger> mapInteger = new HashMap<>();
     private final Map<String, AtomicDouble> mapFloat = new HashMap<>();
 
+    private final ChatClient chatClient;
+
+    private final OllamaChatModel chatModel;
+
+//    private final ProjetTools projetTools;
+
+    private final MeteoTools meteoTools;
+
     public MeteoService(BaseService baseService, AppProperties appProperties,
                         MeteoRestService meteoRestService, ObservationRegistry observationRegistry,
-                        MeterRegistry meterRegistry) {
+                        MeterRegistry meterRegistry, ChatClient chatClient, OllamaChatModel chatModel) {
         this.baseService = baseService;
         this.appProperties = appProperties;
         this.meteoProperties = appProperties.getMeteo();
         this.meteoRestService = meteoRestService;
         this.observationRegistry = observationRegistry;
         this.meterRegistry = meterRegistry;
+        this.chatClient = chatClient;
+        this.chatModel = chatModel;
+        this.meteoTools = new MeteoTools(this);
     }
 
     @PostConstruct
@@ -564,5 +577,41 @@ public class MeteoService {
             mapFloat.put(nom, gauge);
         }
         gauge.set(valeur);
+    }
+
+    public String getMeteoTexte() {
+        try {
+//            var s0 = mapper.writeValueAsString(listMeteo);
+
+            var s = "Quelle est la météo des prochaines heures ?";
+
+            return appelMeteo(s);
+
+        }catch (Exception e){
+            LOGGER.error("erreur",e);
+        }
+        return "";
+    }
+
+
+    private String appelMeteo(String message) {
+
+        LOGGER.info("appel llm : {}", message);
+
+        var debut = Instant.now();
+
+        String response = ChatClient.create(chatModel)
+                .prompt(message)
+                .tools(meteoTools)
+                .call()
+                .content();
+
+
+        var fin = Instant.now();
+
+        LOGGER.info("res: {}", response);
+
+        LOGGER.info("durée d'execution: {}", Duration.between(debut, fin));
+        return response;
     }
 }

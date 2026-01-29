@@ -6,6 +6,8 @@ import org.minidash.minidash.base.service.BaseService;
 import org.minidash.minidash.meteo.service.MeteoRestService;
 import org.minidash.minidash.meteo.service.MeteoService;
 import org.minidash.minidash.properties.AppProperties;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
@@ -27,8 +29,14 @@ public class MeteoConfig {
     @Bean
     public MeteoService meteoService(BaseService baseService, AppProperties appProperties,
                                      MeteoRestService meteoRestService, ObservationRegistry observationRegistry,
-                                     MeterRegistry meterRegistry) {
-        return new MeteoService(baseService, appProperties, meteoRestService, observationRegistry,meterRegistry);
+                                     MeterRegistry meterRegistry, ChatClient chatClient, OllamaChatModel chatModel) {
+        return new MeteoService(baseService, appProperties, meteoRestService, observationRegistry,meterRegistry, chatClient, chatModel);
+    }
+
+
+    @Bean
+    public ChatClient openAiChatClient(OllamaChatModel chatModel) {
+        return ChatClient.create(chatModel);
     }
 
 }

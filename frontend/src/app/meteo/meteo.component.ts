@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import { HttpClient } from "@angular/common/http";
 import {MeteoModel} from "../model/meteo.model";
 import {ChartConfiguration, ChartOptions} from "chart.js";
@@ -8,6 +8,8 @@ import {MeteoCouranteModel} from "../model/meteoCourante.model";
 import {StatusEnum} from "../model/statut.enum";
 import {MeteoStatutModel} from "../model/meteoStatut.model";
 import {DateTime} from "luxon";
+import {MatDialog} from "@angular/material/dialog";
+import {DiagMeteoComponentComponent} from "../diag-meteo.component/diag-meteo.component.component";
 
 
 @Component({
@@ -20,6 +22,8 @@ import {DateTime} from "luxon";
 export class MeteoComponent implements OnInit {
 
   public meteo: MeteoModel | null = null;
+
+  readonly dialog = inject(MatDialog);
 
   constructor(private http: HttpClient, private datePipe: DatePipe, private _snackBar: MatSnackBar) {
   }
@@ -327,5 +331,13 @@ export class MeteoComponent implements OnInit {
     } else {
       return StatusEnum.INCONNU;
     }
+  }
+
+  openDialog() {
+    const dialogRef = this.dialog.open(DiagMeteoComponentComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 }

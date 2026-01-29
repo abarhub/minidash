@@ -28,4 +28,10 @@ public class MeteoControler {
         LOGGER.atInfo().log("updateMeteo");
         return meteoService.update();
     }
+
+    @GetMapping(value = "/api/meteoTexte",produces = "text/plain")
+    public String getMeteoTexte() {
+        LOGGER.atInfo().log("getMeteoTexte");
+        return meteoService.getMeteoTexte();
+    }
 }
