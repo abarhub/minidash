@@ -10,20 +10,27 @@ import org.minidash.minidash.meteo.model.MeteoIAModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.tool.annotation.Tool;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
 public class MeteoTools {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MeteoTools.class);
 
     private final MeteoService meteoService;
 
-    public MeteoTools(MeteoService meteoService) {
+    private final int nbHeures;
+
+    private final ObjectMapper mapper;
+
+    public MeteoTools(MeteoService meteoService, int nbHeures) {
         this.meteoService = meteoService;
+        mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        this.nbHeures = nbHeures;
     }
 
     @Tool(description = "Donne la météo des prochaines heures")
@@ -38,15 +45,13 @@ public class MeteoTools {
 
         var listMeteo = convertie2(meteo);
 
-        listMeteo.setMeteo(listMeteo.getMeteo().stream().limit(6).toList());
+        if (nbHeures > 0) {
+            listMeteo.setMeteo(listMeteo.getMeteo().stream().limit(nbHeures).toList());
+        }
 
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-        LOGGER.info("listMeteo: {}", mapper.valueToTree(listMeteo));
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("listMeteo: {}", mapper.valueToTree(listMeteo));
+        }
 
         return listMeteo;
     }

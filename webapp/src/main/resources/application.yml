@@ -18,6 +18,9 @@ app:
     fichier:
     cron: '0 0 8-20 * * *'
     dureeCache: 15m
+    nbHeures: 12
+    messageIA:
+    #messageIA: "Quelle est la météo des prochaines heures ? je veux une réponse courte"
 
 
   bookmark:

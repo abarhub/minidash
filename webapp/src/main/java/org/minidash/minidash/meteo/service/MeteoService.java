@@ -72,7 +72,7 @@ public class MeteoService {
         this.meterRegistry = meterRegistry;
         this.chatClient = chatClient;
         this.chatModel = chatModel;
-        this.meteoTools = new MeteoTools(this);
+        this.meteoTools = new MeteoTools(this, meteoProperties.getNbHeures());
     }
 
     @PostConstruct
@@ -581,14 +581,15 @@ public class MeteoService {
 
     public String getMeteoTexte() {
         try {
-//            var s0 = mapper.writeValueAsString(listMeteo);
-
             var s = "Quelle est la météo des prochaines heures ?";
+            if (StringUtils.hasText(meteoProperties.getMessageIA())) {
+                s = meteoProperties.getMessageIA();
+            }
 
             return appelMeteo(s);
 
-        }catch (Exception e){
-            LOGGER.error("erreur",e);
+        } catch (Exception e) {
+            LOGGER.error("erreur", e);
         }
         return "";
     }

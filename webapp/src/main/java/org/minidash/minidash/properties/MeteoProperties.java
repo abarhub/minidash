@@ -18,6 +18,10 @@ public class MeteoProperties {
 
     private Duration dureeCache;
 
+    private int nbHeures;
+
+    private String messageIA;
+
     public String getUrl() {
         return url;
     }
@@ -72,5 +76,21 @@ public class MeteoProperties {
 
     public void setDureeCache(Duration dureeCache) {
         this.dureeCache = dureeCache;
+    }
+
+    public int getNbHeures() {
+        return nbHeures;
+    }
+
+    public void setNbHeures(int nbHeures) {
+        this.nbHeures = nbHeures;
+    }
+
+    public String getMessageIA() {
+        return messageIA;
+    }
+
+    public void setMessageIA(String messageIA) {
+        this.messageIA = messageIA;
     }
 }
