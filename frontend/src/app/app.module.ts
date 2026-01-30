@@ -21,6 +21,7 @@ import {MatDividerModule} from "@angular/material/divider";
 import { BookmarkComponent } from './bookmark/bookmark.component';
 import localeFr from '@angular/common/locales/fr';
 import {registerLocaleData} from "@angular/common";
+import {provideMarkdown} from "ngx-markdown";
 registerLocaleData(localeFr);
 
 
@@ -43,5 +44,10 @@ registerLocaleData(localeFr);
         NgChartsModule,
         MatExpansionModule,
         MatDividerModule,
-        HorlogeComponent], providers: [{ provide: LOCALE_ID, useValue: "fr-FR" }, provideHttpClient(withInterceptorsFromDi())] })
+        HorlogeComponent],
+  providers: [
+    { provide: LOCALE_ID, useValue: "fr-FR" },
+    provideHttpClient(withInterceptorsFromDi()),
+    provideMarkdown(),
+  ] })
 export class AppModule { }

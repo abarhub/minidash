@@ -3,6 +3,7 @@ import {MatDialogActions, MatDialogClose, MatDialogContent} from "@angular/mater
 import {MatButton} from "@angular/material/button";
 import {HttpClient} from "@angular/common/http";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import {MarkdownComponent} from "ngx-markdown";
 
 @Component({
   selector: 'app-diag-meteo.component',
@@ -11,7 +12,8 @@ import {MatProgressSpinner} from "@angular/material/progress-spinner";
     MatDialogClose,
     MatButton,
     MatDialogContent,
-    MatProgressSpinner
+    MatProgressSpinner,
+    MarkdownComponent
   ],
   templateUrl: './diag-meteo.component.component.html',
   styleUrl: './diag-meteo.component.component.scss',

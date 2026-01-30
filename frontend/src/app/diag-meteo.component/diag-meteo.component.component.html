@@ -1,7 +1,8 @@
 <h2 mat-dialog-title>Météo</h2>
 <mat-dialog-content class="mat-typography">
   <h3>Prévisions météorologiques des prochaines heures</h3>
-   <pre>{{messageMeteo}}</pre>
+<!--   <pre>{{messageMeteo}}</pre>-->
+  <markdown [data]="messageMeteo"></markdown>
   @if(chargement){
     <p>Chargement de la météo ...</p>
   <p><mat-spinner></mat-spinner></p>
