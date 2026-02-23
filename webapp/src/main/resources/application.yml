@@ -18,8 +18,13 @@ app:
     fichier:
     cron: '0 0 8-20 * * *'
     dureeCache: 15m
-    nbHeures: 12
-    messageIA:
+    nbHeures: 24
+    messageIA: |
+      Décrit la météo des prochaines heures de manière simple.
+      Je ne m'intéresse pas à la nuit (22h à 7h), résume la de manière succinte.
+      Soit par contre précis pour les heures de 7h à 21h.
+
+      Quelle est la météo des prochaines heures ?
     #messageIA: "Quelle est la météo des prochaines heures ? je veux une réponse courte"
 
 
