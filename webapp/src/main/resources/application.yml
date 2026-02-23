@@ -26,6 +26,17 @@ app:
 
       Quelle est la météo des prochaines heures ?
     #messageIA: "Quelle est la météo des prochaines heures ? je veux une réponse courte"
+  telegram:
+    token:
+    idBot:
+    urlBase: https://api.telegram.org/
+    cron: '0 20 7 * * *'
+    actif: true
+    messageIA: |
+      Décrit la météo des prochaines heures de manière simple.
+      Je ne m'intéresse pas à la nuit (22h à 7h), résume la de manière succinte.
+
+      Quelle est la météo des prochaines heures ?
 
 
   bookmark:

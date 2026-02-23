@@ -580,12 +580,20 @@ public class MeteoService {
     }
 
     public String getMeteoTexte() {
+        String s = null;
+        if (StringUtils.hasText(meteoProperties.getMessageIA())) {
+            s = meteoProperties.getMessageIA();
+        }
+        return getMeteoTexte(s);
+    }
+
+    public String getMeteoTexte(String messageIa) {
         try {
             var s = """
-            Regroupe les heures de 22h à 7h du matin comme la nuit.
-            
-            Quelle est la météo des prochaines heures ?
-            """;
+                    Regroupe les heures de 22h à 7h du matin comme la nuit.
+                    
+                    Quelle est la météo des prochaines heures ?
+                    """;
             if (StringUtils.hasText(meteoProperties.getMessageIA())) {
                 s = meteoProperties.getMessageIA();
             }

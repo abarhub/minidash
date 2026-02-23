@@ -16,6 +16,8 @@ public class AppProperties {
 
     private BookmarkProperties bookmark;
 
+    private TelegramProperties telegram;
+
     public VacancesProperties getVacances() {
         return vacances;
     }
@@ -46,5 +48,13 @@ public class AppProperties {
 
     public void setBookmark(BookmarkProperties bookmark) {
         this.bookmark = bookmark;
+    }
+
+    public TelegramProperties getTelegram() {
+        return telegram;
+    }
+
+    public void setTelegram(TelegramProperties telegram) {
+        this.telegram = telegram;
     }
 }

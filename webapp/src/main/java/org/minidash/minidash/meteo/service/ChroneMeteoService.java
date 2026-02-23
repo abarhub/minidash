@@ -30,10 +30,13 @@ public class ChroneMeteoService {
 
     private final ObservationRegistry observationRegistry;
 
-    public ChroneMeteoService(MeteoService meteoService, AppProperties appProperties, ObservationRegistry observationRegistry) {
+    private final AlerteMeteoService alerteMeteoService;
+
+    public ChroneMeteoService(MeteoService meteoService, AppProperties appProperties, ObservationRegistry observationRegistry, AlerteMeteoService alerteMeteoService) {
         this.meteoService = meteoService;
         this.meteoProperties = appProperties.getMeteo();
         this.observationRegistry = observationRegistry;
+        this.alerteMeteoService = alerteMeteoService;
     }
 
     @PostConstruct
@@ -67,6 +70,7 @@ public class ChroneMeteoService {
 
                     }
                 });
+        alerteMeteoService.traitement();
     }
 
     private void traitement() {
