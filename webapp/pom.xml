@@ -17,6 +17,7 @@
 		<java.version>21</java.version>
 <!--		<spring-ai.version>1.1.2</spring-ai.version>-->
 		<spring-ai.version>2.0.0-M2</spring-ai.version>
+		<jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
 	</properties>
 
 
@@ -124,5 +125,44 @@
 			</plugin>
 		</plugins>
 	</build>
+
+
+	<profiles>
+		<profile>
+			<id>sonar</id>
+			<properties>
+				<sonar.projectKey>minidash-webapp</sonar.projectKey>
+				<sonar.projectName>minidash-webapp</sonar.projectName>
+				<sonar.coverage.jacoco.xmlReportPaths>
+					target/site/jacoco/jacoco.xml
+				</sonar.coverage.jacoco.xmlReportPaths>
+			</properties>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>${jacoco-maven-plugin.version}</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>report</id>
+								<phase>test</phase>
+								<goals>
+									<goal>report</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+
+		</profile>
+	</profiles>
 
 </project>
