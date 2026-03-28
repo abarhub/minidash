@@ -594,7 +594,9 @@ public class MeteoService {
                     
                     Quelle est la météo des prochaines heures ?
                     """;
-            if (StringUtils.hasText(meteoProperties.getMessageIA())) {
+            if (StringUtils.hasText(messageIa)) {
+                s = messageIa;
+            } else if (StringUtils.hasText(meteoProperties.getMessageIA())) {
                 s = meteoProperties.getMessageIA();
             }
 
