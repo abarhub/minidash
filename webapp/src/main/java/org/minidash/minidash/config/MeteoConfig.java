@@ -1,8 +1,11 @@
 package org.minidash.minidash.config;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.ObservationRegistry;
 import org.minidash.minidash.base.service.BaseService;
+import org.minidash.minidash.meteo.model.MeteoGlobalModel;
 import org.minidash.minidash.meteo.service.MeteoRestService;
 import org.minidash.minidash.meteo.service.MeteoService;
 import org.minidash.minidash.properties.AppProperties;
@@ -13,6 +16,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+
+import java.time.Duration;
 
 @Configuration
 public class MeteoConfig {
@@ -29,10 +34,19 @@ public class MeteoConfig {
     @Bean
     public MeteoService meteoService(BaseService baseService, AppProperties appProperties,
                                      MeteoRestService meteoRestService, ObservationRegistry observationRegistry,
-                                     MeterRegistry meterRegistry, ChatClient chatClient, OllamaChatModel chatModel) {
-        return new MeteoService(baseService, appProperties, meteoRestService, observationRegistry,meterRegistry, chatClient, chatModel);
+                                     MeterRegistry meterRegistry, OllamaChatModel chatModel,
+                                     Cache<Integer, MeteoGlobalModel> meteoCache) {
+        return new MeteoService(baseService, appProperties, meteoRestService, observationRegistry, meterRegistry,
+                chatModel, appProperties.getTelegram().getMeteo(), meteoCache);
     }
 
+    @Bean
+    public Cache<Integer, MeteoGlobalModel> meteoCache() {
+        return Caffeine.newBuilder()
+                .expireAfterWrite(Duration.ofMinutes(15))
+                .recordStats()
+                .build();
+    }
 
     @Bean
     public ChatClient openAiChatClient(OllamaChatModel chatModel) {

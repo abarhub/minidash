@@ -73,34 +73,48 @@ public class AlerteMeteoService {
         try {
             LOGGER.info("envoiMessage ...");
             var messageIA = telegramProperties.getMessageIA();
-            var message = meteoService.getMeteoTexte(messageIA);
+
+            int no = 0;
+            for (var meteo : telegramProperties.getMeteo()) {
+
+                var message = meteoService.getMeteoTexte(messageIA, no);
+
+                if (message != null) {
+                    message = meteo.getNom() + ": " + message;
+                } else {
+                    message = meteo.getNom() + ":";
+                }
+
+                LOGGER.info("message: {}", message);
 
 //            var message = "test message";
 
 //        String url = telegramProperties.getUrlBase() + "bot" + telegramProperties.getToken() + "/sendMessage?chat_id=" + telegramProperties.getChatId() + "&text={}" + telegramProperties.getMessageIA();
 //        meteoService.envoiMessage(url);
 
-            MessageTelegramDto messageTelegramDto = new MessageTelegramDto(telegramProperties.getIdBot(), message, "HTML");
+                MessageTelegramDto messageTelegramDto = new MessageTelegramDto(telegramProperties.getIdBot(), message, "HTML");
 
-            Verify.verifyNotNull(messageTelegramDto.chatId(), "chatid est vide");
-            Verify.verifyNotNull(messageTelegramDto.text(), "message est vide");
-            Verify.verifyNotNull(messageTelegramDto.parseMode(), "parseMode est vide");
-            Verify.verifyNotNull(telegramProperties.getToken(), "token est vide");
+                Verify.verifyNotNull(messageTelegramDto.chatId(), "chatid est vide");
+                Verify.verifyNotNull(messageTelegramDto.text(), "message est vide");
+                Verify.verifyNotNull(messageTelegramDto.parseMode(), "parseMode est vide");
+                Verify.verifyNotNull(telegramProperties.getToken(), "token est vide");
 
-            RestClient restClient = RestClient.create();
+                RestClient restClient = RestClient.create();
 
-            ResponseEntity<String> response = restClient.post()
-                    .uri(telegramProperties.getUrlBase() + "bot{token}/sendMessage",
-                            telegramProperties.getToken())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(messageTelegramDto)
-                    .retrieve()
-                    .toEntity(String.class);
+                ResponseEntity<String> response = restClient.post()
+                        .uri(telegramProperties.getUrlBase() + "bot{token}/sendMessage",
+                                telegramProperties.getToken())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(messageTelegramDto)
+                        .retrieve()
+                        .toEntity(String.class);
 
-            LOGGER.info("response={}", response);
-            LOGGER.info("response.body={}", response.getBody());
+                LOGGER.info("response={}", response);
+                LOGGER.info("response.body={}", response.getBody());
 
-            LOGGER.info("envoiMessage terminé");
+                LOGGER.info("envoiMessage terminé");
+                no++;
+            }
         } catch (Exception e) {
             LOGGER.error("erreur", e);
         }

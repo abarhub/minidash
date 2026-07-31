@@ -24,24 +24,33 @@ public class MeteoTools {
 
     private final ObjectMapper mapper;
 
-    public MeteoTools(MeteoService meteoService, int nbHeures) {
+    private final int no;
+
+    public MeteoTools(MeteoService meteoService, int nbHeures, int no) {
         this.meteoService = meteoService;
         mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         this.nbHeures = nbHeures;
+        this.no = no;
     }
 
     @Tool(description = "Donne la météo des prochaines heures")
     public ListMeteo getMeteoProchainesHeures() {
         LOGGER.info("getMeteoProchainesHeures");
 
-        LOGGER.info("mise à jour de la météo si necessaire ...");
-        meteoService.update();
+        MeteoGlobalModel meteo;
+        if (no >= 0) {
+            LOGGER.info("mise à jour de la météo si necessaire ...");
+            meteoService.update();
 
-        LOGGER.info("recuperation meteo");
-        var meteo = meteoService.getMeteo();
+            LOGGER.info("recuperation meteo");
+            meteo = meteoService.getMeteo();
+        } else {
+            LOGGER.info("recuperation meteo");
+            meteo = meteoService.getMeteo2(no);
+        }
 
         var listMeteo = convertie2(meteo);
 

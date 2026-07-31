@@ -1,5 +1,6 @@
 package org.minidash.minidash.meteo.service;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import com.google.common.util.concurrent.AtomicDouble;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
@@ -13,6 +14,7 @@ import org.minidash.minidash.meteo.dto.PrecipitationDto;
 import org.minidash.minidash.meteo.model.*;
 import org.minidash.minidash.properties.AppProperties;
 import org.minidash.minidash.properties.MeteoProperties;
+import org.minidash.minidash.properties.TelegramMeteoProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
@@ -53,26 +55,32 @@ public class MeteoService {
     private final Map<String, AtomicInteger> mapInteger = new HashMap<>();
     private final Map<String, AtomicDouble> mapFloat = new HashMap<>();
 
-    private final ChatClient chatClient;
-
     private final OllamaChatModel chatModel;
 
-//    private final ProjetTools projetTools;
-
     private final MeteoTools meteoTools;
+    private final List<TelegramMeteoProperties> listeMeteoProperties;
+    private final Cache<Integer, MeteoGlobalModel> meteoCache;
+    private final List<MeteoTools> listeMeteoTools;
 
     public MeteoService(BaseService baseService, AppProperties appProperties,
                         MeteoRestService meteoRestService, ObservationRegistry observationRegistry,
-                        MeterRegistry meterRegistry, ChatClient chatClient, OllamaChatModel chatModel) {
+                        MeterRegistry meterRegistry, OllamaChatModel chatModel,
+                        List<TelegramMeteoProperties> listeMeteoProperties,
+                        Cache<Integer, MeteoGlobalModel> meteoCache) {
         this.baseService = baseService;
         this.appProperties = appProperties;
         this.meteoProperties = appProperties.getMeteo();
         this.meteoRestService = meteoRestService;
         this.observationRegistry = observationRegistry;
         this.meterRegistry = meterRegistry;
-        this.chatClient = chatClient;
+        this.listeMeteoProperties = listeMeteoProperties;
         this.chatModel = chatModel;
-        this.meteoTools = new MeteoTools(this, meteoProperties.getNbHeures());
+        this.meteoCache = meteoCache;
+        this.meteoTools = new MeteoTools(this, meteoProperties.getNbHeures(), -1);
+        this.listeMeteoTools = new ArrayList<>();
+        for (int i = 0; i < listeMeteoProperties.size(); i++) {
+            this.listeMeteoTools.add(new MeteoTools(this, meteoProperties.getNbHeures(), i));
+        }
     }
 
     @PostConstruct
@@ -121,6 +129,42 @@ public class MeteoService {
             }
             return null;
         }
+    }
+
+
+    public MeteoGlobalModel getMeteo2(int no) {
+        var res = meteoCache.getIfPresent(no);
+        if (res != null) {
+            return res;
+        } else {
+            if (no >= 0 && no < listeMeteoProperties.size()) {
+                var tmp = listeMeteoProperties.get(no);
+
+                if (StringUtils.hasText(meteoProperties.getUrl()) && StringUtils.hasText(tmp.getLongitude()) && StringUtils.hasText(tmp.getLatitude())) {
+                    LOGGER.atInfo().log("url meteo={}", meteoProperties.getUrl());
+                    ResponseEntity<String> response = appelMeteo(tmp.getLongitude(), tmp.getLatitude());
+                    if (response.getStatusCode().is2xxSuccessful()) {
+                        LOGGER.atInfo().log("Appel Meteo reussi. code={}, body={}", response.getStatusCode(), response.getBody());
+                        var res2 = response.getBody();
+                        final MeteoGlobalModel meteoGlobalModel = construitModelMeteo(res2);
+                        if (meteoGlobalModel != null) {
+                            meteoCache.put(no, meteoGlobalModel);
+                            return meteoGlobalModel;
+                        } else {
+                            return null;
+                        }
+                    } else {
+                        LOGGER.atError().log("Erreur pour l'appel Meteo. code={}, body={}", response.getStatusCode(), response.getBody());
+                        return null;
+                    }
+                } else {
+                    throw new RuntimeException("Erreur");
+                }
+            } else {
+                throw new RuntimeException("Erreur");
+            }
+        }
+
     }
 
     public MeteoDto getMeteoDto() {
@@ -444,15 +488,10 @@ public class MeteoService {
             LOGGER.atInfo().log("lecture meteo fichier: {}", meteoProperties.getFichier());
             var p = Path.of(meteoProperties.getFichier());
             var s = Files.readString(p, StandardCharsets.UTF_8);
-            final MeteoGlobalModel meteoGlobalModel1 = construitModelMeteo(s);
-            if (meteoGlobalModel1 != null) {
-                return meteoGlobalModel1;
-            } else {
-                return null;
-            }
+            return construitModelMeteo(s);
         } else if (StringUtils.hasText(meteoProperties.getUrl())) {
             LOGGER.atInfo().log("url meteo={}", meteoProperties.getUrl());
-            ResponseEntity<String> response = appelMeteo();
+            ResponseEntity<String> response = appelMeteo(meteoProperties.getLongitude(), meteoProperties.getLatitude());
             if (response.getStatusCode().is2xxSuccessful()) {
                 LOGGER.atInfo().log("Appel Meteo reussi. code={}, body={}", response.getStatusCode(), response.getBody());
                 var res = response.getBody();
@@ -472,8 +511,8 @@ public class MeteoService {
         }
     }
 
-    private ResponseEntity<String> appelMeteo() {
-        return meteoRestService.get(meteoProperties.getLongitude(), meteoProperties.getLatitude(),
+    private ResponseEntity<String> appelMeteo(String logitude, String latitude) {
+        return meteoRestService.get(logitude, latitude,
                 "fr", "metric", meteoProperties.getApiKey());
     }
 
@@ -584,10 +623,10 @@ public class MeteoService {
         if (StringUtils.hasText(meteoProperties.getMessageIA())) {
             s = meteoProperties.getMessageIA();
         }
-        return getMeteoTexte(s);
+        return getMeteoTexte(s, -1);
     }
 
-    public String getMeteoTexte(String messageIa) {
+    public String getMeteoTexte(String messageIa, int no) {
         try {
             var s = """
                     Regroupe les heures de 22h à 7h du matin comme la nuit.
@@ -600,7 +639,7 @@ public class MeteoService {
                 s = meteoProperties.getMessageIA();
             }
 
-            return appelMeteo(s);
+            return appelMeteo(s, no);
 
         } catch (Exception e) {
             LOGGER.error("erreur", e);
@@ -609,15 +648,17 @@ public class MeteoService {
     }
 
 
-    private String appelMeteo(String message) {
+    private String appelMeteo(String message, int no) {
 
-        LOGGER.info("appel llm : {}", message);
+        LOGGER.info("appel llm {} : {}", no, message);
 
         var debut = Instant.now();
 
+        MeteoTools meteoSelectionne = (no < 0) ? meteoTools : getMeteoTools(no);
+
         String response = ChatClient.create(chatModel)
                 .prompt(message)
-                .tools(meteoTools)
+                .tools(meteoSelectionne)
                 .call()
                 .content();
 
@@ -628,5 +669,9 @@ public class MeteoService {
 
         LOGGER.info("durée d'execution: {}", Duration.between(debut, fin));
         return response;
+    }
+
+    private MeteoTools getMeteoTools(int no) {
+        return listeMeteoTools.get(no);
     }
 }

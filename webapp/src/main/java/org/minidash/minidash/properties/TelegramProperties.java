@@ -1,5 +1,7 @@
 package org.minidash.minidash.properties;
 
+import java.util.List;
+
 public class TelegramProperties {
 
     private String token;
@@ -8,6 +10,7 @@ public class TelegramProperties {
     private String cron;
     private boolean actif;
     private String messageIA;
+    private List<TelegramMeteoProperties> meteo;
 
     public String getToken() {
         return token;
@@ -55,5 +58,13 @@ public class TelegramProperties {
 
     public void setMessageIA(String messageIA) {
         this.messageIA = messageIA;
+    }
+
+    public List<TelegramMeteoProperties> getMeteo() {
+        return meteo;
+    }
+
+    public void setMeteo(List<TelegramMeteoProperties> meteo) {
+        this.meteo = meteo;
     }
 }
