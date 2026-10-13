@@ -100,3 +100,16 @@ spring.ai.model.chat: ollama
 spring.ai.ollama.chat.options.model:   ministral-3:14b
 
 spring.ai.ollama.init.pull-model-strategy: when_missing
+
+spring.task.scheduling.pool.size: 4
+
+apache-http-client:
+  socket-timeout: 1m
+  connection-timeout: 10s
+  time-to-live: 10m
+  max-connection-total: 100
+  max-connection-per-route: 10
+  so-timeout: 1m
+  connection-request-timeout: 10s
+  response-timeout: 3m
+
